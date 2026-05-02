@@ -12,7 +12,6 @@ A injeção de dependência é configurada via `IServiceCollection` com métodos
 [componente]/[componente].Api/ApiDependency.cs
 [componente]/[componente].Application/ApplicationDependency.cs
 [componente]/[componente].Infrastructure/InfrastructureDependency.cs
-[componente]/[componente].Domain/DomainDependency.cs
 ```
 
 ---
