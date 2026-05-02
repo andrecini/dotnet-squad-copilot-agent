@@ -10,9 +10,9 @@ Os endpoints da aplicação são implementados com Minimal APIs do ASP.NET Core 
 
 ```
 [componente]/[componente].Api/Endpoints/
-[componente]/[componente].Api/Endpoints/Example/
-[componente]/[componente].Api/Endpoints/Example/ExampleEndpoint.cs
-[componente]/[componente].Api/Endpoints/Example/ExampleEndpoint.cs
+[componente]/[componente].Api/Endpoints/Orders/
+[componente]/[componente].Api/Endpoints/Orders/CreateOrderEndpoint.cs
+[componente]/[componente].Api/Endpoints/Orders/GetOrderByIdEndpoint.cs
 ```
 
 ---
@@ -32,11 +32,12 @@ public static class CreateOrderEndpoint
             CancellationToken cancellationToken) =>
         {
             var response = await appService.CreateAsync(request, cancellationToken);
-            return Results.Created($"/api/v1/orders/{response.OrderId}", response);
+            return TypedResults.Created($"/api/v1/orders/{response.OrderId}", response);
         })
         .WithName("CreateOrder")
         .WithSummary("Cria um novo pedido")
         .WithTags("Orders")
+        .RequireAuthorization("orders:write")
         .WithOpenApi();
     }
 }
@@ -50,17 +51,16 @@ public static class CreateOrderEndpoint
 - Nome do arquivo e da classe seguem o padrão `[Ação][Recurso]Endpoint` — ex: `CreateOrderEndpoint`, `GetOrderByIdEndpoint`
 - Rotas em `kebab-case` com versionamento obrigatório: `/api/v1/`
 - Sempre declarar `.WithName()`, `.WithSummary()` e `.WithTags()` para suporte ao Swagger
-- Endpoints autenticados devem declarar `.RequireAuthorization()`
+- Endpoints autenticados devem declarar `.RequireAuthorization("policy-name")` seguindo o padrão `[recurso]:[ação]` — ex: `orders:read`, `orders:write`
 - Validação de request é tratada via FluentValidation — há um arquivo de contexto específico para isso
 
 ---
 
 ## Retornos Padrão
 
-Os endpoints utilizam `Results` ou `TypedResults` para retorno. `TypedResults` é preferido por tornar o tipo de retorno explícito e melhorar a inferência do Swagger.
+Os endpoints utilizam `TypedResults` para retorno, por tornar o tipo de retorno explícito e melhorar a inferência do Swagger.
 
 ```csharp
-// Preferido
 return TypedResults.Ok(response);
 return TypedResults.Created($"/api/v1/orders/{response.OrderId}", response);
 return TypedResults.NoContent();
