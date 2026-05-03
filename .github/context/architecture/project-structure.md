@@ -1,4 +1,4 @@
-# Project Structure
+# Folder Structure
 
 ## Visão Geral
 
