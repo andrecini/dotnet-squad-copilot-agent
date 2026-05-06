@@ -1,3 +1,22 @@
+---
+name: onboarding-checklist
+description: 'Use this skill when the user asks to generate an onboarding checklist for a new team member. Trigger for prompts like "create an onboarding checklist", "generate onboarding for a new developer", "what does the new member need to do". Do not trigger for README generation or daily summary creation.'
+license: MIT
+compatibility: 'Requires read access to the repository context files. Must follow the standards defined in onboarding-summary.md.'
+model: claude-haiku
+metadata:
+  version: "1.0"
+argument-hint: 'Required: new member name and profile (junior, mid-level, senior, tech lead).'
+---
+
+## Guardrails
+
+- **Sem alteração de código ou arquivos do repositório** — apenas leitura de contextos e geração de checklist
+- **Sem criação de Issues ou PRs** — o checklist é exibido apenas no chat
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler `appsettings.Production.json`
+- **Checklist restrito ao perfil informado** — nunca incluir itens de nível superior sem confirmação
+- **Sem atribuição de tarefas ou responsáveis** — apenas gerar o checklist; nunca criar cards automaticamente
+
 # Skill: Onboarding Checklist
 
 ## Objetivo

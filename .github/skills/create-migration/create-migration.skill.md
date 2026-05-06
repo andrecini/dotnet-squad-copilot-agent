@@ -1,3 +1,23 @@
+---
+name: create-migration
+description: 'Use this skill when the user asks to create or apply an EF Core migration. Trigger for prompts like "create a migration", "add a migration for X", "generate migration for new entity". Do not trigger for repository or service creation — use the specific skills instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK, Entity Framework Core and dotnet-ef CLI tool. Must be executed within a solution following the standards defined in ef-standards.md.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Required: description of the change (new entity, new column, altered column). Optional: raw SQL if already written.'
+---
+
+## Guardrails
+
+- **Escopo restrito às camadas de Domain e Infrastructure** — nunca criar arquivos fora de `[componente].Domain/Entities/`, `[componente].Infrastructure/Data/`
+- **Sem execução automática de migrations** — sempre confirmar com o usuário antes de executar `dotnet ef database update`
+- **Sem alteração de migrations existentes** — nunca modificar arquivos de migration já gerados; criar nova migration para correções
+- **Sem acesso a bancos de produção** — apenas ambientes de desenvolvimento e staging
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json`
+- **Sem criação de stored procedures ou triggers** — apenas migrations de schema
+
 # Skill: Create Migration
 
 ## Objetivo

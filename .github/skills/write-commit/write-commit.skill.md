@@ -1,3 +1,22 @@
+---
+name: write-commit
+description: 'Use this skill when the user asks to generate a commit message. Trigger for prompts like "generate a commit message", "write the commit", "what should my commit say". Do not trigger for changelog updates, PR descriptions, or card creation.'
+license: MIT
+compatibility: 'Requires staged changes in the repository. Must follow the Conventional Commits standard defined in commit-standards.md.'
+model: claude-haiku
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: Card ID if not automatically detected. Defaults to staged changes analysis.'
+---
+
+## Guardrails
+
+- **Escopo restrito à geração de mensagem** — nunca executar o commit diretamente; apenas exibir a mensagem
+- **Sem acesso a branches externas** — apenas leitura das alterações em staging da branch atual
+- **Sem geração de commit sem Card ID** — bloquear e orientar o usuário a criar um card antes
+- **Sem commit de múltiplos tipos** — alertar e orientar separação quando múltiplos tipos forem detectados
+- **Sem leitura de arquivos de configuração sensíveis** — nunca ler `appsettings.Production.json` ou arquivos com credenciais
+
 # Skill: Write Commit
 
 ## Objetivo

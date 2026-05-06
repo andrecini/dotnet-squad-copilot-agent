@@ -1,3 +1,23 @@
+---
+name: code-review
+description: 'Use this skill when the user asks to review a Pull Request or staged changes. Trigger for prompts like "review this PR", "check my code", "review staged changes", "analyze this pull request". Do not trigger for refactoring, standard creation, or test generation.'
+license: MIT
+compatibility: 'Requires access to the GitHub repository and staged changes or PR URL. Must be executed within a solution following the standards defined in code-review-checklist.md.'
+model: claude-sonnet
+metadata:
+  version: "1.0"
+argument-hint: 'Required: PR URL or staged changes. Optional: specific areas to focus on (architecture, tests, security).'
+---
+
+## Guardrails
+
+- **Sem alteração de código** — apenas leitura e análise; nunca modificar arquivos durante o review
+- **Sem acesso a branches externas** — apenas leitura da branch atual ou do PR informado
+- **Sem execução de comandos no repositório** — apenas análise estática do código
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler `appsettings.Production.json` ou arquivos com credenciais
+- **Sem aprovação automática de PRs** — apenas gerar o relatório; a aprovação é sempre manual
+- **Relatório apenas no chat** — nunca criar arquivos ou comentários no PR automaticamente
+
 # Skill: Code Review
 
 ## Objetivo

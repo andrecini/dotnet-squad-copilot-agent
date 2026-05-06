@@ -1,3 +1,24 @@
+---
+name: create-integration
+description: 'Use this skill when the user asks to create an integration with an external API, AWS service, Kafka topic, or RabbitMQ queue/exchange. Trigger for prompts like "create an integration with X", "add a Kafka consumer", "implement an AWS S3 client", "add a RabbitMQ producer". Do not trigger for internal feature creation, database access, or endpoint creation.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK and the relevant integration packages (Confluent.Kafka, AWSSDK, RabbitMQ.Client). Must be executed within a solution following the Clean Architecture structure defined in solution-architecture.md.'
+model: claude-sonnet
+metadata:
+  version: "1.0"
+argument-hint: 'Required: integration type (API, AWS, Kafka, RabbitMQ) and integration name. Optional: scope (contract only, implementation only, or complete).'
+---
+
+## Guardrails
+
+- **Escopo restrito à camada de integração** — contratos apenas em `[componente].Domain/Integrations/` e implementações apenas em `[componente].Infrastructure/Integrations/`
+- **Sem acesso a camadas de Presentation ou Application** — integrações não interagem diretamente com endpoints ou AppServices
+- **Sem criação de endpoints** — responsabilidade exclusiva das skills `create-feature` ou `create-endpoint`
+- **Sem alteração de `XDependency.cs` de outras camadas** — apenas `InfrastructureDependency.cs`
+- **Sem hardcode de credenciais ou endpoints** — sempre usar `appsettings` para configurações sensíveis
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json`
+- **Perguntar antes de sobrescrever** — se um arquivo já existir, nunca sobrescrever sem confirmação do usuário
+
 # Skill: Create Integration
 
 ## Objetivo

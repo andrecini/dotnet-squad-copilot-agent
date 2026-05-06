@@ -1,3 +1,23 @@
+---
+name: refactor-to-standards
+description: 'Use this skill when the user asks to refactor code to follow project standards. Trigger for prompts like "refactor this to standards", "fix the patterns in this file", "update this code to follow conventions". Do not trigger for new feature creation or bug fixes.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK. Must be executed within a solution following the standards defined in the context files.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: specific files or staged changes to refactor. Defaults to staged changes if not informed.'
+---
+
+## Guardrails
+
+- **Sem criação de novos artefatos** — apenas refatoração de arquivos existentes; nunca criar novos arquivos sem confirmação
+- **Sem alteração de lógica de negócio** — apenas adequação aos padrões; nunca alterar comportamento funcional
+- **Sem alteração de testes** — nunca modificar classes de teste durante a refatoração de código de produção sem informar o usuário
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json`
+- **Sem aplicação automática** — sempre apresentar diagnóstico e aguardar confirmação antes de aplicar alterações
+- **Opção de undo obrigatória** — sempre oferecer `keep` e `undo` por arquivo refatorado
+
 # Skill: Refactor to Standards
 
 ## Objetivo

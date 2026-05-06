@@ -1,3 +1,23 @@
+---
+name: write-changelog-entry
+description: 'Use this skill when the user asks to update the CHANGELOG.md with a new release entry. Trigger for prompts like "update the changelog", "add a changelog entry", "generate the release notes". Do not trigger for README updates or commit message generation.'
+license: MIT
+compatibility: 'Requires access to the repository commit history and merged PRs. Must follow the template defined in changelog-template.md.'
+model: gpt-4o-mini
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: release version. Defaults to automatic version suggestion based on change types.'
+---
+
+## Guardrails
+
+- **Escopo restrito ao `CHANGELOG.md`** — nunca criar ou alterar outros arquivos de documentação
+- **Sem alteração de entradas existentes** — apenas inserir nova entrada; nunca modificar releases anteriores
+- **Sem publicação automática de releases** — apenas atualizar o arquivo; a publicação é sempre manual via GitHub
+- **Sem inclusão de commits de `style` ou `revert`** — filtrar automaticamente esses tipos
+- **Confirmar versão com o usuário antes de aplicar** — nunca assumir versão sem confirmação
+- **Sem leitura de arquivos de configuração sensíveis** — nunca ler `appsettings.Production.json`
+
 # Skill: Write Changelog Entry
 
 ## Objetivo

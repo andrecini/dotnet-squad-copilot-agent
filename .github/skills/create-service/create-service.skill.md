@@ -1,3 +1,24 @@
+---
+name: create-service
+description: 'Use this skill when the user asks to create a service for a specific resource or operation. Trigger for prompts like "create a service for X", "implement the business logic for Y", "add a service method for Z". Do not trigger for full feature creation — use create-feature instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK. Must follow the Result Pattern defined in result-pattern.md and the standards defined in layer-application.md.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Required: resource name and operation. Optional: business rules to apply.'
+---
+
+## Guardrails
+
+- **Escopo restrito às camadas de Domain e Application** — interface em `[componente].Domain/Interfaces/Services/` e implementação em `[componente].Application/Services/`
+- **Sem criação de endpoints ou AppServices** — responsabilidade das skills `create-feature` ou `create-endpoint`
+- **Sem acesso direto a repositórios fora da injeção de dependência** — sempre via interface injetada
+- **Sem lançamento de exceções de negócio** — sempre retornar `Result<T>` ou `Result`
+- **Sem alteração de `XDependency.cs` de outras camadas** — apenas `ApplicationDependency.cs`
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json`
+- **Perguntar antes de sobrescrever** — nunca sobrescrever métodos existentes sem confirmação do usuário
+
 # Skill: Create Service
 
 ## Objetivo

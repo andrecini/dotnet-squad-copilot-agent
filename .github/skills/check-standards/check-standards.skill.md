@@ -1,3 +1,22 @@
+---
+name: check-standards
+description: 'Use this skill when the user asks to verify code adherence to project standards. Trigger for prompts like "check standards", "verify patterns", "analyze code quality", "check if this follows the conventions". Do not trigger for refactoring — use refactor-to-standards instead.'
+license: MIT
+compatibility: 'Requires read access to the repository. Must be executed within a solution following the standards defined in the context files.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: specific layer, file or scope to analyze. Defaults to full repository analysis.'
+---
+
+## Guardrails
+
+- **Sem alteração de código** — apenas leitura e análise; nunca modificar arquivos
+- **Sem execução de comandos no repositório** — apenas análise estática
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler `appsettings.Production.json`
+- **Relatório apenas no chat** — nunca criar arquivos ou Issues automaticamente
+- **Sem acionamento automático de refatoração** — apenas sugerir; aguardar confirmação do usuário para acionar `refactor-to-standards`
+
 # Skill: Check Standards
 
 ## Objetivo

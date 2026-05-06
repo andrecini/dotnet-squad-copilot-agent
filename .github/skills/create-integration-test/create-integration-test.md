@@ -1,3 +1,24 @@
+---
+name: create-integration-test
+description: 'Use this skill when the user asks to create integration tests for an endpoint or between internal layers. Trigger for prompts like "create integration tests for X", "add integration tests to this endpoint", "test the service with the real database". Do not trigger for unit test creation — use create-unit-test instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK, xUnit, Shouldly and a real database for testing. Must follow the standards defined in integration-tests.md.'
+model: claude-sonnet
+metadata:
+  version: "1.0"
+argument-hint: 'Required: test type (endpoint or internal layers) and resource/operation. Optional: specific scenarios to cover.'
+---
+
+## Guardrails
+
+- **Escopo restrito ao projeto de testes de integração** — nunca criar arquivos fora de `[componente].Integration.Tests/`
+- **Sem alteração de código de produção** — apenas leitura para identificar cenários
+- **Sem criação de testes unitários** — responsabilidade exclusiva da skill `create-unit-test`
+- **Sem acesso a bancos de produção** — apenas ambientes de desenvolvimento e staging
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json`
+- **Rollback obrigatório** — sempre usar `DatabaseFixture` para garantir rollback; nunca limpar tabelas manualmente
+- **Perguntar antes de sobrescrever** — se fixture ou classe de teste já existir, nunca sobrescrever sem confirmação
+
 # Skill: Create Integration Test
 
 ## Objetivo

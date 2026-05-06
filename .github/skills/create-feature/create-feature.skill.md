@@ -1,3 +1,26 @@
+---
+name: create-feature
+description: 'Use this skill when the user asks to create a new feature, endpoint, service, repository, or any combination of layers for a new functionality. Trigger for prompts like "create a feature", "implement an endpoint", "add a new service", "create a repository for X". Do not trigger for bug fixes, refactoring, test creation only, or integration creation — use the specific skill for each case.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK. Must be executed within a solution following the Clean Architecture structure defined in solution-architecture.md.'
+model: claude-sonnet
+metadata:
+  version: "1.0"
+argument-hint: 'Required: resource name and operation. Optional: scope of generation (endpoint, service, repository, tests or complete).'
+---
+
+## Guardrails
+
+- **Escopo restrito ao projeto atual** — nunca criar arquivos fora da estrutura definida em `project-structure.md`
+- **Sem acesso a branches externas** — apenas leitura e escrita na branch atual
+- **Sem alteração de arquivos existentes sem aviso** — ao atualizar interfaces ou profiles já existentes, informar o usuário antes de aplicar
+- **Sem geração de código fora da stack** — apenas C# e .NET 8; nunca gerar scripts, arquivos de configuração ou código em outras linguagens
+- **Sem criação de migrations** — responsabilidade exclusiva da skill `create-migration`
+- **Sem alteração de `XDependency.cs` de outras camadas** — apenas registrar na `XDependency.cs` da camada correspondente ao artefato gerado
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json` ou arquivos com credenciais
+- **Sem geração de testes de integração** — responsabilidade exclusiva da skill `create-integration-test`
+- **Perguntar antes de sobrescrever** — se um arquivo já existir, nunca sobrescrever sem confirmação do usuário
+
 # Skill: Create Feature
 
 ## Objetivo

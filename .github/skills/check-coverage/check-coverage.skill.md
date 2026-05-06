@@ -1,3 +1,23 @@
+---
+name: check-coverage
+description: 'Use this skill when the user asks to check test coverage. Trigger for prompts like "check coverage", "what is the test coverage", "which classes are not tested", "verify the 85% threshold". Do not trigger for test creation — use create-unit-test instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK, dotnet-coverage CLI tool and xUnit. Must be executed within a solution following the test architecture defined in test-architecture.md.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: specific layer or test project to analyze. Defaults to full repository coverage check.'
+---
+
+## Guardrails
+
+- **Sem alteração de código** — apenas execução de testes e análise de relatório; nunca modificar arquivos
+- **Sem acesso a bancos de produção** — testes executados apenas no ambiente de desenvolvimento
+- **Sem acesso a `appsettings.Production.json`** — nunca ler arquivos com credenciais
+- **Relatório apenas no chat** — nunca criar arquivos de relatório automaticamente
+- **Sem acionamento automático de `create-unit-test`** — apenas sugerir; aguardar confirmação do usuário
+- **Threshold fixo em 85%** — nunca alterar o threshold mínimo sem instrução explícita do usuário
+
 # Skill: Check Coverage
 
 ## Objetivo

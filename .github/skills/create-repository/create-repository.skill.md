@@ -1,3 +1,25 @@
+---
+name: create-repository
+description: 'Use this skill when the user asks to create a repository for a specific resource. Trigger for prompts like "create a repository for X", "implement the repository layer for Y", "add data access for Z". Do not trigger for full feature creation — use create-feature instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK, Entity Framework Core and/or Dapper. Must follow the standards defined in generic-repository.md, ef-standards.md and dapper-standards.md.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Required: resource name. Optional: operations to support (CRUD, read-only, custom).'
+---
+
+## Guardrails
+
+- **Escopo restrito às camadas de Domain e Infrastructure** — interface em `[componente].Domain/Interfaces/Repositories/` e implementação em `[componente].Infrastructure/Repositories/`
+- **Sem criação de endpoints ou AppServices** — responsabilidade das skills `create-feature` ou `create-endpoint`
+- **Sem criação de migrations** — responsabilidade exclusiva da skill `create-migration`
+- **Sem acesso a `appsettings.Production.json`** — nunca ler ou alterar arquivos com credenciais
+- **Sem alteração de `XDependency.cs` de outras camadas** — apenas `InfrastructureDependency.cs`
+- **Sem queries inline** — sempre referenciar constantes do Domain em `Integrations/Sql/`
+- **Soft delete obrigatório** — nunca usar `Remove()` do EF Core; sempre `DeletedAt`
+- **Perguntar antes de sobrescrever** — se um arquivo já existir, nunca sobrescrever sem confirmação
+
 # Skill: Create Repository
 
 ## Objetivo
