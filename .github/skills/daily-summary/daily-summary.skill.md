@@ -1,3 +1,23 @@
+---
+name: daily-summary
+description: 'Use this skill when the user asks to create the daily async Issue on GitHub. Trigger for prompts like "create the daily", "open the daily issue", "generate today daily summary". Do not trigger for sprint planning, retrospective, or card creation.'
+license: MIT
+compatibility: 'Requires GitHub API access via GITHUB_TOKEN. Must follow the template defined in agile-ceremonies.md.'
+model: claude-haiku
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: specific activities to include. Defaults to automatic detection from commits and PRs.'
+---
+
+## Guardrails
+
+- **Escopo restrito à criação da Issue de daily** — nunca criar outros tipos de Issue ou artefatos do GitHub
+- **Sem acesso ao código-fonte** — apenas leitura de commits e PRs para detecção de atividades
+- **Sem atribuição automática de responsáveis** — a Issue é sempre coletiva e sem assignees
+- **Sem criação de Issues em repositórios externos** — apenas no repositório atual
+- **Labels restritas a `chore`** — nunca aplicar outras labels
+- **Sem leitura de arquivos de configuração sensíveis** — nunca ler `appsettings.Production.json`
+
 # Skill: Daily Summary
 
 ## Objetivo

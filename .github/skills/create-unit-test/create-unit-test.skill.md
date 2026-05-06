@@ -1,3 +1,24 @@
+---
+name: create-unit-test
+description: 'Use this skill when the user asks to create unit tests for a specific class or set of classes. Trigger for prompts like "create tests for X", "write unit tests for Y", "add test coverage to Z". Do not trigger for integration test creation — use create-integration-test instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK, xUnit, Shouldly and Moq. Must be executed within a solution following the test architecture defined in test-architecture.md.'
+model: claude-sonnet
+metadata:
+  version: "1.0"
+argument-hint: 'Required: class name or code to test. Optional: specific methods or scenarios to cover.'
+---
+
+## Guardrails
+
+- **Escopo restrito ao projeto de testes correspondente** — nunca criar arquivos de teste fora de `[componente].X.Tests/`
+- **Sem alteração de código de produção** — apenas leitura de arquivos de produção para identificar cenários
+- **Sem criação de testes de integração** — responsabilidade exclusiva da skill `create-integration-test`
+- **Sem alteração de Data Mocks ou Mock Classes de outros recursos** — apenas adicionar ou atualizar os relacionados à classe testada
+- **Sem uso de `Assert` nativo do xUnit** — exclusivamente Shouldly para asserções
+- **Sem criação de testes sem o conjunto completo** — sempre gerar Data Mock + Mock Class + Teste juntos
+- **Perguntar antes de sobrescrever** — se classe de teste já existir, nunca sobrescrever sem confirmação do usuário
+
 # Skill: Create Unit Test
 
 ## Objetivo

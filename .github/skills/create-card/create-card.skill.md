@@ -1,3 +1,23 @@
+---
+name: create-card
+description: 'Use this skill when the user asks to create a GitHub Issue. Trigger for prompts like "create a card", "open an issue", "add a task to the board", "create a bug report". Do not trigger for code creation, PR reviews, or commit generation.'
+license: MIT
+compatibility: 'Requires GitHub API access via GITHUB_TOKEN. Must follow the card templates defined in card-specification.md.'
+model: gpt-4o-mini
+metadata:
+  version: "1.0"
+argument-hint: 'Required: card type (feature, bug, tech debt, spike) and title. Optional: description and acceptance criteria.'
+---
+
+## Guardrails
+
+- **Escopo restrito à criação de Issues** — nunca criar PRs, comentários em código ou qualquer outro artefato do GitHub
+- **Sem acesso ao código-fonte** — apenas leitura do repositório para contexto; nunca modificar arquivos
+- **Sem criação de Issues em repositórios externos** — apenas no repositório atual
+- **Sem atribuição automática de responsáveis** — nunca atribuir assignees sem confirmação do usuário
+- **Sem definição automática de milestones ou projetos** — apenas title, body e labels
+- **Labels restritas ao conjunto definido** — apenas `feat`, `fix`, `chore`, `spike`
+
 # Skill: Create Card
 
 ## Objetivo

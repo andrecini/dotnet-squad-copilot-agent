@@ -1,3 +1,22 @@
+---
+name: write-readme
+description: 'Use this skill when the user asks to create or update the README.md. Trigger for prompts like "generate the README", "update the README", "write the project documentation". Do not trigger for changelog updates or onboarding checklist generation.'
+license: MIT
+compatibility: 'Requires read access to the repository structure, appsettings and launchSettings. Must follow the template defined in readme-template.md.'
+model: gpt-4o-mini
+metadata:
+  version: "1.0"
+argument-hint: 'Optional: specific sections to update. Defaults to full README generation if not informed.'
+---
+
+## Guardrails
+
+- **Escopo restrito ao `README.md`** — nunca criar ou alterar outros arquivos de documentação
+- **Sem exposição de credenciais** — nunca incluir valores reais de variáveis de ambiente; apenas placeholders descritivos
+- **Sem leitura de `appsettings.Production.json`** — apenas `appsettings.json` e `appsettings.Example.json`
+- **Sem alteração de código-fonte** — apenas leitura para extração de informações
+- **Sem desvio do template** — seguir estritamente a estrutura definida em `readme-template.md`
+
 # Skill: Write README
 
 ## Objetivo

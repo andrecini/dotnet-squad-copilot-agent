@@ -1,3 +1,23 @@
+---
+name: create-endpoint
+description: 'Use this skill when the user asks to create a single endpoint with its validator, AppService and Swagger documentation. Trigger for prompts like "create an endpoint", "add a route", "implement a POST endpoint for X". Do not trigger for full feature creation — use create-feature instead.'
+license: MIT
+compatibility: 'Requires .NET 8 SDK and ASP.NET Core. Must be executed within a solution following the standards defined in minimal-apis.md.'
+model: gpt-4o
+metadata:
+  version: "1.0"
+argument-hint: 'Required: resource, operation and HTTP method. Optional: authentication policy, request and response fields.'
+---
+
+## Guardrails
+
+- **Escopo restrito à camada de Presentation** — nunca criar arquivos fora de `[componente].Api/`
+- **Sem criação de Services ou Repositories** — responsabilidade das skills `create-service` e `create-repository`
+- **Sem criação de migrations** — responsabilidade exclusiva da skill `create-migration`
+- **Sem acesso a arquivos de configuração sensíveis** — nunca ler ou alterar `appsettings.Production.json`
+- **Sem alteração de `XDependency.cs` de outras camadas** — apenas `ApiDependency.cs`
+- **Perguntar antes de sobrescrever** — se um arquivo já existir, nunca sobrescrever sem confirmação do usuário
+
 # Skill: Create Endpoint
 
 ## Objetivo
