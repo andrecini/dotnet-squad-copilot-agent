@@ -1,0 +1,43 @@
+{
+  "_description": "MCP Server para integração com GitHub. Configurado por padrão no Copilot cloud agent. Habilita criação de Issues, leitura de PRs, commits e tags diretamente pelo agente.",
+  "_docs": "https://github.com/modelcontextprotocol/servers/tree/main/src/github",
+  "_skills": [
+    "create-card",
+    "daily-summary",
+    "code-review",
+    "write-changelog-entry",
+    "write-commit"
+  ],
+  "_guardrails": [
+    "Usar apenas o token com escopo mínimo necessário — nunca solicitar permissões de admin",
+    "Nunca criar Issues, PRs ou comentários em repositórios externos ao atual",
+    "Nunca fazer merge ou fechar PRs automaticamente — apenas leitura e criação",
+    "Nunca expor o GITHUB_PERSONAL_ACCESS_TOKEN em logs ou respostas"
+  ],
+  "_env": {
+    "COPILOT_MCP_GITHUB_TOKEN": "Token de acesso pessoal do GitHub com escopos: repo, issues, pull_requests"
+  },
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "$COPILOT_MCP_GITHUB_TOKEN"
+      },
+      "tools": [
+        "create_issue",
+        "get_issue",
+        "list_issues",
+        "update_issue",
+        "create_pull_request",
+        "get_pull_request",
+        "list_pull_requests",
+        "get_pull_request_diff",
+        "list_commits",
+        "get_commit",
+        "list_tags",
+        "get_tag"
+      ]
+    }
+  }
+}

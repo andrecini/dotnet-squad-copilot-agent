@@ -1,0 +1,39 @@
+{
+  "_description": "MCP Server para inspeção do schema PostgreSQL. Acesso somente leitura. Habilita o agente a consultar tabelas, colunas e schemas reais do banco antes de gerar migrations, queries Dapper e configurações EF Core.",
+  "_docs": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+  "_skills": [
+    "create-migration",
+    "create-dapper-query",
+    "create-repository",
+    "check-standards"
+  ],
+  "_guardrails": [
+    "Acesso somente leitura — nunca executar DDL (CREATE, ALTER, DROP) ou DML (INSERT, UPDATE, DELETE) via MCP",
+    "Restrito ao banco de dados de desenvolvimento ou staging — nunca conectar ao banco de produção",
+    "Nunca expor a connection string ou credenciais em logs ou respostas",
+    "Nunca executar queries que retornem dados sensíveis de usuários ou pagamentos",
+    "Usado exclusivamente para inspeção de schema: list_tables, describe_table, list_schemas"
+  ],
+  "_env": {
+    "COPILOT_MCP_POSTGRES_URL": "Connection string do PostgreSQL de desenvolvimento. Formato: postgresql://user:password@host:5432/dbname"
+  },
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "$COPILOT_MCP_POSTGRES_URL"
+      ],
+      "env": {
+        "POSTGRES_URL": "$COPILOT_MCP_POSTGRES_URL"
+      },
+      "tools": [
+        "query",
+        "describe_table",
+        "list_tables",
+        "list_schemas"
+      ]
+    }
+  }
+}

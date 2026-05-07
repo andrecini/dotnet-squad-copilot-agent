@@ -1,0 +1,35 @@
+{
+  "_description": "MCP Server para leitura do repositório Git local. Habilita leitura de diff, staging, histórico de commits e branches diretamente pelo agente. Complementa o GitHub MCP para operações locais.",
+  "_docs": "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+  "_skills": [
+    "write-commit",
+    "code-review",
+    "check-standards",
+    "write-changelog-entry"
+  ],
+  "_guardrails": [
+    "Nunca executar commits, merges, pushes ou qualquer operação de escrita no repositório via MCP",
+    "Acesso restrito ao repositório atual — nunca acessar repositórios externos",
+    "Nunca expor conteúdo de arquivos sensíveis encontrados no histórico Git",
+    "Usado exclusivamente para leitura de diff, staging e histórico"
+  ],
+  "mcpServers": {
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git",
+        "--repository",
+        "."
+      ],
+      "tools": [
+        "git_status",
+        "git_diff",
+        "git_diff_staged",
+        "git_log",
+        "git_show",
+        "git_branch"
+      ]
+    }
+  }
+}
