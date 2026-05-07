@@ -231,3 +231,28 @@ Antes de entregar o relatório, verificar:
 - [ ] Percentual de aderência calculado corretamente
 - [ ] Sugestão de `refactor-to-standards` incluída ao final com os arquivos corretos
 - [ ] Camadas sem desvios sinalizadas explicitamente como conformes
+
+---
+
+## Prompt Examples
+
+- "verifica se o código está seguindo os padrões"
+- "analisa a qualidade do código do projeto"
+- "quais arquivos estão fora do padrão?"
+- "faz um diagnóstico de conformidade do repositório"
+- "checa os padrões da camada de Infrastructure"
+
+---
+
+## Related Skills
+
+- `refactor-to-standards` — corrigir os desvios identificados no relatório
+- `check-coverage` — verificar cobertura de testes em conjunto com os padrões
+
+---
+
+## Error Handling
+
+- **Projeto sem estrutura reconhecível** — se a solution não seguir o padrão de `project-structure.md`, alertar e listar apenas os arquivos que foi possível analisar
+- **Arquivo inacessível** — ignorar arquivos inacessíveis e informar ao usuário quais foram pulados
+- **Escopo muito amplo** — se o repositório tiver mais de 200 arquivos, sugerir análise por camada para evitar respostas incompletas

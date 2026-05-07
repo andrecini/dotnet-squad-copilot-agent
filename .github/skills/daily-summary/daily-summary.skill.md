@@ -174,3 +174,21 @@ Antes de criar a Issue, verificar:
 - [ ] Atividades detectadas automaticamente revisadas — remover ruídos como commits de merge ou style
 - [ ] Label `chore` aplicada
 - [ ] Issue criada como coletiva — nunca individual
+
+---
+
+## Prompt Examples
+
+- "cria a daily de hoje"
+- "abre a issue da daily"
+- "gera o resumo diário do time"
+- "cria a daily assíncrona"
+- "quero criar a issue de daily para hoje"
+
+---
+
+## Error Handling
+
+- **Token GitHub inválido ou ausente** — informar que não é possível criar via API e gerar o conteúdo formatado para criação manual
+- **Issue de daily já criada para a data** — alertar que já existe uma daily para hoje e perguntar se deseja criar uma nova ou reabrir a existente
+- **Nenhuma atividade detectada automaticamente** — informar ao usuário e oferecer a opção de preencher manualmente ou deixar em branco para preenchimento nos comentários

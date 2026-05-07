@@ -142,3 +142,29 @@ Antes de criar a Issue, verificar:
 - [ ] Ao menos um critério de aceite no formato Given/When/Then (Feature, Bug e Tech Debt)
 - [ ] Tasks técnicas definidas
 - [ ] Spike possui Resultado Esperado preenchido — consulte [card-specification.md](../context/agile/card-specification.md)
+
+---
+
+## Prompt Examples
+
+- "cria um card de feature para o endpoint de pedidos"
+- "abre uma issue de bug para o erro de autenticação"
+- "adiciona um tech debt para refatorar o OrderService"
+- "cria um spike para investigar o uso de Redis"
+- "quero criar uma tarefa no board"
+
+---
+
+## Related Skills
+
+- `create-feature` — iniciar o desenvolvimento após a criação do card
+- `write-commit` — referenciar o card criado no commit correspondente
+
+---
+
+## Error Handling
+
+- **Token GitHub inválido ou ausente** — informar que não é possível criar via API e gerar o conteúdo formatado para criação manual
+- **Tipo de card não informado** — nunca assumir o tipo; sempre perguntar antes de prosseguir
+- **Título não informado** — nunca gerar um card sem título; sempre solicitar ao usuário
+- **Critérios de aceite insuficientes** — se a descrição fornecida não permitir gerar ao menos um critério de aceite no formato Given/When/Then, perguntar mais detalhes antes de criar

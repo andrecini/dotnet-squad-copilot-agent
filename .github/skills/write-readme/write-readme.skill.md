@@ -163,3 +163,22 @@ Antes de entregar o output, verificar:
 - [ ] Seção de contribuição referencia `branching-strategy.md` e `commit-standards.md`
 - [ ] Link para `CHANGELOG.md` presente e correto
 - [ ] Estrutura do projeto reflete a estrutura real detectada em `src/`
+
+---
+
+## Prompt Examples
+
+- "gera o README do projeto"
+- "cria a documentação inicial do repositório"
+- "atualiza a seção de instalação do README"
+- "o README está desatualizado, corrige"
+- "escreve o README completo"
+
+---
+
+## Error Handling
+
+- **`appsettings.Example.json` ausente** — alertar o usuário e solicitar que informe as variáveis de ambiente manualmente antes de gerar a seção de configuração
+- **`launchSettings.json` ausente** — usar porta padrão `5001` e alertar que a porta pode diferir do ambiente real
+- **Solution file não encontrada** — alertar e solicitar que o usuário informe o nome do componente manualmente
+- **README já existente** — nunca sobrescrever sem perguntar; sempre oferecer a opção de atualizar seções específicas

@@ -223,3 +223,29 @@ Antes de entregar o relatório, verificar:
 - [ ] Status geral (Aprovado/Reprovado) coerente com os resultados
 - [ ] Sugestão de `create-unit-test` apresentada para classes com cobertura insuficiente
 - [ ] Resposta do usuário aguardada antes de executar qualquer skill adicional
+
+---
+
+## Prompt Examples
+
+- "verifica a cobertura de testes do projeto"
+- "quais classes estão abaixo de 85%?"
+- "checa a cobertura da camada de Application"
+- "quero saber quais classes não têm testes"
+- "roda os testes e me mostra a cobertura"
+
+---
+
+## Related Skills
+
+- `create-unit-test` — gerar testes para classes com cobertura insuficiente
+- `check-standards` — verificar padrões em conjunto com a cobertura
+
+---
+
+## Error Handling
+
+- **`dotnet-coverage` não instalado** — alertar e fornecer o comando de instalação antes de prosseguir
+- **Falha na execução dos testes** — exibir os testes que falharam e perguntar se deseja continuar a análise apenas com os testes que passaram
+- **Nenhum projeto de testes encontrado** — alertar e orientar o usuário sobre a estrutura esperada em `test-architecture.md`
+- **Relatório de cobertura vazio** — alertar que nenhuma classe foi instrumentada e orientar sobre a configuração do Coverlet

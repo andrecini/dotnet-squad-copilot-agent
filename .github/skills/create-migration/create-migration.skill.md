@@ -202,3 +202,30 @@ Antes de entregar o output, verificar:
 - [ ] `DbSet` adicionado ao `AppDbContext` se for nova entidade
 - [ ] Nome da migration é descritivo e segue o padrão `PascalCase`
 - [ ] Migration gerada está coerente com as alterações realizadas
+
+---
+
+## Prompt Examples
+
+- "cria uma migration para a entidade Product"
+- "adiciona a coluna discount na tabela orders"
+- "gera a migration para o novo campo de status"
+- "preciso de uma migration para o índice de customer_id"
+- "cria a migration para renomear a coluna price para unit_price"
+
+---
+
+## Related Skills
+
+- `create-repository` — criar o repositório para a nova entidade após a migration
+- `create-feature` — criar a feature completa após a migration estar pronta
+
+---
+
+## Error Handling
+
+- **`dotnet-ef` não instalado** — alertar o usuário e fornecer o comando de instalação antes de prosseguir
+- **Migration com nome duplicado** — se já existir uma migration com o mesmo nome, alertar e sugerir um nome alternativo
+- **Entidade sem `BaseEntity`** — se a entidade existente não herdar de `BaseEntity`, alertar e oferecer a correção antes de gerar a migration
+- **Alteração destrutiva detectada** — se a migration envolver remoção de coluna ou tabela, alertar explicitamente sobre o risco e exigir confirmação dupla antes de executar
+- **Falha na execução do comando** — exibir o erro retornado pelo CLI e orientar o usuário sobre como resolvê-lo

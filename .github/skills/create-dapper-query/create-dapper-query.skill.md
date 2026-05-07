@@ -268,3 +268,30 @@ Antes de entregar o output, verificar:
 - [ ] `CancellationToken` propagado
 - [ ] Testes cobrem cenário de resultado vazio e resultado com dados
 - [ ] Data Mock possui método `Valid()` obrigatório
+
+---
+
+## Prompt Examples
+
+- "cria uma query Dapper para listar pedidos por cliente"
+- "adiciona uma consulta SQL paginada para produtos"
+- "quero uma query customizada para relatório de vendas"
+- "implementa o GetSummariesByStatus com Dapper"
+- "escreve a query de busca de clientes inativos"
+
+---
+
+## Related Skills
+
+- `create-repository` — criar ou atualizar o repositório que executará a query
+- `create-unit-test` — gerar testes para a query criada
+
+---
+
+## Error Handling
+
+- **SQL inválido fornecido pelo usuário** — alertar sobre os erros encontrados e sugerir correções antes de criar os artefatos
+- **Filtro `deleted_at IS NULL` ausente** — adicionar automaticamente e informar o usuário
+- **Aliases incompatíveis com o modelo** — se os aliases do SQL não corresponderem às propriedades do modelo de destino, alertar e sugerir correções antes de prosseguir
+- **Classe de queries já existente** — nunca recriar; apenas adicionar a nova constante preservando as existentes
+- **Modelo de resultado já existente com campos conflitantes** — alertar e perguntar se deseja reutilizar, estender ou criar um novo modelo

@@ -285,3 +285,29 @@ Antes de entregar o output, verificar:
 - [ ] `CancellationToken.None` em todas as operações assíncronas
 - [ ] Rollback garantido via `DatabaseFixture` — nunca limpeza manual
 - [ ] Ambiente de testes configurado via `UseEnvironment("Testing")`
+
+---
+
+## Prompt Examples
+
+- "cria testes de integração para o endpoint de pedidos"
+- "adiciona testes de integração para o OrderService com banco real"
+- "quero testar o fluxo completo de criação de pagamento"
+- "gera os testes de integração para o GET /api/v1/orders"
+- "testa a integração entre OrderService e OrderRepository"
+
+---
+
+## Related Skills
+
+- `create-unit-test` — gerar testes unitários complementares para as classes envolvidas
+- `check-coverage` — verificar cobertura após geração dos testes
+
+---
+
+## Error Handling
+
+- **`WebApplicationFactory` não configurada** — criar a fixture automaticamente se não existir, informando o usuário
+- **Banco de dados inacessível** — alertar que o banco configurado no ambiente de testes não está acessível e orientar sobre a configuração necessária
+- **Endpoint não encontrado** — se o endpoint informado não existir no projeto, alertar e sugerir execução da skill `create-endpoint` antes de prosseguir
+- **`AuthHelper` ausente em teste autenticado** — criar automaticamente se não existir, informando o usuário
