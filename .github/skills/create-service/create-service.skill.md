@@ -286,3 +286,30 @@ Antes de entregar o output, verificar:
 - [ ] Data Mocks possuem método `Valid()` obrigatório
 - [ ] Testes cobrem ao menos 85% dos cenários testáveis
 - [ ] Mock Classes existentes atualizadas — nunca duplicadas
+
+---
+
+## Prompt Examples
+
+- "cria a service de pedidos"
+- "implementa a lógica de negócio para criação de pagamento"
+- "adiciona o método de cancelamento na OrderService"
+- "quero uma service para validar estoque antes de criar o pedido"
+- "cria o caso de uso de aprovação de crédito"
+
+---
+
+## Related Skills
+
+- `create-repository` — criar o repositório necessário se não existir
+- `create-endpoint` — criar o endpoint que consumirá a service
+- `create-unit-test` — gerar testes unitários para a service criada
+
+---
+
+## Error Handling
+
+- **Repository não encontrado** — alertar o usuário e perguntar se deseja executar `create-repository` antes de prosseguir ou gerar a service com a dependência referenciada
+- **Interface já existente** — nunca recriar; apenas adicionar o novo método preservando os existentes
+- **Regras de negócio não informadas** — gerar apenas o fluxo base e alertar que as regras de negócio devem ser implementadas manualmente ou informadas para uma nova iteração
+- **Conflito de método** — se o método já existir na interface ou implementação, alertar e perguntar se deseja substituir ou criar uma variação

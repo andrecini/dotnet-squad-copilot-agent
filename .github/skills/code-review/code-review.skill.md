@@ -187,13 +187,6 @@ Produzir o relatório estruturado conforme o template abaixo.
 
 ---
 
-## Próximos Passos
-
-> [lista objetiva do que precisa ser feito antes da aprovação, se houver]
-```
-
----
-
 ## Critérios de Resultado
 
 | Resultado | Condição |
@@ -214,3 +207,29 @@ Antes de entregar o relatório, verificar:
 - [ ] O resultado final está coerente com os problemas encontrados
 - [ ] Nenhum item do checklist foi ignorado sem justificativa
 - [ ] O relatório referencia o arquivo e trecho exato de cada problema encontrado
+
+--- 
+
+## Prompt Examples
+
+- "revisa esse PR"
+- "faz o code review das minhas alterações"
+- "analisa o código em staging"
+- "verifica se meu código está seguindo os padrões"
+- "revisa o pull request #42"
+
+---
+
+## Related Skills
+
+- `refactor-to-standards` — corrigir os desvios identificados no review
+- `create-unit-test` — gerar testes ausentes identificados durante o review
+
+---
+
+## Error Handling
+
+- **PR não encontrado** — se o link do PR for inválido ou inacessível, alertar e oferecer a opção de usar as alterações em staging
+- **Sem alterações em staging** — se não houver alterações em staging e nenhum PR for informado, alertar e aguardar nova entrada do usuário
+- **Arquivo binário ou gerado** — ignorar arquivos de migration gerados, binários e arquivos fora do escopo de código-fonte; informar ao usuário quais foram ignorados
+- **PR de outra branch que não `develop` ou `main`** — alertar que o review está sendo feito em uma branch não padrão e confirmar antes de prosseguir

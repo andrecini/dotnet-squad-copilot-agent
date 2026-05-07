@@ -234,3 +234,29 @@ Antes de entregar o output, verificar:
 - [ ] `CancellationToken` propagado em todas as operações assíncronas
 - [ ] Todos os componentes registrados na `InfrastructureDependency.cs`
 - [ ] Data Mock possui método `Valid()` obrigatório
+
+---
+
+## Prompt Examples
+
+- "cria uma integração com a API de pagamento"
+- "adiciona um consumer Kafka para o tópico order-created"
+- "implementa o cliente S3 para upload de arquivos"
+- "cria um producer RabbitMQ para notificações"
+- "integra com o serviço de CEP via HTTP"
+
+---
+
+## Related Skills
+
+- `create-unit-test` — gerar testes unitários para o cliente de integração criado
+- `code-review` — revisar os artefatos gerados antes do commit
+
+---
+
+## Error Handling
+
+- **Tipo de integração não informado** — nunca assumir o tipo; sempre perguntar antes de prosseguir
+- **Pacote NuGet ausente** — se o pacote necessário (`Confluent.Kafka`, `AWSSDK`, `RabbitMQ.Client`) não estiver referenciado no projeto, alertar o usuário antes de gerar os artefatos
+- **Interface já existente** — se a interface já existir no Domain, alertar e perguntar se deseja adicionar um novo método ou substituir
+- **Tópico/fila sem sufixo padrão** — se o nome informado não seguir o padrão `kebab-case` com sufixos `-main`, `-retry`, `-dead-letter`, alertar e sugerir a nomenclatura correta

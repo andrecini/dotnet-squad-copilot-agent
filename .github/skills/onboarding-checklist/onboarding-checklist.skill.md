@@ -204,3 +204,22 @@ Antes de entregar o checklist, verificar:
 - [ ] Todos os contextos referenciados existem no índice — consulte `indice.md`
 - [ ] Marco de conclusão presente ao final
 - [ ] Data de início preenchida com a data atual
+
+---
+
+## Prompt Examples
+
+- "cria o checklist de onboarding para o João"
+- "gera o onboarding de um novo developer júnior"
+- "quero o checklist de entrada para um tech lead"
+- "novo membro entrando no time, gera o onboarding"
+- "cria o guia de onboarding para a Maria, developer sênior"
+
+---
+
+## Error Handling
+
+- **Nome não informado** — perguntar o nome antes de gerar o checklist
+- **Perfil não informado** — nunca assumir o perfil; sempre perguntar antes de prosseguir
+- **Perfil não reconhecido** — se o perfil informado não corresponder a nenhum dos quatro definidos, apresentar as opções e aguardar nova resposta
+- **Contextos referenciados ausentes** — se algum arquivo de contexto referenciado no checklist não existir no repositório, omitir o item e alertar ao final da geração

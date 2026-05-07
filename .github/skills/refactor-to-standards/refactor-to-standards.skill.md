@@ -187,3 +187,29 @@ Antes de entregar o output, verificar por arquivo refatorado:
 - [ ] Nenhuma credencial hardcoded
 - [ ] Objetos corretos em cada camada — consulte [layer-objects.md](../context/architecture/layer-objects.md)
 - [ ] Novos serviços registrados nas `XDependency.cs` corretas após refatoração
+
+---
+
+## Prompt Examples
+
+- "refatora esse arquivo para os padrões do projeto"
+- "corrige os desvios de padrão no OrderService"
+- "atualiza o código em staging para seguir as convenções"
+- "esse código está fora do padrão, corrige"
+- "adequa o repositório de pagamentos aos padrões"
+
+---
+
+## Related Skills
+
+- `check-standards` — verificar desvios antes de refatorar sem alterar o código
+- `create-unit-test` — gerar testes para classes refatoradas que não possuem cobertura
+
+---
+
+## Error Handling
+
+- **Sem alterações em staging e nenhum arquivo informado** — alertar e aguardar nova entrada do usuário
+- **Arquivo não encontrado** — se um arquivo informado não existir no projeto, alertar e continuar com os demais
+- **Refatoração que altera comportamento** — se uma correção de padrão puder alterar o comportamento funcional, alertar explicitamente e aguardar confirmação antes de aplicar
+- **Arquivo de configuração ou migration** — nunca refatorar `XDependency.cs`, migrations ou `appsettings`; ignorar e informar ao usuário

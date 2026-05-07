@@ -264,3 +264,31 @@ Antes de entregar o output, verificar:
 - [ ] Registro adicionado na `InfrastructureDependency.cs`
 - [ ] Data Mock possui método `Valid()` obrigatório
 - [ ] Testes cobrem ao menos 85% dos cenários testáveis
+
+---
+
+## Prompt Examples
+
+- "cria o repository de pedidos"
+- "implementa o acesso a dados para a entidade Product"
+- "adiciona o repository de clientes com paginação"
+- "quero um repository só de leitura para relatórios"
+- "cria o repositório do Payment com GetById e Create"
+
+---
+
+## Related Skills
+
+- `create-service` — criar a service que consumirá o repositório
+- `create-migration` — criar a migration se a entidade ainda não existir no banco
+- `create-unit-test` — gerar testes unitários para o repositório criado
+- `create-dapper-query` — adicionar queries Dapper customizadas ao repositório
+
+---
+
+## Error Handling
+
+- **Entidade não encontrada** — se a entidade correspondente não existir no Domain, alertar e perguntar se deseja criá-la antes de prosseguir
+- **Interface já existente** — se `I[Recurso]Repository` já existir, apenas adicionar os novos métodos sem recriar a interface
+- **Configuração EF ausente** — se a entidade não tiver `IEntityTypeConfiguration<T>`, alertar e sugerir execução da skill `create-migration` para criá-la
+- **Unit of Work não atualizado** — sempre verificar e alertar se o repositório não estiver exposto no Unit of Work após a criação

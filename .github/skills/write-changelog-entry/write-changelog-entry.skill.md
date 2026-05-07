@@ -182,3 +182,22 @@ Antes de atualizar o arquivo, verificar:
 - [ ] Data no formato `YYYY-MM-DD`
 - [ ] Versão no formato `v[MAJOR].[MINOR].[PATCH]`
 - [ ] Conteúdo em **português**
+
+---
+
+## Prompt Examples
+
+- "atualiza o changelog com a nova release"
+- "adiciona a entrada de release no CHANGELOG"
+- "gera as release notes para a versão 1.2.0"
+- "o que mudou desde a última release?"
+- "cria a entrada do changelog para essa versão"
+
+---
+
+## Error Handling
+
+- **Nenhuma release anterior encontrada** — assumir `v0.0.0` como base, informar ao usuário e confirmar antes de prosseguir
+- **Nenhum PR ou commit encontrado desde a última release** — alertar que não há alterações registradas e aguardar confirmação do usuário
+- **Versão informada menor que a atual** — alertar sobre regressão de versão e exigir confirmação antes de prosseguir
+- **`CHANGELOG.md` ausente** — criar o arquivo com a estrutura base antes de inserir a entrada, informando o usuário

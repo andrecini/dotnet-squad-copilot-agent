@@ -177,3 +177,29 @@ Antes de entregar o output, verificar:
 - [ ] Mock Classes seguem o padrão `BaseMock<T>` com métodos encadeáveis
 - [ ] Data Mocks e Mock Classes existentes foram atualizados, nunca duplicados
 - [ ] Cada cenário testado em método isolado — nunca múltiplos cenários em um único teste
+
+---
+
+## Prompt Examples
+
+- "cria testes unitários para a OrderService"
+- "adiciona cobertura de testes para o CreateOrderRequestValidator"
+- "gera os testes do OrderAppService"
+- "quero testes para essa classe"
+- "cobre os cenários de falha do PaymentService"
+
+---
+
+## Related Skills
+
+- `create-integration-test` — gerar testes de integração complementares
+- `check-coverage` — verificar se a cobertura atingiu o threshold de 85% após geração
+
+---
+
+## Error Handling
+
+- **Classe não encontrada** — se a classe informada não existir no projeto, alertar e perguntar se deseja informar o código diretamente
+- **Classe sem métodos públicos testáveis** — alertar o usuário e listar apenas os métodos identificados antes de prosseguir
+- **Data Mock ou Mock Class com conflito** — se um método de cenário ou setup já existir com nome igual mas implementação diferente, alertar antes de atualizar
+- **Cobertura insuficiente após geração** — se os cenários gerados não atingirem 85%, listar os cenários faltantes e perguntar se deseja complementar

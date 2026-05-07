@@ -203,3 +203,32 @@ Antes de entregar o output, verificar:
 - [ ] Data Mock possui método `Valid()` obrigatório
 - [ ] Testes cobrem ao menos 85% dos cenários testáveis
 - [ ] Nomenclatura de arquivos e classes seguindo os padrões de cada camada
+
+---
+
+## Prompt Examples
+
+- "cria uma feature de pedidos com endpoint, service e repository"
+- "implementa o fluxo completo de criação de pagamento"
+- "adiciona a funcionalidade de listagem de clientes"
+- "quero um CRUD de produtos"
+- "cria o endpoint e a service de cancelamento de pedido"
+
+---
+
+## Related Skills
+
+- `create-unit-test` — gerar testes unitários para os artefatos criados
+- `create-integration-test` — gerar testes de integração para o endpoint criado
+- `create-migration` — criar migration se uma nova entidade foi gerada
+- `code-review` — revisar os artefatos gerados antes do commit
+
+---
+
+## Error Handling
+
+- **Recurso já existente** — se a entidade, interface ou implementação já existir, alertar o usuário e perguntar se deseja adicionar uma nova operação ao artefato existente ou criar um novo
+- **Estrutura de pastas divergente** — se a estrutura do projeto não seguir o padrão de `project-structure.md`, alertar e aguardar confirmação antes de prosseguir
+- **Service não encontrada** — se o escopo incluir AppService mas a interface da Service correspondente não existir, sugerir execução da skill `create-service` antes de prosseguir
+- **Repository não encontrado** — se o escopo incluir Service mas o Repository correspondente não existir, sugerir execução da skill `create-repository` antes de prosseguir
+- **Escopo não informado** — nunca assumir escopo; sempre perguntar antes de gerar qualquer artefato

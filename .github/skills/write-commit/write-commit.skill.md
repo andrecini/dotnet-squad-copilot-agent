@@ -159,3 +159,22 @@ Antes de entregar o output, verificar:
 - [ ] Campo `CARD: #[id]` presente e preenchido
 - [ ] Alterações de múltiplos tipos sinalizadas ao usuário
 - [ ] Nenhum commit gerado sem Card ID
+
+---
+
+## Prompt Examples
+
+- "gera a mensagem de commit"
+- "o que devo escrever no commit?"
+- "cria o commit das minhas alterações"
+- "escreve a mensagem de commit para o que está em stage"
+- "qual o commit message correto para essas mudanças?"
+
+---
+
+## Error Handling
+
+- **Sem alterações em staging** — alertar e orientar o usuário a adicionar arquivos ao stage antes de prosseguir
+- **Card ID não informado e não detectável** — bloquear e orientar a criar um card via `create-card` antes de commitar
+- **Múltiplos tipos detectados** — alertar e orientar a separar em commits distintos antes de gerar a mensagem
+- **Alterações em arquivos de configuração sensíveis em staging** — alertar que `appsettings.Production.json` ou arquivos com credenciais não devem ser commitados

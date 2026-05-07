@@ -202,3 +202,30 @@ Antes de entregar o output, verificar:
 - [ ] `CancellationToken` propagado na AppService e no endpoint
 - [ ] Construtores primários em todas as classes com DI
 - [ ] AppService, profile e validator registrados na `ApiDependency.cs`
+
+---
+
+## Prompt Examples
+
+- "cria um endpoint POST de criação de pedido"
+- "adiciona a rota GET /api/v1/products/{id}"
+- "implementa o endpoint de cancelamento de pagamento"
+- "quero um DELETE para remover clientes"
+- "adiciona um endpoint autenticado de listagem de faturas"
+
+---
+
+## Related Skills
+
+- `create-service` — criar a service correspondente se ainda não existir
+- `create-unit-test` — gerar testes unitários para o endpoint e AppService criados
+- `create-migration` — criar migration se uma nova entidade for necessária
+
+---
+
+## Error Handling
+
+- **Service não encontrada** — se a interface da service correspondente não existir, alertar e sugerir execução da skill `create-service` antes de prosseguir
+- **Rota duplicada** — se a rota informada já existir no projeto, alertar e perguntar se deseja criar uma nova versão ou substituir
+- **Policy de autorização não cadastrada** — se a policy informada não estiver registrada na `ApiDependency.cs`, alertar e incluir o registro automaticamente
+- **Campos de request ou response não informados** — perguntar antes de gerar DTOs genéricos
