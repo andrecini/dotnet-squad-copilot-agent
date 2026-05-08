@@ -160,7 +160,72 @@ Antes de finalizar qualquer resposta com código:
 
 ---
 
+## MCP Tools Disponíveis
+
+O agente possui acesso a MCP servers para operações que exigem dados reais do repositório, banco de dados ou GitHub. Consulte `.github/tools/mcp-config.json` para a configuração completa.
+
+### Quando usar cada MCP
+
+| MCP | Quando usar | Nunca usar para |
+|-----|-------------|-----------------|
+| **GitHub** | Criar Issues, ler PRs, commits, tags e diff | Fazer merge, fechar PRs ou acessar repositórios externos |
+| **Filesystem** | Ler e criar arquivos em `src/` | Acessar `.github/`, `appsettings.Production.json` ou deletar arquivos |
+| **Git** | Ler diff, staging, log e branches | Executar commits, merges ou pushes |
+| **PostgreSQL** | Inspecionar schema, tabelas e colunas | Executar DDL/DML ou conectar ao banco de produção |
+| **MongoDB** | Inspecionar collections e documentos de exemplo | Inserir, atualizar ou deletar documentos |
+
+### Regras Globais de Uso de MCP
+
+- **Confirmar antes de escrever** — operações de escrita via Filesystem sempre exigem confirmação do usuário
+- **Sem acesso a produção** — MCPs de banco de dados operam apenas em desenvolvimento e staging
+- **Nunca expor credenciais** — connection strings, tokens e URIs nunca aparecem em respostas
+- **Escopo mínimo** — usar apenas as tools necessárias para a solicitação atual
+- **MCP restrito ao escopo da skill** — nunca usar tools de MCP fora das operações definidas na skill em execução
+
+### MCP por Skill
+
+| Skill | MCPs utilizados |
+|-------|----------------|
+| `create-feature` | Filesystem |
+| `create-endpoint` | Filesystem |
+| `create-service` | Filesystem |
+| `create-repository` | Filesystem, PostgreSQL, MongoDB |
+| `create-migration` | Filesystem, PostgreSQL |
+| `create-dapper-query` | Filesystem, PostgreSQL |
+| `create-integration` | Filesystem |
+| `create-unit-test` | Filesystem |
+| `create-integration-test` | Filesystem |
+| `check-coverage` | Filesystem |
+| `code-review` | GitHub, Git |
+| `check-standards` | Filesystem, Git |
+| `refactor-to-standards` | Filesystem, Git |
+| `write-readme` | Filesystem |
+| `write-commit` | Git |
+| `write-changelog-entry` | GitHub, Git |
+| `create-card` | GitHub |
+| `daily-summary` | GitHub, Git |
+| `onboarding-checklist` | — |
+
+---
+
 ## Estrutura de Arquivos
+
+### Tools (MCP)
+```
+.github/tools/
+├── github/
+│   └── github.mcp.json
+├── filesystem/
+│   └── filesystem.mcp.json
+├── git/
+│   └── git.mcp.json
+├── postgres/
+│   └── postgres.mcp.json
+├── mongodb/
+│   └── mongodb.mcp.json
+└── mcp-config.json
+```
+Consulte `.github/tools/mcp-config.json` para a configuração completa dos MCP servers.
 
 ### Contextos
 ```
