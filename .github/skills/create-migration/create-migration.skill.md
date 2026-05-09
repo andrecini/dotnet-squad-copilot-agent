@@ -20,6 +20,35 @@ argument-hint: 'Required: description of the change (new entity, new column, alt
 
 # Skill: Create Migration
 
+## MCP
+
+### 1. Inspecionar schema via PostgreSQL MCP
+Antes de gerar a migration, consultar o schema real do banco:
+
+```
+list_tables → listar tabelas existentes
+describe_table → inspecionar colunas da tabela afetada (se já existir)
+list_schemas → confirmar schema correto
+```
+
+Usar os dados retornados para validar nomes de tabelas e colunas antes de gerar a migration.
+
+### 2. Verificar arquivos existentes via Filesystem MCP
+
+```
+list_directory → src/[componente].Infrastructure/Data/Configurations/
+read_file → src/[componente].Domain/Entities/[Recurso].cs (se existir)
+```
+
+### 3. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/[componente].Domain/Entities/...
+write_file → src/[componente].Infrastructure/Data/Configurations/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação de uma migration EF Core a partir de uma nova entidade, alteração de entidade existente ou detecção automática de alterações em staging. Atualiza a entidade e sua configuração quando necessário e executa o comando de migration após confirmação do usuário.

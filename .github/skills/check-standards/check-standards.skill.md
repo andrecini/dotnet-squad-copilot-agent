@@ -62,6 +62,26 @@ Deseja analisar o repositório completo ou um escopo específico?
 
 ## Passos
 
+## MCP
+
+### 1. Coletar arquivos via Filesystem e Git MCP
+
+**Para escopo completo ou por camada — Filesystem MCP:**
+
+```
+list_directory → src/[escopo selecionado]
+read_multiple_files → arquivos .cs identificados no escopo
+```
+
+**Para detectar alterações recentes — Git MCP (opcional):**
+
+```
+git_status → identificar arquivos modificados recentemente
+git_diff → obter contexto das alterações
+```
+
+---
+
 ### 1. Definir escopo de análise
 
 - Se **completo** → analisar todos os arquivos `.cs` do repositório exceto migrations e arquivos gerados

@@ -19,6 +19,18 @@ argument-hint: 'Required: new member name and profile (junior, mid-level, senior
 
 # Skill: Onboarding Checklist
 
+## MCP
+
+### 1. Verificar contextos disponíveis via Filesystem MCP
+
+```
+list_directory → .github/context/
+```
+
+Para cada contexto referenciado no checklist, verificar se o arquivo existe. Omitir o item do checklist e alertar ao final se algum contexto estiver ausente.
+
+---
+
 ## Objetivo
 
 Gera um checklist de onboarding personalizado por perfil para novos membros do time, baseado nos contextos e padrões do projeto. O checklist é exibido no chat e adaptado conforme o nível e papel do novo membro.

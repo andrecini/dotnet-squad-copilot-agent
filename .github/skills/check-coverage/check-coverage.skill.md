@@ -20,6 +20,19 @@ argument-hint: 'Optional: specific layer or test project to analyze. Defaults to
 
 # Skill: Check Coverage
 
+## MCP
+
+### 1. Ler relatório de cobertura via Filesystem MCP
+
+Após execução dos testes, ler o relatório gerado:
+
+```
+read_file → coverage/coverage.xml
+Usar os dados do relatório para identificar classes abaixo de 85% e classes sem cobertura.
+```
+
+---
+
 ## Objetivo
 
 Executa os testes unitários, coleta o relatório de cobertura e identifica classes sem testes ou abaixo do threshold mínimo de 85%. Ao final, sugere a execução do `create-unit-test` para as classes com cobertura insuficiente e aguarda a resposta do usuário.

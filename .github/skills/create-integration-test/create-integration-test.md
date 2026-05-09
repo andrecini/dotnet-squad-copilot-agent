@@ -21,6 +21,27 @@ argument-hint: 'Required: test type (endpoint or internal layers) and resource/o
 
 # Skill: Create Integration Test
 
+## MCP
+
+### 1. Verificar arquivos existentes via Filesystem MCP
+
+Antes de criar qualquer artefato, verificar quais arquivos já existem:
+
+```
+list_directory → src/[componente].Domain/Integrations/[Tipo]/
+list_directory → src/[componente].Infrastructure/Integrations/[Tipo]/
+```
+
+### 2. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/[componente].Domain/Integrations/...
+write_file → src/[componente].Infrastructure/Integrations/...
+write_file → src/Tests/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação completa de testes de integração — cobrindo endpoints HTTP ou integração entre camadas internas (ex: Service → Repository). Gera fixtures, helpers, Data Mocks e classes de teste seguindo os padrões de `integration-tests.md`. Data Mocks e helpers são criados automaticamente se não existirem.

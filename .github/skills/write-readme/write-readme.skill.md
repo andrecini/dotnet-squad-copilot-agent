@@ -19,6 +19,31 @@ argument-hint: 'Optional: specific sections to update. Defaults to full README g
 
 # Skill: Write README
 
+## MCP
+
+### 1. Coletar informações via Filesystem MCP
+
+```
+search_files → src/ → "*.sln" (detectar nome da solution)
+read_file → src/[componente].Api/appsettings.Example.json
+read_file → src/[componente].Api/Properties/launchSettings.json
+list_directory → src/ (detectar estrutura de camadas)
+```
+
+### 2. Verificar README existente via Filesystem MCP
+
+```
+read_file → README.md (se existir)
+```
+
+### 3. Escrever README via Filesystem MCP
+
+```
+write_file → README.md
+```
+
+---
+
 ## Objetivo
 
 Gera ou atualiza o `README.md` do repositório seguindo estritamente o template e padrões definidos em `readme.md`. As informações do projeto são detectadas automaticamente a partir do código e configurações do repositório.

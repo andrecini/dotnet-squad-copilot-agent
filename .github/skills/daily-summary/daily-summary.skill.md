@@ -20,6 +20,27 @@ argument-hint: 'Optional: specific activities to include. Defaults to automatic 
 
 # Skill: Daily Summary
 
+## MCP
+
+### 1. Coletar atividades via Git e GitHub MCP
+
+**Se detecção automática:**
+
+```
+git_log → commits do dia anterior filtrados por autor
+list_pull_requests → PRs abertos ou atualizados no dia anterior
+list_issues → Issues movidas ou fechadas no dia anterior
+```
+
+### 2. Criar Issue via GitHub MCP
+
+```
+create_issue → criar a daily com title, body e label "chore"
+Se a tool falhar, gerar conteúdo formatado para criação manual.
+```
+
+---
+
 ## Objetivo
 
 Gera e cria a Issue de daily assíncrona coletiva no GitHub seguindo o padrão definido em `agile-ceremonies.md`. As atividades do dia anterior podem ser detectadas automaticamente a partir de commits e PRs ou informadas manualmente pelo usuário.

@@ -20,6 +20,25 @@ argument-hint: 'Optional: release version. Defaults to automatic version suggest
 
 # Skill: Write Changelog Entry
 
+## MCP
+
+### 1. Coletar dados via GitHub e Git MCP
+
+```
+list_tags → obter última tag de release
+git_log → listar commits desde a última tag
+list_pull_requests → listar PRs mergeados em main desde a última tag
+```
+
+### 2. Verificar e atualizar CHANGELOG via Filesystem MCP
+
+```
+read_file → CHANGELOG.md (ler conteúdo atual)
+write_file → CHANGELOG.md (inserir nova entrada)
+```
+
+---
+
 ## Objetivo
 
 Gera e aplica uma nova entrada no `CHANGELOG.md` a partir dos PRs mergeados e commits desde a última release. Sugere automaticamente a versão com base no tipo de alterações e atualiza o arquivo diretamente.

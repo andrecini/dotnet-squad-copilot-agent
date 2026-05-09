@@ -22,6 +22,42 @@ argument-hint: 'Required: resource name. Optional: operations to support (CRUD, 
 
 # Skill: Create Repository
 
+## MCP
+
+### 1. Inspecionar schema via PostgreSQL ou MongoDB MCP
+
+**Para repositórios SQL — PostgreSQL MCP:**
+
+```
+list_tables → confirmar se a tabela correspondente existe
+describe_table → inspecionar colunas para validar mapeamento EF/Dapper
+```
+
+**Para repositórios NoSQL — MongoDB MCP:**
+
+```
+list_collections → confirmar se a collection existe
+describe_collection → inspecionar campos para validar mapeamento
+```
+
+### 2. Verificar arquivos existentes via Filesystem MCP
+
+```
+read_file → src/[componente].Domain/Interfaces/Repositories/I[Recurso]Repository.cs
+read_file → src/[componente].Infrastructure/Repositories/[Recurso]/[Recurso]Repository.cs
+```
+
+### 3. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/[componente].Domain/Interfaces/Repositories/...
+write_file → src/[componente].Domain/Integrations/Sql/...  (se Dapper)
+write_file → src/[componente].Infrastructure/Repositories/...
+write_file → src/Tests/.../Repositories/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação isolada de um repositório — interface no Domain e implementação na Infrastructure — decidindo automaticamente entre EF Core e Dapper com justificativa. Gera também os testes unitários correspondentes.
