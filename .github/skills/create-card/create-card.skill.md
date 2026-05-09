@@ -20,6 +20,17 @@ argument-hint: 'Required: card type (feature, bug, tech debt, spike) and title. 
 
 # Skill: Create Card
 
+## MCP
+
+### 1. Criar Issue via GitHub MCP
+
+```
+create_issue → criar a Issue com title, body e labels
+```
+Se a tool falhar, gerar cont conteúdo formatado para criação manual.
+
+---
+
 ## Objetivo
 
 Guia a criação de uma Issue no GitHub seguindo os templates definidos por tipo de card. A Issue é criada diretamente via GitHub API. Em caso de falha, gera o conteúdo formatado para preenchimento manual.

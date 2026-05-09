@@ -20,6 +20,28 @@ argument-hint: 'Optional: specific files or staged changes to refactor. Defaults
 
 # Skill: Refactor to Standards
 
+## MCP
+
+### 1. Coletar arquivos via Git e Filesystem MCP
+
+**Se staging:**
+
+```
+git_status → listar arquivos modificados em staging
+git_diff_staged → obter diff dos arquivos para análise
+```
+
+**Para leitura do conteúdo atual:**
+```
+read_file → src/... (para cada arquivo a ser refatorado)
+```
+
+### 2. Escrever arquivos refatorados via Filesystem MCP
+Após confirmação do usuário para cada arquivo:
+write_file → src/... (arquivo refatorado)
+
+---
+
 ## Objetivo
 
 Analisa um ou mais arquivos — fornecidos pelo usuário ou detectados em staging — e refatora o código para aderência aos padrões do projeto. As alterações são aplicadas diretamente nos arquivos, com opção de manter (`keep`) ou desfazer (`undo`) cada refatoração.

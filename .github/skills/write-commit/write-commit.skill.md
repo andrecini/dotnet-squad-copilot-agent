@@ -19,6 +19,18 @@ argument-hint: 'Optional: Card ID if not automatically detected. Defaults to sta
 
 # Skill: Write Commit
 
+## MCP
+
+### 1. Coletar alterações via Git MCP
+```
+git_status → listar arquivos em staging
+git_diff_staged → obter diff completo para análise
+git_branch → confirmar branch atual e nome para validar nomenclatura
+git_log → obter último commit para referência de contexto
+```
+
+---
+
 ## Objetivo
 
 Gera a mensagem de commit no padrão Conventional Commits em português a partir das alterações em staging. O campo `CARD` é obrigatório — o commit é bloqueado se o ID não for informado.

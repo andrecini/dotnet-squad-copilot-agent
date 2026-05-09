@@ -21,6 +21,38 @@ argument-hint: 'Required: resource name and query description or raw SQL. Option
 
 # Skill: Create Dapper Query
 
+## MCP 
+
+### 1. Inspecionar schema via PostgreSQL MCP
+
+Antes de gerar o SQL, consultar o schema real do banco:
+
+```
+list_tables → confirmar tabelas envolvidas na query
+describe_table → inspecionar colunas disponíveis para SELECT e WHERE
+```
+
+Usar os dados retornados para validar nomes de tabelas, colunas e aliases.
+
+### 2. Verificar arquivos existentes via Filesystem MCP
+
+```
+read_file → src/[componente].Domain/Integrations/Sql/[Recurso]/[Recurso]Queries.cs
+read_file → src/[componente].Domain/Interfaces/Repositories/I[Recurso]Repository.cs
+read_file → src/[componente].Infrastructure/Repositories/[Recurso]/[Recurso]Repository.cs
+```
+
+### 3. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/[componente].Domain/Integrations/Sql/...
+write_file → src/[componente].Domain/Interfaces/Repositories/...
+write_file → src/[componente].Infrastructure/Repositories/...
+write_file → src/Tests/.../Repositories/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação de uma query Dapper completa — do SQL à implementação no repositório. Aceita descrição em linguagem natural ou SQL direto. Gera a constante no Domain, o modelo de resultado, a implementação no repositório e os testes correspondentes.

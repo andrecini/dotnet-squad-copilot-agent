@@ -21,6 +21,29 @@ argument-hint: 'Required: integration type (API, AWS, Kafka, RabbitMQ) and integ
 
 # Skill: Create Integration
 
+## MCP
+
+### 1. Verificar fixtures e helpers via Filesystem MCP
+
+```
+list_directory → src/Tests/4 - Integration/[componente].Integration.Tests/Fixtures/
+list_directory → src/Tests/4 - Integration/[componente].Integration.Tests/Helpers/
+list_directory → src/Tests/4 - Integration/[componente].Integration.Tests/DataMocks/
+```
+
+Para cada arquivo já existente, preservar e apenas complementar.
+
+### 2. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/Tests/4 - Integration/.../Fixtures/...
+write_file → src/Tests/4 - Integration/.../Helpers/...
+write_file → src/Tests/4 - Integration/.../DataMocks/...
+write_file → src/Tests/4 - Integration/.../Tests/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação completa de uma integração externa seguindo os padrões arquiteturais do projeto. O tipo de integração e o escopo de geração são definidos pelo usuário — se não informados, devem ser perguntados antes de iniciar.

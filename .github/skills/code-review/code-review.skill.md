@@ -20,6 +20,26 @@ argument-hint: 'Required: PR URL or staged changes. Optional: specific areas to 
 
 # Skill: Code Review
 
+## MCP
+
+### 1. Coletar dados via GitHub e Git MCP
+
+**Se PR informado — GitHub MCP:**
+```
+get_pull_request → obter metadados e título do PR
+get_pull_request_diff → obter diff completo dos arquivos alterados
+list_commits → listar commits do PR para contexto
+```
+
+**Se staging — Git MCP:**
+```
+git_status → listar arquivos em staging
+git_diff_staged → obter diff completo dos arquivos em staging
+git_branch → confirmar branch atual antes de prosseguir
+```
+
+---
+
 ## Objetivo
 
 Executa o code review de um Pull Request ou das alterações em staging, gerando um relatório estruturado com resultado de aprovação, pontos de melhoria e sugestões de correção com código.

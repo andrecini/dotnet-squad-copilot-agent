@@ -23,6 +23,32 @@ argument-hint: 'Required: resource name and operation. Optional: scope of genera
 
 # Skill: Create Feature
 
+## MCP
+
+### 1. Verificar arquivos existentes via Filesystem MCP
+
+Antes de criar qualquer artefato, usar o Filesystem MCP para verificar quais arquivos já existem:
+ 
+```
+read_multiple_files / list_directory → src/[componente].Api/AppServices/
+read_multiple_files / list_directory → src/[componente].Domain/Interfaces/
+read_multiple_files / list_directory → src/[componente].Infrastructure/Repositories/
+```
+
+### 2. Escrever arquivos via Filesystem MCP
+
+Após gerar todos os artefatos, usar o Filesystem MCP para criar os arquivos confirmados:
+ 
+```
+write_file → src/[componente].Api/...
+write_file → src/[componente].Application/...
+write_file → src/[componente].Domain/...
+write_file → src/[componente].Infrastructure/...
+write_file → src/Tests/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação completa de uma feature seguindo os padrões arquiteturais do projeto. O escopo de geração é definido pelo usuário — se não informado, deve ser perguntado antes de iniciar.

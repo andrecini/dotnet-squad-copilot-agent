@@ -21,6 +21,24 @@ argument-hint: 'Required: class name or code to test. Optional: specific methods
 
 # Skill: Create Unit Test
 
+## MCP
+
+### 1. Verificar arquivos existentes via Filesystem MCP
+```
+list_directory → src/Tests/[camada]/[componente].X.Tests/DataMocks/
+list_directory → src/Tests/[camada]/[componente].X.Tests/Mocks/
+list_directory → src/Tests/[camada]/[componente].X.Tests/Tests/
+Para cada arquivo já existente, informar o usuário antes de atualizar.
+```
+### 2. Escrever arquivos via Filesystem MCP
+```
+write_file → src/Tests/[camada]/[componente].X.Tests/DataMocks/...
+write_file → src/Tests/[camada]/[componente].X.Tests/Mocks/...
+write_file → src/Tests/[camada]/[componente].X.Tests/Tests/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação do conjunto completo de testes unitários para uma classe — Data Mocks, Mock Classes e classes de teste. Se o usuário informar a classe, os cenários são identificados automaticamente. Se fornecer o código, os cenários são extraídos diretamente. Data Mocks e Mock Classes existentes são atualizados, nunca duplicados.

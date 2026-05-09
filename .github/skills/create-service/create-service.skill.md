@@ -21,6 +21,28 @@ argument-hint: 'Required: resource name and operation. Optional: business rules 
 
 # Skill: Create Service
 
+## MCP
+
+### 1. Verificar arquivos existentes via Filesystem MCP
+
+```
+read_file → src/[componente].Domain/Interfaces/Services/I[Recurso]Service.cs
+read_file → src/[componente].Application/Services/[Recurso]/[Recurso]Service.cs
+list_directory → src/[componente].Domain/Interfaces/Repositories/
+```
+
+### 2. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/[componente].Domain/Interfaces/Services/...
+write_file → src/[componente].Domain/Models/...
+write_file → src/[componente].Domain/Mappings/...
+write_file → src/[componente].Application/Services/...
+write_file → src/Tests/.../Services/...
+```
+
+---
+
 ## Objetivo
 
 Guia a criação isolada de uma service — interface no Domain e implementação no Application — seguindo o Result Pattern. Agrega novos métodos a interfaces existentes sem recriar o que já existe, verifica dependências necessárias e gera os testes unitários correspondentes.

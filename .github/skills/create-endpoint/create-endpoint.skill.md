@@ -20,6 +20,28 @@ argument-hint: 'Required: resource, operation and HTTP method. Optional: authent
 
 # Skill: Create Endpoint
 
+## MCP
+
+### 1. Verificar arquivos existentes via Filesystem MCP
+
+```
+list_directory → src/[componente].Api/Endpoints/[Recurso]/
+list_directory → src/[componente].Api/AppServices/
+list_directory → src/[componente].Api/Validators/[Recurso]/
+```
+Para cada arquivo já existente, informar o usuário antes de atualizar.
+
+### 2. Escrever arquivos via Filesystem MCP
+
+```
+write_file → src/[componente].Api/Endpoints/...
+write_file → src/[componente].Api/AppServices/...
+write_file → src/[componente].Api/DTOs/...
+write_file → src/[componente].Api/Mappings/...
+write_file → src/[componente].Api/Validators/...
+```
+---
+
 ## Objetivo
 
 Guia a criação isolada de um endpoint com Minimal API, Validator, Filter, AppService e documentação Swagger, seguindo todos os padrões da camada de Presentation. Diferente do `create-feature`, não gera Service, Repository ou testes — foca exclusivamente na camada de API.
