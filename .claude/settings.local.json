@@ -4,7 +4,10 @@
       "Read(//c/projects/**)",
       "Bash(\\\\.claude\")",
       "Bash(dotnet build *)",
-      "Bash(dotnet package *)"
+      "Bash(dotnet package *)",
+      "Bash(dotnet ef *)",
+      "Bash(dotnet add *)",
+      "Bash(git *)"
     ]
   }
 }
