@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/projects/**)",
+      "Bash(\\\\.claude\")",
+      "Bash(dotnet build *)",
+      "Bash(dotnet package *)"
+    ]
+  }
+}
