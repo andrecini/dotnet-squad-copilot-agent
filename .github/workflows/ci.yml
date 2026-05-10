@@ -1,0 +1,49 @@
+name: CI — Build and Test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+
+      - name: Build solution
+        run: dotnet build Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx --no-restore --configuration Release
+
+      # Requires the test projects to reference coverlet.collector (NuGet)
+      # Threshold de 85% e aplicado via coverlet.runsettings ou coverlet.msbuild — configure em coverlet.runsettings se necessario
+      - name: Run tests with coverage
+        run: >
+          dotnet test Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+          --no-build
+          --configuration Release
+          --collect:"XPlat Code Coverage"
+          --results-directory ./coverage
+          --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Threshold=85
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ThresholdType=Line
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ThresholdStat=Total
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./coverage
+          retention-days: 7
