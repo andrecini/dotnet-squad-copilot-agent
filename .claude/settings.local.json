@@ -7,7 +7,9 @@
       "Bash(dotnet package *)",
       "Bash(dotnet ef *)",
       "Bash(dotnet add *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(dir \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\" /s /b)",
+      "Bash(dir C:\\\\projects\\\\dotnet-squad-copilot-agent *)"
     ]
   }
 }

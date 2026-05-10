@@ -1,0 +1,126 @@
+name: Deploy — Staging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: Build and Test
+  # ---------------------------------------------------------------------------
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+
+      - name: Build solution
+        run: dotnet build Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx --no-restore --configuration Release
+
+      # Requires the test projects to reference coverlet.collector (NuGet)
+      - name: Run tests with coverage
+        run: >
+          dotnet test Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+          --no-build
+          --configuration Release
+          --collect:"XPlat Code Coverage"
+          --results-directory ./coverage
+          --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Threshold=85
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ThresholdType=Line
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ThresholdStat=Total
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./coverage
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Job 2: SonarCloud Analysis
+  # Secrets necessarios:
+  #   - SONAR_TOKEN       : token de autenticacao gerado em sonarcloud.io
+  # Variaveis necessarias (Settings > Secrets and variables > Variables):
+  #   - SONAR_ORGANIZATION: slug da organizacao no SonarCloud (ex: andrecini)
+  #   - SONAR_PROJECT_KEY : chave do projeto no SonarCloud (ex: andrecini_sticker-manager)
+  # ---------------------------------------------------------------------------
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Necessario para analise de blame e historico completo
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=Copilot.SquadAgent.StickerManager
+            -Dsonar.exclusions=**/Migrations/**,**/obj/**,**/bin/**
+            -Dsonar.cs.opencover.reportsPaths=./coverage/**/coverage.opencover.xml
+
+  # ---------------------------------------------------------------------------
+  # Job 3: Deploy to Staging (ilustrativo)
+  # Depende de build-and-test e sonarcloud — so executa se ambos passarem.
+  # Este job e ilustrativo. Substitua o step de deploy pelo mecanismo adequado
+  # ao seu ambiente quando estiver pronto para produzir um deploy real.
+  # Opcoes comuns:
+  #   - SCP + SSH para servidor proprio
+  #   - Azure Web App Deploy (action azure/webapps-deploy@v3)
+  #   - AWS Elastic Beanstalk / ECS
+  #   - Docker build + push + pull no host remoto
+  # ---------------------------------------------------------------------------
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-test
+      - sonarcloud
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish application
+        run: >
+          dotnet publish Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+          --configuration Release
+          --output ./publish
+
+      - name: Deploy to staging (placeholder)
+        run: |
+          echo "=========================================="
+          echo "  DEPLOY PLACEHOLDER — nao configurado"
+          echo "=========================================="
+          echo "Build publicado em: ./publish"
+          echo "Substitua este step pelo mecanismo de deploy do seu ambiente."
+          echo "Commit : ${{ github.sha }}"
+          echo "Autor  : ${{ github.actor }}"
+          echo "Branch : ${{ github.ref_name }}"
+
