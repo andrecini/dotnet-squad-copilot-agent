@@ -5,6 +5,13 @@ namespace Copilot.SquadAgent.StickerManager.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
+    public DbSet<User> Users { get; set; }
+    public DbSet<Team> Teams { get; set; }
+    public DbSet<Sticker> Stickers { get; set; }
+    public DbSet<UserCollection> UserCollections { get; set; }
+    public DbSet<TradeOffer> TradeOffers { get; set; }
+    public DbSet<TradeOfferItem> TradeOfferItems { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
