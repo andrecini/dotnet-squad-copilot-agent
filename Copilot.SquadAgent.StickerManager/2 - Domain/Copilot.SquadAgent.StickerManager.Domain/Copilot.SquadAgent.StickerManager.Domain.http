@@ -1,0 +1,6 @@
+@Copilot.SquadAgent.StickerManager.Domain_HostAddress = http://localhost:5039
+
+GET {{Copilot.SquadAgent.StickerManager.Domain_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
