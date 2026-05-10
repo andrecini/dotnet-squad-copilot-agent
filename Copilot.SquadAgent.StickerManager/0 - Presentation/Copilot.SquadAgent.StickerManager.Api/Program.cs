@@ -1,25 +1,55 @@
-var builder = WebApplication.CreateBuilder(args);
+using Copilot.SquadAgent.StickerManager.Api;
+using Copilot.SquadAgent.StickerManager.Application;
+using Copilot.SquadAgent.StickerManager.Domain;
+using Copilot.SquadAgent.StickerManager.Infrastructure;
+using Serilog;
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog((context, services, configuration) => configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .WriteTo.Console());
+
+    builder.Services
+        .AddDomain()
+        .AddApplication()
+        .AddInfrastructure(builder.Configuration)
+        .AddApi();
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new() { Title = "Sticker Manager API", Version = "v1" });
+    });
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseSerilogRequestLogging();
+    app.UseHttpsRedirection();
+
+    app.MapApiEndpoints();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex) when (ex is not HostAbortedException)
+{
+    Log.Fatal(ex, "Aplicação encerrada inesperadamente.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

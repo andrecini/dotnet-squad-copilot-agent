@@ -7,7 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\1 - Application\Copilot.SquadAgent.StickerManager.Application\Copilot.SquadAgent.StickerManager.Application.csproj" />
+    <ProjectReference Include="..\..\3 - Infrastructure\Copilot.SquadAgent.StickerManager.Infrastructure\Copilot.SquadAgent.StickerManager.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
