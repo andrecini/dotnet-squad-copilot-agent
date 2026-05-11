@@ -1,63 +1,65 @@
-using Copilot.SquadAgent.StickerManager.Api;
 using Copilot.SquadAgent.StickerManager.Application;
 using Copilot.SquadAgent.StickerManager.Domain;
 using Copilot.SquadAgent.StickerManager.Infrastructure;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 
-[ExcludeFromCodeCoverage]
-internal class Program
+namespace Copilot.SquadAgent.StickerManager.Api
 {
-    private static void Main(string[] args)
+    [ExcludeFromCodeCoverage]
+    public class Program
     {
-        Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
-
-        try
+        private static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            Log.Logger = new LoggerConfiguration()
+        .WriteTo.Console()
+        .CreateBootstrapLogger();
 
-            builder.Host.UseSerilog((context, services, configuration) => configuration
-                .ReadFrom.Configuration(context.Configuration)
-                .ReadFrom.Services(services)
-                .Enrich.FromLogContext()
-                .WriteTo.Console());
-
-            builder.Services
-                .AddDomain()
-                .AddApplication()
-                .AddInfrastructure(builder.Configuration)
-                .AddApi();
-
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
+            try
             {
-                options.SwaggerDoc("v1", new() { Title = "Sticker Manager API", Version = "v1" });
-            });
+                var builder = WebApplication.CreateBuilder(args);
 
-            var app = builder.Build();
+                builder.Host.UseSerilog((context, services, configuration) => configuration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .ReadFrom.Services(services)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console());
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                builder.Services
+                    .AddDomain()
+                    .AddApplication()
+                    .AddInfrastructure(builder.Configuration)
+                    .AddApi();
+
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc("v1", new() { Title = "Sticker Manager API", Version = "v1" });
+                });
+
+                var app = builder.Build();
+
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
+
+                app.UseSerilogRequestLogging();
+                app.UseHttpsRedirection();
+
+                app.MapApiEndpoints();
+
+                app.Run();
             }
-
-            app.UseSerilogRequestLogging();
-            app.UseHttpsRedirection();
-
-            app.MapApiEndpoints();
-
-            app.Run();
-        }
-        catch (Exception ex) when (ex is not HostAbortedException)
-        {
-            Log.Fatal(ex, "Aplicação encerrada inesperadamente.");
-        }
-        finally
-        {
-            Log.CloseAndFlush();
+            catch (Exception ex) when (ex is not HostAbortedException)
+            {
+                Log.Fatal(ex, "Aplicação encerrada inesperadamente.");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }
