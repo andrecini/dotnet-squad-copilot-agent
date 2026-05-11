@@ -1,5 +1,6 @@
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Application.Services.User;
+using Moq;
 using Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Entities;
 using Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Repositories;
@@ -97,5 +98,47 @@ public class UserServiceTests
         result.IsFailure.ShouldBeTrue();
         result.Code.ShouldBe(ResultCode.InternalError);
         result.StatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task RegisterAsync_ValidModel_HashesPasswordBeforeSavingAsync()
+    {
+        // Arrange
+        var model = RegisterUserModelMock.Valid();
+        var userEntity = UserEntityMock.Valid();
+        var passwordHasherMock = new PasswordHasherMock()
+            .SetupHash();
+
+        var userRepository = new UserRepositoryMock()
+            .SetupExistsByEmailAsync(false)
+            .SetupCreateAsync(Result<UserEntity>.Success(userEntity))
+            .Build();
+
+        var service = new UserService(userRepository, passwordHasherMock.Build(), _mapper);
+
+        // Act
+        await service.RegisterAsync(model, CancellationToken.None);
+
+        // Assert
+        passwordHasherMock.VerifyHashCalled(Times.Once());
+    }
+
+    [Fact]
+    public async Task RegisterAsync_EmailAlreadyExists_DoesNotCallRepositoryCreateAsync()
+    {
+        // Arrange
+        var model = RegisterUserModelMock.Valid();
+        var userRepositoryMock = new UserRepositoryMock()
+            .SetupExistsByEmailAsync(true);
+
+        var passwordHasher = new PasswordHasherMock().Build();
+
+        var service = new UserService(userRepositoryMock.Build(), passwordHasher, _mapper);
+
+        // Act
+        await service.RegisterAsync(model, CancellationToken.None);
+
+        // Assert
+        userRepositoryMock.VerifyCreateAsyncNotCalled();
     }
 }

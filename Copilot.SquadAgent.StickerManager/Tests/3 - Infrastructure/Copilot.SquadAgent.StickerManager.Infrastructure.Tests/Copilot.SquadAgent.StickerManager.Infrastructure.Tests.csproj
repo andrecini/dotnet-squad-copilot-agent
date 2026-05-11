@@ -5,11 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <Include>[Copilot.SquadAgent.StickerManager.Application]*</Include>
+    <Include>[Copilot.SquadAgent.StickerManager.Infrastructure]*</Include>
+    <ExcludeByFile>**/Migrations/**/*.cs</ExcludeByFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -18,8 +18,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="Shouldly" Version="4.2.1" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\1 - Application\Copilot.SquadAgent.StickerManager.Application\Copilot.SquadAgent.StickerManager.Application.csproj" />
+    <ProjectReference Include="..\..\..\3 - Infrastructure\Copilot.SquadAgent.StickerManager.Infrastructure\Copilot.SquadAgent.StickerManager.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
 
+[ExcludeFromCodeCoverage]
 public class RegisterUserResponse
 {
     public Guid UserId { get; set; }

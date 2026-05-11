@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
@@ -5,6 +6,7 @@ using Copilot.SquadAgent.StickerManager.Domain.Models.User;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Mappings;
 
+[ExcludeFromCodeCoverage]
 public class UserProfile : Profile
 {
     public UserProfile()

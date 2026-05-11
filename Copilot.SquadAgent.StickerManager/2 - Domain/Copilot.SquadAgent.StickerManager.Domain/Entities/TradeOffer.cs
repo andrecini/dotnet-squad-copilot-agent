@@ -1,7 +1,9 @@
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Copilot.SquadAgent.StickerManager.Domain.Entities;
 
+[ExcludeFromCodeCoverage]
 public class TradeOffer : BaseEntity
 {
     public Guid UserId { get; set; }

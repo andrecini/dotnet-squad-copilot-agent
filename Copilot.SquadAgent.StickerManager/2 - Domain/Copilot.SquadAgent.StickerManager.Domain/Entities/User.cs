@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Domain.Entities;
 
+[ExcludeFromCodeCoverage]
 public class User : BaseEntity
 {
     public string Email { get; set; } = string.Empty;

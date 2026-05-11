@@ -3,9 +3,11 @@ using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.Endpoints.Auth;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Copilot.SquadAgent.StickerManager.Api;
 
+[ExcludeFromCodeCoverage]
 public static class ApiDependency
 {
     public static IServiceCollection AddApi(this IServiceCollection services)

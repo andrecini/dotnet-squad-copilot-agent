@@ -52,4 +52,18 @@ public static class RegisterUserRequestMock
         Name = string.Empty,
         Password = "Senha123"
     };
+
+    public static RegisterUserRequest WithLongName() => new()
+    {
+        Email = "joao.silva@email.com",
+        Name = new string('A', 101),
+        Password = "Senha123"
+    };
+
+    public static RegisterUserRequest WithEmptyPassword() => new()
+    {
+        Email = "joao.silva@email.com",
+        Name = "João Silva",
+        Password = string.Empty
+    };
 }

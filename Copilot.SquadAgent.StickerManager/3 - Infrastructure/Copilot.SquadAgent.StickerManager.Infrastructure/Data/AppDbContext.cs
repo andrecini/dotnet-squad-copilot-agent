@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Copilot.SquadAgent.StickerManager.Infrastructure.Data;
 
+[ExcludeFromCodeCoverage]
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; }

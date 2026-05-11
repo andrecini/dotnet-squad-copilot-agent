@@ -22,4 +22,10 @@ public class UserRepositoryMock : BaseMock<IUserRepository>
 
         return this;
     }
+
+    public UserRepositoryMock VerifyCreateAsyncNotCalled()
+    {
+        _mock.Verify(x => x.CreateAsync(It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()), Times.Never);
+        return this;
+    }
 }

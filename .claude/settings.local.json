@@ -13,7 +13,10 @@
       "Bash(curl -s \"https://api.github.com/repos/SonarSource/sonarcloud-github-action/commits/master\")",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['sha'], d['commit']['message'].splitlines\\(\\)[0]\\)\")",
       "Bash(dotnet restore *)",
-      "Bash(dotnet test *)"
+      "Bash(dotnet test *)",
+      "Skill(write-commit)",
+      "Skill(check-coverage)",
+      "Skill(create-unit-test)"
     ]
   }
 }

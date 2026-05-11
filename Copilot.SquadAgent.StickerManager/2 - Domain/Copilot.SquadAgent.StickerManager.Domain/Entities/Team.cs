@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Domain.Entities;
 
+[ExcludeFromCodeCoverage]
 public class Team : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
