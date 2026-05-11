@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <Include>[Copilot.SquadAgent.StickerManager.Infrastructure]*</Include>
+    <ExcludeByFile>**/Migrations/**/*.cs</ExcludeByFile>
   </PropertyGroup>
 
   <ItemGroup>
