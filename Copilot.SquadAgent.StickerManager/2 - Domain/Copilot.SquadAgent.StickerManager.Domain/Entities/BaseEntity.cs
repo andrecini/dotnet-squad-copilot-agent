@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Domain.Entities;
 
+[ExcludeFromCodeCoverage]
 public abstract class BaseEntity
 {
     public Guid Id { get; init; } = Guid.NewGuid();

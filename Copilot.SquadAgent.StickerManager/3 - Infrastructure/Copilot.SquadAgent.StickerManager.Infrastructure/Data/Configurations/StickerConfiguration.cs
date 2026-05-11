@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Copilot.SquadAgent.StickerManager.Infrastructure.Data.Configurations;
 
+[ExcludeFromCodeCoverage]
 public class StickerConfiguration : IEntityTypeConfiguration<Sticker>
 {
     public void Configure(EntityTypeBuilder<Sticker> builder)

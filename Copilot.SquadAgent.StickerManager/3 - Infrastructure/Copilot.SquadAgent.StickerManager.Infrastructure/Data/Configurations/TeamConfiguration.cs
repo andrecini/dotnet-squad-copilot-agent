@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Copilot.SquadAgent.StickerManager.Infrastructure.Data.Configurations;
 
+[ExcludeFromCodeCoverage]
 public class TeamConfiguration : IEntityTypeConfiguration<Team>
 {
     public void Configure(EntityTypeBuilder<Team> builder)

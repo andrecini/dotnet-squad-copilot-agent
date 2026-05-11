@@ -53,3 +53,8 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+namespace Copilot.SquadAgent.StickerManager.Api;
+
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+public partial class Program { }

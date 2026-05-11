@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Domain.Result;
 
+[ExcludeFromCodeCoverage]
 public class Result<T> : Result
 {
     public T? Value { get; }

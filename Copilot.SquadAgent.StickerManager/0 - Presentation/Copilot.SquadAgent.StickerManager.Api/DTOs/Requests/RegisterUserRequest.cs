@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 
+[ExcludeFromCodeCoverage]
 public class RegisterUserRequest
 {
     public string Email { get; set; } = string.Empty;

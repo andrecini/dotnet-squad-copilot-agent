@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Copilot.SquadAgent.StickerManager.Domain.Models.User;
 
+[ExcludeFromCodeCoverage]
 public class UserModel
 {
     public Guid Id { get; set; }

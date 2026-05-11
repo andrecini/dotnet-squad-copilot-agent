@@ -2,9 +2,11 @@ using Copilot.SquadAgent.StickerManager.Application.Services.User;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Copilot.SquadAgent.StickerManager.Application;
 
+[ExcludeFromCodeCoverage]
 public static class ApplicationDependency
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)

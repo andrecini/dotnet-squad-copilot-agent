@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Security;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Copilot.SquadAgent.StickerManager.Infrastructure;
 
+[ExcludeFromCodeCoverage]
 public static class InfrastructureDependency
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)

@@ -106,4 +106,32 @@ public class RegisterUserRequestValidatorTests
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldContain(e => e.PropertyName == nameof(RegisterUserRequest.Password));
     }
+
+    [Fact]
+    public void Validate_NameTooLong_FailsValidation()
+    {
+        // Arrange
+        var request = RegisterUserRequestMock.WithLongName();
+
+        // Act
+        var result = _validator.Validate(request);
+
+        // Assert
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldContain(e => e.PropertyName == nameof(RegisterUserRequest.Name));
+    }
+
+    [Fact]
+    public void Validate_EmptyPassword_FailsValidation()
+    {
+        // Arrange
+        var request = RegisterUserRequestMock.WithEmptyPassword();
+
+        // Act
+        var result = _validator.Validate(request);
+
+        // Assert
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldContain(e => e.PropertyName == nameof(RegisterUserRequest.Password));
+    }
 }

@@ -88,4 +88,25 @@ public class UserAppServiceTests
         var problem = (ProblemHttpResult)result;
         problem.StatusCode.ShouldBe(500);
     }
+
+    [Fact]
+    public async Task RegisterAsync_ServiceReturnsFailureWithNullStatusCode_ReturnsProblemWith500Async()
+    {
+        // Arrange
+        var request = RegisterUserRequestMock.Valid();
+
+        var userService = new UserServiceMock()
+            .SetupRegisterAsync(Result<Domain.Models.User.UserModel>.Failure(ResultCode.InternalError, "Erro interno."))
+            .Build();
+
+        var appService = new UserAppService(userService, _mapper);
+
+        // Act
+        var result = await appService.RegisterAsync(request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<ProblemHttpResult>();
+        var problem = (ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(500);
+    }
 }

@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.Filters;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Auth;
 
+[ExcludeFromCodeCoverage]
 public static class RegisterUserEndpoint
 {
     public static void Map(IEndpointRouteBuilder app)

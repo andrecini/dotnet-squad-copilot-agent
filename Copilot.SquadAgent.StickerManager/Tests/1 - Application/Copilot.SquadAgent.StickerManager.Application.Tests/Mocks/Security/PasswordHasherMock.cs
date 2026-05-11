@@ -12,4 +12,10 @@ public class PasswordHasherMock : BaseMock<IPasswordHasher>
 
         return this;
     }
+
+    public PasswordHasherMock VerifyHashCalled(Times times)
+    {
+        _mock.Verify(x => x.Hash(It.IsAny<string>()), times);
+        return this;
+    }
 }
