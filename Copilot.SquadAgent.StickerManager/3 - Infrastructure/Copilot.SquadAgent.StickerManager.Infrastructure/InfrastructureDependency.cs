@@ -1,4 +1,8 @@
+using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
+using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Security;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
+using Copilot.SquadAgent.StickerManager.Infrastructure.Repositories.User;
+using Copilot.SquadAgent.StickerManager.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +15,9 @@ public static class InfrastructureDependency
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
 
         return services;
     }

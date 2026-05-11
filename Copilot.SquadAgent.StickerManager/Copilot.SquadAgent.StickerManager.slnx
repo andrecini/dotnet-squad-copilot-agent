@@ -11,4 +11,10 @@
   <Folder Name="/3 - Infrastructure/">
     <Project Path="3 - Infrastructure/Copilot.SquadAgent.StickerManager.Infrastructure/Copilot.SquadAgent.StickerManager.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Tests/0 - Presentation/">
+    <Project Path="Tests/0 - Presentation/Copilot.SquadAgent.StickerManager.Api.Tests/Copilot.SquadAgent.StickerManager.Api.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/1 - Application/">
+    <Project Path="Tests/1 - Application/Copilot.SquadAgent.StickerManager.Application.Tests/Copilot.SquadAgent.StickerManager.Application.Tests.csproj" />
+  </Folder>
 </Solution>
