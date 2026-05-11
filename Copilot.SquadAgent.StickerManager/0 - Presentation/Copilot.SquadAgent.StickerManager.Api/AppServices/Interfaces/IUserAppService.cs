@@ -1,0 +1,8 @@
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+
+namespace Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+
+public interface IUserAppService
+{
+    Task<IResult> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken);
+}
