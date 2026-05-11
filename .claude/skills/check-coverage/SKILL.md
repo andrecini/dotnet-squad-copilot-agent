@@ -57,6 +57,41 @@ Deseja verificar a cobertura do repositório completo ou de um escopo específic
 
 ## Passos
 
+### 0. Verificar projetos de testes existentes
+
+Antes de executar qualquer teste, verificar se existe um projeto `.X.Tests` para cada camada presente na solution:
+
+```
+Tests/
+├── 0 - Presentation/  → [componente].Api.Tests
+├── 1 - Application/   → [componente].Application.Tests
+├── 2 - Domain/        → [componente].Domain.Tests       (se a camada existir)
+└── 3 - Infrastructure/ → [componente].Infrastructure.Tests
+```
+
+Se algum projeto de testes estiver ausente:
+```
+❌ Projeto de testes ausente: [componente].Infrastructure.Tests
+   A camada Infrastructure não possui projeto de testes. A cobertura dessa camada será 0%.
+   Deseja criar os testes agora via create-unit-test antes de continuar?
+   1. Sim — executar create-unit-test para a camada ausente
+   2. Não — continuar a análise sem a camada
+```
+
+Também verificar se cada projeto de testes tem `<Include>` configurado no `.csproj`. Sem esse filtro, o coverlet mede todos os assemblies transitivos e o resultado é incorreto:
+
+```xml
+<!-- obrigatório em cada projeto de testes -->
+<Include>[NomeDoProjeto.NomeDaCamada]*</Include>
+```
+
+Se `<Include>` estiver ausente em algum projeto, alertar antes de prosseguir:
+```
+⚠️ [componente].Api.Tests não tem <Include> configurado no .csproj.
+   A cobertura medida incluirá assemblies de outras camadas, tornando o resultado impreciso.
+   Consulte tests-architecture.md para o padrão correto.
+```
+
 ### 1. Definir escopo
 
 - Se **completo** → executar todos os projetos de testes da solution
@@ -65,22 +100,30 @@ Deseja verificar a cobertura do repositório completo ou de um escopo específic
 
 ### 2. Executar testes com coleta de cobertura
 
-Executar o comando conforme o escopo definido:
+O projeto usa **`coverlet.msbuild`** com formato **OpenCover**. Não usar `--collect:"XPlat Code Coverage"` nem `dotnet-coverage merge`.
 
 #### Completo
 ```bash
-dotnet test src/[componente].sln \
+dotnet test [componente].slnx \
   --configuration Release \
-  --collect:"XPlat Code Coverage" \
-  --results-directory ./coverage
+  -p:CollectCoverage=true \
+  -p:CoverletOutputFormat=opencover \
+  "-p:CoverletOutput=./TestResults/" \
+  -p:Threshold=85 \
+  -p:ThresholdType=line \
+  -p:ThresholdStat=Total
 ```
 
 #### Por projeto
 ```bash
-dotnet test src/Tests/[camada]/[componente].[Escopo].Tests \
+dotnet test "Tests/[camada]/[componente].[Escopo].Tests/[componente].[Escopo].Tests.csproj" \
   --configuration Release \
-  --collect:"XPlat Code Coverage" \
-  --results-directory ./coverage
+  -p:CollectCoverage=true \
+  -p:CoverletOutputFormat=opencover \
+  "-p:CoverletOutput=./TestResults/" \
+  -p:Threshold=85 \
+  -p:ThresholdType=line \
+  -p:ThresholdStat=Total
 ```
 
 Reportar o resultado da execução antes de prosseguir:
@@ -100,13 +143,12 @@ Deseja ver os detalhes das falhas antes de continuar?
 2. Não — continuar com a análise de cobertura
 ```
 
-### 3. Consolidar relatório de cobertura
+### 3. Ler relatório de cobertura
 
-Consolidar os arquivos de cobertura gerados:
+O relatório é gerado em `TestResults/coverage.opencover.xml` dentro de cada projeto de testes. Ler o arquivo para extrair cobertura por classe:
 
-```bash
-dotnet tool install --global dotnet-coverage
-dotnet-coverage merge ./coverage/**/*.xml --output coverage.xml --output-format cobertura
+```
+read_file → [projeto].Tests/TestResults/coverage.opencover.xml
 ```
 
 ### 4. Analisar cobertura por classe
@@ -253,7 +295,8 @@ Antes de entregar o relatório, verificar:
 
 ## Error Handling
 
-- **`dotnet-coverage` não instalado** — alertar e fornecer o comando de instalação antes de prosseguir
+- **Projeto de testes ausente para uma camada** — alertar como ❌ crítico e sugerir `create-unit-test` antes de continuar
+- **`<Include>` ausente no `.csproj`** — alertar que o resultado de cobertura será impreciso; orientar a adicionar conforme `tests-architecture.md`
 - **Falha na execução dos testes** — exibir os testes que falharam e perguntar se deseja continuar a análise apenas com os testes que passaram
-- **Nenhum projeto de testes encontrado** — alertar e orientar o usuário sobre a estrutura esperada em `test-architecture.md`
-- **Relatório de cobertura vazio** — alertar que nenhuma classe foi instrumentada e orientar sobre a configuração do Coverlet
+- **Cobertura total abaixo de 85% com todos os testes passando** — verificar primeiro se `<Include>` está configurado; pode ser falso negativo por scope de assembly incorreto
+- **Relatório de cobertura vazio** — verificar se `coverlet.msbuild` está referenciado como `PackageReference` no projeto de testes e se `-p:CollectCoverage=true` foi passado

@@ -163,6 +163,43 @@ public class CreateOrderRequestValidatorTests
 
 ---
 
+## Exclusão de Cobertura
+
+Use `[ExcludeFromCodeCoverage]` para remover da análise classes que não têm lógica testável. O atributo pertence ao namespace `System.Diagnostics.CodeAnalysis`.
+
+### Onde aplicar
+
+| Tipo de artefato | Aplicar? |
+|------------------|----------|
+| `XDependency.cs` (classes de DI/registro) | ✅ Sim |
+| Entidades (`BaseEntity` e subclasses) | ✅ Sim |
+| Modelos, DTOs, Requests, Responses | ✅ Sim |
+| Perfis AutoMapper (`Profile`) | ✅ Sim |
+| Configurações EF Core (`IEntityTypeConfiguration<T>`) | ✅ Sim |
+| `AppDbContext` | ✅ Sim |
+| Endpoints estáticos de configuração de rota | ✅ Sim |
+| `Program.cs` | ✅ Sim — via `partial class Program { }` no final do arquivo |
+| Services, repositories, validators, app services, filtros | ❌ Não — têm lógica testável |
+
+### Tipos C# onde o atributo é INVÁLIDO
+
+- **`enum`** — o compilador rejeita com `CS0592`. Enums não precisam do atributo: o Coverlet não os instrumenta por padrão
+- **Interfaces** — não são instrumentadas pelo Coverlet; o atributo é desnecessário
+
+### Padrão para Program.cs
+
+Top-level statements não aceitam atributos diretamente. Use a declaração de partial class ao final do arquivo:
+
+```csharp
+// final de Program.cs
+namespace NomeDoProjeto.Api;
+
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+public partial class Program { }
+```
+
+---
+
 ## Convenções
 
 - Um arquivo de testes por classe testada

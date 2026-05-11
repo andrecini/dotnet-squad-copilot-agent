@@ -2,9 +2,9 @@
 
 ## Visão Geral
 
-As pipelines de CI/CD são configuradas via **GitHub Actions**. O projeto possui dois ambientes — `staging` e `production` — cada um com sua própria pipeline. Não há etapa de deploy configurada neste momento. As pipelines cobrem build, testes unitários, validação de cobertura de código e análise estática de qualidade.
+As pipelines de CI/CD são configuradas via **GitHub Actions**. O projeto possui dois workflows: `ci.yml` (validação de Pull Requests) e `deploy-staging.yml` (deploy ao fazer merge na `main`). As pipelines cobrem build, testes unitários, validação de cobertura de código e análise estática via SonarCloud.
 
------
+---
 
 ## Localização
 
@@ -12,148 +12,204 @@ As pipelines de CI/CD são configuradas via **GitHub Actions**. O projeto possui
 [nome-do-projeto]/
 └── .github/
     └── workflows/
-        ├── ci-staging.yml
-        └── ci-production.yml
+        ├── ci.yml               — dispara em Pull Requests
+        └── deploy-staging.yml   — dispara em push para main
 ```
 
------
+---
 
 ## Ferramentas
 
-|Ferramenta       |Propósito                                        |
-|-----------------|-------------------------------------------------|
-|GitHub Actions   |Orquestração das pipelines                       |
-|Coverlet         |Coleta de cobertura de testes                    |
-|dotnet-coverage  |Geração e validação do relatório de cobertura    |
-|Compilador .NET 8|Análise estática via warnings tratados como erros|
+| Ferramenta           | Propósito                                                     |
+|----------------------|---------------------------------------------------------------|
+| GitHub Actions       | Orquestração das pipelines                                    |
+| coverlet.msbuild     | Coleta e validação de cobertura (threshold enforcement)       |
+| dotnet-sonarscanner  | Análise estática e envio para SonarCloud                      |
+| SonarCloud           | Qualidade de código, cobertura e Quality Gate                 |
+| Java 17              | Requisito do dotnet-sonarscanner                              |
 
------
+---
 
-## Pipelines
+## Stack de Cobertura
 
-### CI — Staging
+O projeto usa **`coverlet.msbuild`** com formato **OpenCover** — não `coverlet.collector` nem `dotnet-coverage merge`.
 
-Disparada em todo Push ou Pull Request para a branch `develop`.
+- `coverlet.msbuild` é referenciado como `PackageReference` em cada projeto de testes
+- O formato OpenCover é obrigatório para integração com SonarCloud (`sonar.cs.opencover.reportsPaths`)
+- O threshold é validado pelo próprio `coverlet.msbuild` via `/p:Threshold=85`
+
+```bash
+dotnet test [solucao].slnx \
+  --configuration Release \
+  -p:CollectCoverage=true \
+  -p:CoverletOutputFormat=opencover \
+  "-p:CoverletOutput=./TestResults/" \
+  -p:Threshold=85 \
+  -p:ThresholdType=line \
+  -p:ThresholdStat=Total
+```
+
+---
+
+## Integração com SonarCloud
+
+### Fluxo obrigatório
+
+O `dotnet-sonarscanner` exige um único job com a sequência: `begin` → `build` → `test` → `end`. Os steps de build e test **devem estar dentro do mesmo job** — caso contrário o scanner não consegue capturar os artefatos.
+
+```
+SonarCloud Begin → Build → Run Tests with Coverage → SonarCloud End
+```
+
+### Parâmetros importantes
+
+- **`sonar.qualitygate.wait=true`** deve ser passado no **`begin`**, não no `end`
+  - A partir da v11 do SonarScanner para .NET, esse parâmetro é inválido no `end` (erro de compilação na pipeline)
+  - Com esse parâmetro, o `sonarscanner end` aguarda o resultado do Quality Gate e falha o step se o gate não passar
+- **`fetch-depth: 0`** é obrigatório no `checkout` para que o SonarCloud analise o histórico de blame
+- **Java 17** é obrigatório para executar o scanner
+
+### Secrets e Variables necessárias
+
+| Nome                 | Tipo     | Descrição                                              |
+|----------------------|----------|--------------------------------------------------------|
+| `SONAR_TOKEN`        | Secret   | Token de autenticação gerado em sonarcloud.io          |
+| `SONAR_PROJECT_KEY`  | Variable | Chave do projeto no SonarCloud (ex: `org_sticker-manager`) |
+| `SONAR_ORGANIZATION` | Variable | Slug da organização no SonarCloud (ex: `andrecini`)    |
+
+---
+
+## Workflows
+
+### ci.yml — Pull Request
+
+Dispara em Pull Requests para `main` ou `develop`. Bloqueia o merge se build, testes, threshold de cobertura ou Quality Gate do SonarCloud falharem.
 
 ```yaml
-name: CI - Staging
+name: CI — Build and Test
 
 on:
-  push:
-    branches: [develop]
   pull_request:
-    branches: [develop]
+    branches:
+      - main
+      - develop
 
 jobs:
   build-and-test:
+    name: Build, Test and Analyze
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v4
         with:
-          dotnet-version: '8.0.x'
+          fetch-depth: 0                          # obrigatório para SonarCloud blame
 
-      - name: Restore dependencies
-        run: dotnet restore src/[componente].sln
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
 
-      - name: Build
-        run: dotnet build src/[componente].sln --no-restore --configuration Release /warnaserror
+      - uses: actions/setup-java@v4               # obrigatório para dotnet-sonarscanner
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - run: dotnet tool install --global dotnet-sonarscanner
+
+      - run: dotnet restore [solucao].slnx
+
+      - name: SonarCloud Begin
+        run: >
+          dotnet sonarscanner begin
+          /k:"${{ vars.SONAR_PROJECT_KEY }}"
+          /o:"${{ vars.SONAR_ORGANIZATION }}"
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.opencover.xml"
+          /d:sonar.exclusions="**/Migrations/**,**/obj/**,**/bin/**"
+          /d:sonar.qualitygate.wait=true           # DEVE estar no begin, não no end
+
+      - run: dotnet build [solucao].slnx --no-restore --configuration Release
 
       - name: Run tests with coverage
-        run: |
-          dotnet test src/[componente].sln \
-            --no-build \
-            --configuration Release \
-            --collect:"XPlat Code Coverage" \
-            --results-directory ./coverage
+        run: >
+          dotnet test [solucao].slnx
+          --no-build
+          --configuration Release
+          -p:CollectCoverage=true
+          -p:CoverletOutputFormat=opencover
+          "-p:CoverletOutput=./TestResults/"
+          -p:Threshold=85
+          -p:ThresholdType=line
+          -p:ThresholdStat=Total
 
-      - name: Validate coverage threshold
-        run: |
-          dotnet tool install --global dotnet-coverage
-          dotnet-coverage merge ./coverage/**/*.xml --output coverage.xml --output-format cobertura
-          dotnet-coverage analyze --report coverage.xml --threshold 85
+      - name: SonarCloud End
+        if: always()                              # garante envio mesmo se testes falharem
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### CI — Production
+### deploy-staging.yml — Push para main
 
-Disparada em todo Push ou Pull Request para a branch `main`.
+Dispara em push para `main`. O job `deploy-staging` só executa se `build-test-analyze` passar.
 
 ```yaml
-name: CI - Production
+name: Deploy — Staging
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build-test-analyze:
+    # mesmo conteúdo do ci.yml acima
+
+  deploy-staging:
+    needs: build-test-analyze
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore src/[componente].sln
-
-      - name: Build
-        run: dotnet build src/[componente].sln --no-restore --configuration Release /warnaserror
-
-      - name: Run tests with coverage
-        run: |
-          dotnet test src/[componente].sln \
-            --no-build \
-            --configuration Release \
-            --collect:"XPlat Code Coverage" \
-            --results-directory ./coverage
-
-      - name: Validate coverage threshold
-        run: |
-          dotnet tool install --global dotnet-coverage
-          dotnet-coverage merge ./coverage/**/*.xml --output coverage.xml --output-format cobertura
-          dotnet-coverage analyze --report coverage.xml --threshold 85
+      # steps de deploy
 ```
 
------
+---
+
+## Branch Protection Rules
+
+Para que o CI bloqueie merges de Pull Requests, é obrigatório configurar Branch Protection Rules no GitHub. **Sem essa configuração, o CI é apenas informativo — o PR pode ser mergeado mesmo que a pipeline falhe.**
+
+### Como configurar
+
+1. Acesse o repositório → **Settings → Branches**
+2. Clique em **Add branch protection rule**
+3. **Branch name pattern**: `main` (repetir para `develop` se necessário)
+4. Marque **Require status checks to pass before merging**
+5. Adicione o check: **`Build, Test and Analyze`** (nome exato do job no `ci.yml`)
+6. Marque **Require branches to be up to date before merging**
+7. Salve
+
+---
 
 ## Etapas da Pipeline
 
-|Etapa       |Descrição                                                          |
-|------------|-------------------------------------------------------------------|
-|Checkout    |Clona o repositório                                                |
-|Setup .NET 8|Instala o SDK do .NET 8                                            |
-|Restore     |Restaura os pacotes NuGet                                          |
-|Build       |Compila a solution em modo Release com warnings tratados como erros|
-|Test        |Executa os testes unitários com coleta de cobertura via Coverlet   |
-|Coverage    |Valida se a cobertura mínima de **85%** foi atingida               |
+| Etapa              | Descrição                                                                  |
+|--------------------|---------------------------------------------------------------------------|
+| Checkout           | Clona o repositório com histórico completo (`fetch-depth: 0`)             |
+| Setup .NET 8       | Instala o SDK do .NET 8                                                   |
+| Setup Java 17      | Instala Java 17 (requisito do dotnet-sonarscanner)                        |
+| Install Scanner    | Instala o `dotnet-sonarscanner` como global tool                          |
+| Restore            | Restaura os pacotes NuGet                                                 |
+| SonarCloud Begin   | Inicia a análise; configura Quality Gate wait e caminhos de cobertura     |
+| Build              | Compila em Release                                                        |
+| Test + Coverage    | Executa testes com coverlet.msbuild; valida threshold de 85%              |
+| SonarCloud End     | Envia resultados; aguarda Quality Gate (via `qualitygate.wait` no begin)  |
 
------
-
-## Qualidade de Código
-
-A análise estática é feita pelo próprio compilador do .NET 8 com a flag `/warnaserror`, que trata todos os warnings de compilação como erros, bloqueando o build em caso de violações. Isso cobre:
-
-- Nullable reference types não tratados
-- Variáveis não utilizadas
-- Membros obsoletos
-- Inconsistências de tipo e assinatura
-
------
+---
 
 ## Convenções
 
-- Pull Requests para `develop` e `main` só podem ser mergeados após a pipeline passar com sucesso
-- A cobertura mínima exigida é de **85%** — pipelines que não atingirem esse threshold falham
-- Warnings de compilação bloqueiam o build — nenhum warning é ignorado em Release
-- As pipelines de `staging` e `production` são idênticas neste momento — a diferença entre elas será o ponto de entrada para futuras etapas de deploy
+- Pull Requests para `main` e `develop` só podem ser mergeados após o CI passar — **requer Branch Protection Rules configuradas**
+- Cobertura mínima: **85% de linhas** — pipelines abaixo desse threshold falham no step de testes
+- `sonar.qualitygate.wait=true` deve estar sempre no `begin`, nunca no `end`
+- Migrations do EF Core são excluídas da análise via `sonar.exclusions` e `ExcludeByFile` nos projetos de testes
+- O SonarCloud End usa `if: always()` para garantir o envio dos dados mesmo quando os testes falham
