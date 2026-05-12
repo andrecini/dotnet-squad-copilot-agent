@@ -32,4 +32,29 @@ public class UserAppService(IUserService userService, IMapper mapper) : IUserApp
         var response = mapper.Map<LoginUserResponse>(result.Value);
         return TypedResults.Ok(response);
     }
+
+    public async Task<IResult> GetProfileAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await userService.GetProfileAsync(userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<UserProfileResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
+
+    public async Task<IResult> UpdateProfileAsync(Guid userId, UpdateUserProfileRequest request, CancellationToken cancellationToken)
+    {
+        var model = mapper.Map<UpdateUserProfileModel>(request);
+        model.UserId = userId;
+
+        var result = await userService.UpdateProfileAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<UserProfileResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
 }

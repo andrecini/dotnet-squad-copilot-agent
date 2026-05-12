@@ -1,5 +1,6 @@
 using Copilot.SquadAgent.StickerManager.Application;
 using Copilot.SquadAgent.StickerManager.Domain;
+using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Copilot.SquadAgent.StickerManager.Infrastructure;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;

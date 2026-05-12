@@ -3,6 +3,7 @@ using System.Text;
 using Copilot.SquadAgent.StickerManager.Api.AppServices;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.Endpoints.Auth;
+using Copilot.SquadAgent.StickerManager.Api.Endpoints.Users;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -47,6 +48,8 @@ public static class ApiDependency
     {
         RegisterUserEndpoint.Map(app);
         LoginUserEndpoint.Map(app);
+        GetUserProfileEndpoint.Map(app);
+        UpdateUserProfileEndpoint.Map(app);
 
         return app;
     }
