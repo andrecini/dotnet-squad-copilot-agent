@@ -14,6 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<UserCollection> UserCollections { get; set; }
     public DbSet<TradeOffer> TradeOffers { get; set; }
     public DbSet<TradeOfferItem> TradeOfferItems { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

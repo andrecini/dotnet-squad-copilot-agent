@@ -9,6 +9,27 @@ namespace Copilot.SquadAgent.StickerManager.Api.AppServices;
 
 public class UserAppService(IUserService userService, IMapper mapper) : IUserAppService
 {
+    public async Task<IResult> ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var model = mapper.Map<ForgotPasswordModel>(request);
+        var result = await userService.ForgotPasswordAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        return TypedResults.Ok();
+    }
+
+    public async Task<IResult> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var model = mapper.Map<ResetPasswordModel>(request);
+        var result = await userService.ResetPasswordAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        return TypedResults.Ok();
+    }
     public async Task<IResult> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var model = mapper.Map<RegisterUserModel>(request);
