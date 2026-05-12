@@ -34,7 +34,7 @@ public static class ApiDependency
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["Issuer"]!,
                     ValidAudience = jwtSettings["Audience"]!,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!)) // NOSONAR - secret provided exclusively via environment variable (Jwt__Secret), never in appsettings
                 };
             });
 

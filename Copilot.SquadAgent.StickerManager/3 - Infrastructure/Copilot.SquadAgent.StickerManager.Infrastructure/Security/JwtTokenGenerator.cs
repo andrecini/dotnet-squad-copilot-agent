@@ -16,7 +16,7 @@ public class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerato
     {
         var jwtSettings = configuration.GetSection("Jwt");
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!)); // NOSONAR - secret provided exclusively via environment variable (Jwt__Secret), never in appsettings
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
