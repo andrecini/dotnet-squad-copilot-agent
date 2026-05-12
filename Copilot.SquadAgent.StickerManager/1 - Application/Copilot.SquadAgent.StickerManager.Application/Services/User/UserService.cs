@@ -11,6 +11,7 @@ namespace Copilot.SquadAgent.StickerManager.Application.Services.User;
 public class UserService(
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
+    IJwtTokenGenerator jwtTokenGenerator,
     IMapper mapper) : IUserService
 {
     public async Task<Result<UserModel>> RegisterAsync(RegisterUserModel model, CancellationToken cancellationToken)
@@ -29,5 +30,24 @@ public class UserService(
             return Result<UserModel>.Failure(result.Code, result.Message!, result.StatusCode);
 
         return Result<UserModel>.Success(mapper.Map<UserModel>(result.Value));
+    }
+
+    public async Task<Result<TokenModel>> LoginAsync(LoginUserModel model, CancellationToken cancellationToken)
+    {
+        var result = await userRepository.GetByEmailAsync(model.Email, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<TokenModel>.Failure(ResultCode.Unauthorized, "Credenciais inválidas.", statusCode: 401);
+
+        var user = result.Value!;
+        var passwordValid = passwordHasher.Verify(model.Password, user.PasswordHash);
+
+        if (!passwordValid)
+            return Result<TokenModel>.Failure(ResultCode.Unauthorized, "Credenciais inválidas.", statusCode: 401);
+
+        var userModel = mapper.Map<UserModel>(user);
+        var token = jwtTokenGenerator.Generate(userModel);
+
+        return Result<TokenModel>.Success(token);
     }
 }

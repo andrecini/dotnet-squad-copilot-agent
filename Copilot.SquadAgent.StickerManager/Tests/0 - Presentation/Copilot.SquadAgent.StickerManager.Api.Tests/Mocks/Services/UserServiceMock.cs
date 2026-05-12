@@ -20,4 +20,18 @@ public class UserServiceMock : BaseMock<IUserService>
         _mock.Verify(x => x.RegisterAsync(It.IsAny<RegisterUserModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
+
+    public UserServiceMock SetupLoginAsync(Result<TokenModel> returnValue)
+    {
+        _mock.Setup(x => x.LoginAsync(It.IsAny<LoginUserModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserServiceMock VerifyLoginAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.LoginAsync(It.IsAny<LoginUserModel>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
 }

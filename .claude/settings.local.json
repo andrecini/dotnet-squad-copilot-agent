@@ -16,7 +16,9 @@
       "Bash(dotnet test *)",
       "Skill(write-commit)",
       "Skill(check-coverage)",
-      "Skill(create-unit-test)"
+      "Skill(create-unit-test)",
+      "Bash(dotnet nuget *)",
+      "Bash(powershell *)"
     ]
   }
 }
