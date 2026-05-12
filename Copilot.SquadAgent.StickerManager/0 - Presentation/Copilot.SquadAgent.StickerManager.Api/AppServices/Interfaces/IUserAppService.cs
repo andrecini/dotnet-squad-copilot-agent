@@ -5,4 +5,5 @@ namespace Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 public interface IUserAppService
 {
     Task<IResult> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken);
+    Task<IResult> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken);
 }

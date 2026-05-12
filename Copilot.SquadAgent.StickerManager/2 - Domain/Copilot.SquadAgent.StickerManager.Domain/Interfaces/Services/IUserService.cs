@@ -6,4 +6,5 @@ namespace Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 public interface IUserService
 {
     Task<Result<UserModel>> RegisterAsync(RegisterUserModel model, CancellationToken cancellationToken);
+    Task<Result<TokenModel>> LoginAsync(LoginUserModel model, CancellationToken cancellationToken);
 }

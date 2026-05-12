@@ -29,7 +29,7 @@ namespace Copilot.SquadAgent.StickerManager.Api
                     .AddDomain()
                     .AddApplication()
                     .AddInfrastructure(builder.Configuration)
-                    .AddApi();
+                    .AddApi(builder.Configuration);
 
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen(options =>
@@ -47,6 +47,8 @@ namespace Copilot.SquadAgent.StickerManager.Api
 
                 app.UseSerilogRequestLogging();
                 app.UseHttpsRedirection();
+                app.UseAuthentication();
+                app.UseAuthorization();
 
                 app.MapApiEndpoints();
 

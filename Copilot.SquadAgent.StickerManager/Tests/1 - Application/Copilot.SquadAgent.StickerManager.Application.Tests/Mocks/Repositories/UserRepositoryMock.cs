@@ -28,4 +28,12 @@ public class UserRepositoryMock : BaseMock<IUserRepository>
         _mock.Verify(x => x.CreateAsync(It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()), Times.Never);
         return this;
     }
+
+    public UserRepositoryMock SetupGetByEmailAsync(Result<UserEntity> returnValue)
+    {
+        _mock.Setup(x => x.GetByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
 }
