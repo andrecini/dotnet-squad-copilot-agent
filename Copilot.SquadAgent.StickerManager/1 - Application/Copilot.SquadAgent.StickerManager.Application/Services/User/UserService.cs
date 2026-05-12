@@ -50,4 +50,44 @@ public class UserService(
 
         return Result<TokenModel>.Success(token);
     }
+
+    public async Task<Result<UserModel>> GetProfileAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await userRepository.GetByIdAsync(userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<UserModel>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<UserModel>.Success(mapper.Map<UserModel>(result.Value));
+    }
+
+    public async Task<Result<UserModel>> UpdateProfileAsync(UpdateUserProfileModel model, CancellationToken cancellationToken)
+    {
+        var result = await userRepository.GetByIdAsync(model.UserId, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<UserModel>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        var user = result.Value!;
+
+        if (model.Email is not null && model.Email != user.Email)
+        {
+            var emailExists = await userRepository.ExistsByEmailAsync(model.Email, cancellationToken);
+
+            if (emailExists)
+                return Result<UserModel>.Failure(ResultCode.Conflict, "E-mail já cadastrado.", statusCode: 409);
+
+            user.Email = model.Email;
+        }
+
+        if (model.Name is not null)
+            user.Name = model.Name;
+
+        var updateResult = await userRepository.UpdateAsync(user, cancellationToken);
+
+        if (updateResult.IsFailure)
+            return Result<UserModel>.Failure(updateResult.Code, updateResult.Message!, updateResult.StatusCode);
+
+        return Result<UserModel>.Success(mapper.Map<UserModel>(updateResult.Value));
+    }
 }

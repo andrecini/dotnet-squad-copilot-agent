@@ -36,4 +36,26 @@ public class UserRepositoryMock : BaseMock<IUserRepository>
 
         return this;
     }
+
+    public UserRepositoryMock SetupGetByIdAsync(Result<UserEntity> returnValue)
+    {
+        _mock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserRepositoryMock SetupUpdateAsync(Result<UserEntity> returnValue)
+    {
+        _mock.Setup(x => x.UpdateAsync(It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserRepositoryMock VerifyUpdateAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.UpdateAsync(It.IsAny<UserEntity>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
 }

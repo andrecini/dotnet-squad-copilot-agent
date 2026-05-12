@@ -12,5 +12,7 @@ public class UserProfile : Profile
     {
         CreateMap<RegisterUserModel, User>();
         CreateMap<User, UserModel>();
+        CreateMap<UpdateUserProfileModel, User>()
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

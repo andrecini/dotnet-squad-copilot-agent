@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
+using Copilot.SquadAgent.StickerManager.Infrastructure.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Copilot.SquadAgent.StickerManager.Infrastructure.Data;
@@ -19,6 +20,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        modelBuilder.ApplyUtcDateTimeConverters();
     }
 
     public override int SaveChanges()

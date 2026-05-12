@@ -17,5 +17,10 @@ public class UserProfile : Profile
 
         CreateMap<LoginUserRequest, LoginUserModel>();
         CreateMap<TokenModel, LoginUserResponse>();
+
+        CreateMap<UserModel, UserProfileResponse>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
+
+        CreateMap<UpdateUserProfileRequest, UpdateUserProfileModel>();
     }
 }
