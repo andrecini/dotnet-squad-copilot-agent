@@ -2,6 +2,7 @@ using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models.User;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
+using System;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
 
@@ -32,6 +33,22 @@ public class UserServiceMock : BaseMock<IUserService>
     public UserServiceMock VerifyLoginAsyncCalled(Times times)
     {
         _mock.Verify(x => x.LoginAsync(It.IsAny<LoginUserModel>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public UserServiceMock SetupGetProfileAsync(Result<UserModel> returnValue)
+    {
+        _mock.Setup(x => x.GetProfileAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserServiceMock SetupUpdateProfileAsync(Result<UserModel> returnValue)
+    {
+        _mock.Setup(x => x.UpdateProfileAsync(It.IsAny<UpdateUserProfileModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
         return this;
     }
 }
