@@ -5,6 +5,7 @@ using Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Repositories;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Security;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 using Xunit;
@@ -15,6 +16,7 @@ namespace Copilot.SquadAgent.StickerManager.Application.Tests.Tests.Services;
 public class LoginUserServiceTests
 {
     private readonly IMapper _mapper;
+    private readonly ILogger<UserService> _logger = new Mock<ILogger<UserService>>().Object;
 
     public LoginUserServiceTests()
     {
@@ -44,7 +46,7 @@ public class LoginUserServiceTests
             .SetupGenerate(tokenModel)
             .Build();
 
-        var service = new UserService(userRepository, passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         var result = await service.LoginAsync(model, CancellationToken.None);
@@ -70,7 +72,7 @@ public class LoginUserServiceTests
         var passwordHasher = new PasswordHasherMock().Build();
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
 
-        var service = new UserService(userRepository, passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         var result = await service.LoginAsync(model, CancellationToken.None);
@@ -99,7 +101,7 @@ public class LoginUserServiceTests
 
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
 
-        var service = new UserService(userRepository, passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         var result = await service.LoginAsync(model, CancellationToken.None);
@@ -124,7 +126,7 @@ public class LoginUserServiceTests
         var passwordHasherMock = new PasswordHasherMock();
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
 
-        var service = new UserService(userRepository, passwordHasherMock.Build(), jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasherMock.Build(), jwtGenerator, _logger, _mapper);
 
         // Act
         await service.LoginAsync(model, CancellationToken.None);
@@ -150,7 +152,7 @@ public class LoginUserServiceTests
 
         var jwtGeneratorMock = new JwtTokenGeneratorMock();
 
-        var service = new UserService(userRepository, passwordHasher, jwtGeneratorMock.Build(), _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGeneratorMock.Build(), _logger, _mapper);
 
         // Act
         await service.LoginAsync(model, CancellationToken.None);
@@ -178,7 +180,7 @@ public class LoginUserServiceTests
             .SetupGenerate(tokenModel)
             .Build();
 
-        var service = new UserService(userRepository, passwordHasherMock.Build(), jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasherMock.Build(), jwtGenerator, _logger, _mapper);
 
         // Act
         await service.LoginAsync(model, CancellationToken.None);
@@ -206,7 +208,7 @@ public class LoginUserServiceTests
         var jwtGeneratorMock = new JwtTokenGeneratorMock()
             .SetupGenerate(tokenModel);
 
-        var service = new UserService(userRepository, passwordHasher, jwtGeneratorMock.Build(), _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGeneratorMock.Build(), _logger, _mapper);
 
         // Act
         await service.LoginAsync(model, CancellationToken.None);

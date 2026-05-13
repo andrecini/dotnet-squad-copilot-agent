@@ -22,5 +22,8 @@ public class UserProfile : Profile
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
 
         CreateMap<UpdateUserProfileRequest, UpdateUserProfileModel>();
+
+        CreateMap<ForgotPasswordRequest, ForgotPasswordModel>();
+        CreateMap<ResetPasswordRequest, ResetPasswordModel>();
     }
 }

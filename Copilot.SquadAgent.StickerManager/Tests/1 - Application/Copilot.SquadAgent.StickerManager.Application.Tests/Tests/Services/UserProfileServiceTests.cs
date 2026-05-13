@@ -5,6 +5,7 @@ using Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Repositories;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Security;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 using Xunit;
@@ -15,6 +16,7 @@ namespace Copilot.SquadAgent.StickerManager.Application.Tests.Tests.Services;
 public class UserProfileServiceTests
 {
     private readonly IMapper _mapper;
+    private readonly ILogger<UserService> _logger = new Mock<ILogger<UserService>>().Object;
 
     public UserProfileServiceTests()
     {
@@ -27,8 +29,10 @@ public class UserProfileServiceTests
     private UserService BuildService(UserRepositoryMock repoMock) =>
         new UserService(
             repoMock.Build(),
+            new PasswordResetTokenRepositoryMock().Build(),
             new PasswordHasherMock().Build(),
             new JwtTokenGeneratorMock().Build(),
+            _logger,
             _mapper);
 
     // -------- GetProfileAsync --------
