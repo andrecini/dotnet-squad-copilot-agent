@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Security;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
+using Copilot.SquadAgent.StickerManager.Infrastructure.Repositories.PasswordResetToken;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Repositories.User;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public static class InfrastructureDependency
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
         services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 

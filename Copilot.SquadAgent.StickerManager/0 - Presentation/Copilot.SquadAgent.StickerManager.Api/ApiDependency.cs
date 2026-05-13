@@ -4,6 +4,7 @@ using Copilot.SquadAgent.StickerManager.Api.AppServices;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.Endpoints.Auth;
 using Copilot.SquadAgent.StickerManager.Api.Endpoints.Users;
+using Copilot.SquadAgent.StickerManager.Api.Mappings;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,8 @@ public static class ApiDependency
         LoginUserEndpoint.Map(app);
         GetUserProfileEndpoint.Map(app);
         UpdateUserProfileEndpoint.Map(app);
+        ForgotPasswordEndpoint.Map(app);
+        ResetPasswordEndpoint.Map(app);
 
         return app;
     }

@@ -18,7 +18,8 @@
       "Skill(check-coverage)",
       "Skill(create-unit-test)",
       "Bash(dotnet nuget *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Skill(create-migration)"
     ]
   }
 }

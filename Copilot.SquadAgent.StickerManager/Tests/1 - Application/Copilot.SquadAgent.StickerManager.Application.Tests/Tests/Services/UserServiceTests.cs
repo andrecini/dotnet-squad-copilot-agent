@@ -5,6 +5,7 @@ using Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Repositories;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Security;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 using Xunit;
@@ -15,6 +16,7 @@ namespace Copilot.SquadAgent.StickerManager.Application.Tests.Tests.Services;
 public class UserServiceTests
 {
     private readonly IMapper _mapper;
+    private readonly ILogger<UserService> _logger = new Mock<ILogger<UserService>>().Object;
 
     public UserServiceTests()
     {
@@ -41,7 +43,7 @@ public class UserServiceTests
             .Build();
 
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
-        var service = new UserService(userRepository, passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         var result = await service.RegisterAsync(model, CancellationToken.None);
@@ -65,7 +67,7 @@ public class UserServiceTests
         var passwordHasher = new PasswordHasherMock().Build();
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
 
-        var service = new UserService(userRepository, passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         var result = await service.RegisterAsync(model, CancellationToken.None);
@@ -92,7 +94,7 @@ public class UserServiceTests
             .Build();
 
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
-        var service = new UserService(userRepository, passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         var result = await service.RegisterAsync(model, CancellationToken.None);
@@ -118,7 +120,7 @@ public class UserServiceTests
             .Build();
 
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
-        var service = new UserService(userRepository, passwordHasherMock.Build(), jwtGenerator, _mapper);
+        var service = new UserService(userRepository, new PasswordResetTokenRepositoryMock().Build(), passwordHasherMock.Build(), jwtGenerator, _logger, _mapper);
 
         // Act
         await service.RegisterAsync(model, CancellationToken.None);
@@ -138,7 +140,7 @@ public class UserServiceTests
         var passwordHasher = new PasswordHasherMock().Build();
         var jwtGenerator = new JwtTokenGeneratorMock().Build();
 
-        var service = new UserService(userRepositoryMock.Build(), passwordHasher, jwtGenerator, _mapper);
+        var service = new UserService(userRepositoryMock.Build(), new PasswordResetTokenRepositoryMock().Build(), passwordHasher, jwtGenerator, _logger, _mapper);
 
         // Act
         await service.RegisterAsync(model, CancellationToken.None);

@@ -2,7 +2,6 @@ using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models.User;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
-using System;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
 
@@ -47,6 +46,22 @@ public class UserServiceMock : BaseMock<IUserService>
     public UserServiceMock SetupUpdateProfileAsync(Result<UserModel> returnValue)
     {
         _mock.Setup(x => x.UpdateProfileAsync(It.IsAny<UpdateUserProfileModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserServiceMock SetupForgotPasswordAsync(Result returnValue)
+    {
+        _mock.Setup(x => x.ForgotPasswordAsync(It.IsAny<ForgotPasswordModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserServiceMock SetupResetPasswordAsync(Result returnValue)
+    {
+        _mock.Setup(x => x.ResetPasswordAsync(It.IsAny<ResetPasswordModel>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync(returnValue);
 
         return this;
