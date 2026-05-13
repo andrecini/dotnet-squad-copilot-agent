@@ -1,12 +1,14 @@
-using System.Net;
-using System.Net.Http.Json;
 using Copilot.SquadAgent.StickerManager.Integration.Tests.DataMocks.Requests;
 using Copilot.SquadAgent.StickerManager.Integration.Tests.Fixtures;
 using Shouldly;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Http.Json;
 using Xunit;
 
 namespace Copilot.SquadAgent.StickerManager.Integration.Tests.Tests.Auth;
 
+[ExcludeFromCodeCoverage]
 public class ForgotPasswordEndpointTests(IntegrationTestFixture fixture) : IClassFixture<IntegrationTestFixture>
 {
     private readonly HttpClient _client = fixture.Client;

@@ -1,7 +1,9 @@
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Copilot.SquadAgent.StickerManager.Integration.Tests.DataMocks.Requests;
 
+[ExcludeFromCodeCoverage]
 public static class LoginUserRequestMock
 {
     public static LoginUserRequest Valid(string email = "login@test.com") => new()

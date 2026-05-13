@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace Copilot.SquadAgent.StickerManager.Integration.Tests.Fixtures;
 
+[ExcludeFromCodeCoverage]
 public class IntegrationTestFixture : WebApplicationFactory<Copilot.SquadAgent.StickerManager.Api.Program>, IAsyncLifetime
 {
     private readonly string _dbName = $"TestDb_{Guid.NewGuid()}";

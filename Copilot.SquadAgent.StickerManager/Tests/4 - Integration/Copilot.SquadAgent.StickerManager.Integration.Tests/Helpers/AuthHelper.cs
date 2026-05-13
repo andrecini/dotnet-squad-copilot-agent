@@ -1,9 +1,11 @@
-using System.Net.Http.Json;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Json;
 
 namespace Copilot.SquadAgent.StickerManager.Integration.Tests.Helpers;
 
+[ExcludeFromCodeCoverage]
 public static class AuthHelper
 {
     public static async Task<string> GetTokenAsync(HttpClient client, string email = "auth@test.com", string password = "Test@1234")
