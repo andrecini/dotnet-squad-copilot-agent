@@ -39,7 +39,7 @@ public class AddToCollectionEndpointTests(IntegrationTestFixture fixture) : ICla
         {
             Code = $"BRA-{Guid.NewGuid():N}".Substring(0, 10),
             PlayerName = "Neymar",
-            Rarity = StickerRarity.Common,
+            Rarity = StickerRarity.Base,
             TeamId = team.Id,
             CreatedAt = DateTime.UtcNow
         };

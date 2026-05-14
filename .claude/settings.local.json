@@ -28,7 +28,9 @@
       "Bash(Remove-Item -Recurse -Force \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\obj\" -ErrorAction SilentlyContinue)",
       "Bash(Write-Host \"Pastas bin/obj removidas.\")",
       "Bash(Get-ChildItem -Recurse \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\")",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(Select-String -Pattern \"error|Error|warning CS|Build succeeded|Build FAILED\")",
+      "Bash(Select-Object -Last 20)"
     ]
   }
 }
