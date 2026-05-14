@@ -19,7 +19,18 @@
       "Skill(create-unit-test)",
       "Bash(dotnet nuget *)",
       "Bash(powershell *)",
-      "Skill(create-migration)"
+      "Skill(create-migration)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\Fixtures\")",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\Helpers\")",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\DataMocks\\\\Requests\")",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\Tests\\\\Auth\")",
+      "Bash(Remove-Item -Recurse -Force \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\bin\" -ErrorAction SilentlyContinue)",
+      "Bash(Remove-Item -Recurse -Force \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\\\\obj\" -ErrorAction SilentlyContinue)",
+      "Bash(Write-Host \"Pastas bin/obj removidas.\")",
+      "Bash(Get-ChildItem -Recurse \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\Tests\\\\4 - Integration\\\\Copilot.SquadAgent.StickerManager.Integration.Tests\")",
+      "Bash(Select-Object FullName)",
+      "Bash(Select-String -Pattern \"error|Error|warning CS|Build succeeded|Build FAILED\")",
+      "Bash(Select-Object -Last 20)"
     ]
   }
 }

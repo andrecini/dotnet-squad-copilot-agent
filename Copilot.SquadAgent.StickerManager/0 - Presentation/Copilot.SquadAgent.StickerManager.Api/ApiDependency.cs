@@ -3,6 +3,7 @@ using System.Text;
 using Copilot.SquadAgent.StickerManager.Api.AppServices;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.Endpoints.Auth;
+using Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 using Copilot.SquadAgent.StickerManager.Api.Endpoints.Users;
 using Copilot.SquadAgent.StickerManager.Api.Mappings;
 using FluentValidation;
@@ -22,6 +23,7 @@ public static class ApiDependency
         services.AddValidatorsFromAssembly(typeof(ApiDependency).Assembly);
 
         services.AddScoped<IUserAppService, UserAppService>();
+        services.AddScoped<ICollectionAppService, CollectionAppService>();
 
         var jwtSettings = configuration.GetSection("Jwt");
 
@@ -53,6 +55,7 @@ public static class ApiDependency
         UpdateUserProfileEndpoint.Map(app);
         ForgotPasswordEndpoint.Map(app);
         ResetPasswordEndpoint.Map(app);
+        AddToCollectionEndpoint.Map(app);
 
         return app;
     }

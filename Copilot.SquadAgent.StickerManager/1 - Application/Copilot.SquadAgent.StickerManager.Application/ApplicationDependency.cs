@@ -1,3 +1,4 @@
+using Copilot.SquadAgent.StickerManager.Application.Services.Collection;
 using Copilot.SquadAgent.StickerManager.Application.Services.User;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using FluentValidation;
@@ -17,6 +18,7 @@ public static class ApplicationDependency
         services.AddValidatorsFromAssembly(typeof(ApplicationDependency).Assembly);
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICollectionService, CollectionService>();
 
         return services;
     }
