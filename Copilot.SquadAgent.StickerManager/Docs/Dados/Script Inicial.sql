@@ -1,7 +1,7 @@
   -- ============================================================
   -- Sticker Manager — Schema PostgreSQL
   -- ============================================================
-
+  
   CREATE TABLE users (
       id              UUID            NOT NULL DEFAULT gen_random_uuid(),
       email           VARCHAR(256)    NOT NULL,
@@ -97,3 +97,8 @@
   );
 
   CREATE INDEX ix_trade_offer_items_trade_offer_id ON trade_offer_items (trade_offer_id);
+  
+ALTER TABLE stickers RENAME COLUMN number TO code;
+ALTER TABLE stickers ALTER COLUMN code TYPE VARCHAR(32) USING code::VARCHAR;
+
+ALTER TABLE stickers ADD CONSTRAINT uq_stickers_code UNIQUE (code);

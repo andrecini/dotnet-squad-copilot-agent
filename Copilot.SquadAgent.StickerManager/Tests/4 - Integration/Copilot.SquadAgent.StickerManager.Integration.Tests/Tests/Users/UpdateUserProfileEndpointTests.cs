@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -10,6 +11,7 @@ using Xunit;
 
 namespace Copilot.SquadAgent.StickerManager.Integration.Tests.Tests.Users;
 
+[ExcludeFromCodeCoverage]
 public class UpdateUserProfileEndpointTests(IntegrationTestFixture fixture) : IClassFixture<IntegrationTestFixture>
 {
     private readonly HttpClient _client = fixture.Client;

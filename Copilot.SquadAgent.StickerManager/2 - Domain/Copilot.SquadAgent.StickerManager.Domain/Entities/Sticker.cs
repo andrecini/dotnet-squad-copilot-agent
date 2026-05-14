@@ -6,7 +6,7 @@ namespace Copilot.SquadAgent.StickerManager.Domain.Entities;
 [ExcludeFromCodeCoverage]
 public class Sticker : BaseEntity
 {
-    public int Number { get; set; }
+    public string Code { get; set; } = string.Empty;
     public string PlayerName { get; set; } = string.Empty;
     public StickerRarity Rarity { get; set; }
     public Guid TeamId { get; set; }

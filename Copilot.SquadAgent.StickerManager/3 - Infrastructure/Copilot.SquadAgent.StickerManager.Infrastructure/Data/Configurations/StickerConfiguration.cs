@@ -16,9 +16,14 @@ public class StickerConfiguration : IEntityTypeConfiguration<Sticker>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id");
 
-        builder.Property(x => x.Number)
-            .HasColumnName("number")
+        builder.Property(x => x.Code)
+            .HasColumnName("code")
+            .HasMaxLength(32)
             .IsRequired();
+
+        builder.HasIndex(x => x.Code)
+            .IsUnique()
+            .HasDatabaseName("uq_stickers_code");
 
         builder.Property(x => x.PlayerName)
             .HasColumnName("player_name")
