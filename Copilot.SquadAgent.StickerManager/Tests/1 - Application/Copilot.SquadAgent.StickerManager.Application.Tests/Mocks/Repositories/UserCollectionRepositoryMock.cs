@@ -15,6 +15,14 @@ public class UserCollectionRepositoryMock : BaseMock<IUserCollectionRepository>
         return this;
     }
 
+    public UserCollectionRepositoryMock SetupGetByIdAsync(Result<UserCollectionEntity?> returnValue)
+    {
+        _mock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
     public UserCollectionRepositoryMock SetupCreateAsync(Result<UserCollectionEntity> returnValue)
     {
         _mock.Setup(x => x.CreateAsync(It.IsAny<UserCollectionEntity>(), It.IsAny<CancellationToken>()))
@@ -31,6 +39,14 @@ public class UserCollectionRepositoryMock : BaseMock<IUserCollectionRepository>
         return this;
     }
 
+    public UserCollectionRepositoryMock SetupSoftDeleteAsync(Result returnValue)
+    {
+        _mock.Setup(x => x.SoftDeleteAsync(It.IsAny<UserCollectionEntity>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
     public UserCollectionRepositoryMock VerifyCreateAsyncCalled(Times times)
     {
         _mock.Verify(x => x.CreateAsync(It.IsAny<UserCollectionEntity>(), It.IsAny<CancellationToken>()), times);
@@ -40,6 +56,12 @@ public class UserCollectionRepositoryMock : BaseMock<IUserCollectionRepository>
     public UserCollectionRepositoryMock VerifyUpdateAsyncCalled(Times times)
     {
         _mock.Verify(x => x.UpdateAsync(It.IsAny<UserCollectionEntity>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public UserCollectionRepositoryMock VerifySoftDeleteAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.SoftDeleteAsync(It.IsAny<UserCollectionEntity>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
 }

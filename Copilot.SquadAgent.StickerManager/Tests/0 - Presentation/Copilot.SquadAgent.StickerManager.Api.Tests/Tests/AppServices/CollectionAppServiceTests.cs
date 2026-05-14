@@ -154,4 +154,111 @@ public class CollectionAppServiceTests
         // Assert
         collectionServiceMock.VerifyAddStickerAsyncCalled(Moq.Times.Once());
     }
+
+    // RemoveStickerFromCollectionAsync tests
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_Success_ReturnsNoContentAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupRemoveStickerFromCollectionAsync(Result.Success())
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.RemoveStickerFromCollectionAsync(userId, collectionId, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Microsoft.AspNetCore.Http.HttpResults.NoContent>();
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_ServiceReturnsNotFound_ReturnsProblemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupRemoveStickerFromCollectionAsync(Result.Failure(ResultCode.NotFound, "Registro de coleção não encontrado.", 404))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.RemoveStickerFromCollectionAsync(userId, collectionId, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult>();
+        var problem = (Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(404);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_ServiceReturnsForbidden_ReturnsProblemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupRemoveStickerFromCollectionAsync(Result.Failure(ResultCode.Forbidden, "Você não tem permissão para remover este registro.", 403))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.RemoveStickerFromCollectionAsync(userId, collectionId, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult>();
+        var problem = (Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(403);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_ServiceReturnsInternalError_ReturnsProblemWith500Async()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupRemoveStickerFromCollectionAsync(Result.Failure(ResultCode.InternalError, "Erro interno."))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.RemoveStickerFromCollectionAsync(userId, collectionId, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult>();
+        var problem = (Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_Success_CallsServiceOnceAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+
+        var collectionServiceMock = new CollectionServiceMock()
+            .SetupRemoveStickerFromCollectionAsync(Result.Success());
+
+        var appService = new CollectionAppService(collectionServiceMock.Build(), _mapper);
+
+        // Act
+        await appService.RemoveStickerFromCollectionAsync(userId, collectionId, CancellationToken.None);
+
+        // Assert
+        collectionServiceMock.VerifyRemoveStickerFromCollectionAsyncCalled(Moq.Times.Once());
+    }
 }

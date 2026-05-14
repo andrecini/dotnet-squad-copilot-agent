@@ -56,6 +56,7 @@ public static class ApiDependency
         ForgotPasswordEndpoint.Map(app);
         ResetPasswordEndpoint.Map(app);
         AddToCollectionEndpoint.Map(app);
+        RemoveStickerFromCollectionEndpoint.Map(app);
 
         return app;
     }

@@ -6,4 +6,5 @@ namespace Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 public interface ICollectionService
 {
     Task<ResultNs.Result<UserCollectionModel>> AddStickerAsync(AddToCollectionModel model, CancellationToken cancellationToken);
+    Task<ResultNs.Result> RemoveStickerFromCollectionAsync(RemoveStickerFromCollectionModel model, CancellationToken cancellationToken);
 }
