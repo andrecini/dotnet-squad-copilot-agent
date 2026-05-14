@@ -2,9 +2,21 @@ namespace Copilot.SquadAgent.StickerManager.Domain.Enums;
 
 public enum StickerRarity
 {
-    Common,
-    Uncommon,
-    Rare,
-    UltraRare,
-    Legend
+    Base,
+
+    CocaColaBrazil,
+    CocaColaCanada,
+    CocaColaEurope,
+    CocaColaInternational,
+    CocaColaLatinAmerica,
+    CocaColaMexico,
+    CocaColaRestOfWorld,
+    CocaColaUsaCanada,
+
+    ExtraBronze,
+    ExtraGold,
+    ExtraPurple,
+    ExtraSilver,
+
+    Foil
 }
