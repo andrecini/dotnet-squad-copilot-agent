@@ -22,4 +22,20 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         var response = mapper.Map<AddToCollectionResponse>(result.Value);
         return TypedResults.Created($"/api/v1/collection/{response.CollectionId}", response);
     }
+
+    public async Task<IResult> RemoveStickerFromCollectionAsync(Guid userId, Guid collectionId, CancellationToken cancellationToken)
+    {
+        var model = new RemoveStickerFromCollectionModel
+        {
+            CollectionId = collectionId,
+            UserId = userId
+        };
+
+        var result = await collectionService.RemoveStickerFromCollectionAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        return TypedResults.NoContent();
+    }
 }

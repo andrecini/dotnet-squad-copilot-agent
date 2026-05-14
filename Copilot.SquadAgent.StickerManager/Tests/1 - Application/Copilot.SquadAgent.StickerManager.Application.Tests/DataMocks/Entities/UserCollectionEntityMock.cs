@@ -12,6 +12,14 @@ public static class UserCollectionEntityMock
         QuantityDuplicate = 0
     };
 
+    public static UserCollectionEntity WithUserId(Guid userId) => new()
+    {
+        UserId = userId,
+        StickerId = Guid.NewGuid(),
+        QuantityOwned = 1,
+        QuantityDuplicate = 0
+    };
+
     public static UserCollectionEntity WithMaxDuplicates() => new()
     {
         UserId = Guid.NewGuid(),

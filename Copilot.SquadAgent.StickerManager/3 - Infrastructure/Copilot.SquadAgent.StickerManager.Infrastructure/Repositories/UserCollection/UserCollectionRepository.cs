@@ -11,7 +11,15 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
     public async Task<Result<UserCollectionEntity?>> GetByUserAndStickerAsync(Guid userId, Guid stickerId, CancellationToken cancellationToken)
     {
         var userCollection = await dbContext.UserCollections
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.StickerId == stickerId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.UserId == userId && x.StickerId == stickerId && x.DeletedAt == null, cancellationToken);
+
+        return Result<UserCollectionEntity?>.Success(userCollection);
+    }
+
+    public async Task<Result<UserCollectionEntity?>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var userCollection = await dbContext.UserCollections
+            .FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null, cancellationToken);
 
         return Result<UserCollectionEntity?>.Success(userCollection);
     }
@@ -30,5 +38,14 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result<UserCollectionEntity>.Success(userCollection);
+    }
+
+    public async Task<Result> SoftDeleteAsync(UserCollectionEntity userCollection, CancellationToken cancellationToken)
+    {
+        userCollection.DeletedAt = DateTime.UtcNow;
+        dbContext.UserCollections.Update(userCollection);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 }

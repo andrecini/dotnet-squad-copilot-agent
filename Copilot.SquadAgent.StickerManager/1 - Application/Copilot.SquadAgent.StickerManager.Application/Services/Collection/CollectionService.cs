@@ -14,6 +14,29 @@ public class CollectionService(
 {
     private const int MaxDuplicates = 10;
 
+    public async Task<Result> RemoveStickerFromCollectionAsync(RemoveStickerFromCollectionModel model, CancellationToken cancellationToken)
+    {
+        var getResult = await userCollectionRepository.GetByIdAsync(model.CollectionId, cancellationToken);
+
+        if (getResult.IsFailure)
+            return Result.Failure(getResult.Code, getResult.Message!, getResult.StatusCode);
+
+        var entry = getResult.Value;
+
+        if (entry is null)
+            return Result.Failure(ResultCode.NotFound, "Registro de coleção não encontrado.", 404);
+
+        if (entry.UserId != model.UserId)
+            return Result.Failure(ResultCode.Forbidden, "Você não tem permissão para remover este registro.", 403);
+
+        var deleteResult = await userCollectionRepository.SoftDeleteAsync(entry, cancellationToken);
+
+        if (deleteResult.IsFailure)
+            return Result.Failure(deleteResult.Code, deleteResult.Message!, deleteResult.StatusCode);
+
+        return Result.Success();
+    }
+
     public async Task<Result<UserCollectionModel>> AddStickerAsync(AddToCollectionModel model, CancellationToken cancellationToken)
     {
         var stickerResult = await stickerRepository.GetByIdAsync(model.StickerId, cancellationToken);

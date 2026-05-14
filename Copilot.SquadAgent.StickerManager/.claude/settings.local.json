@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(Select-String -Pattern \"\\(error|Error|FALHA|Build succeeded\\)\")",
+      "Bash(Select-Object -First 30)",
+      "Bash(dotnet test *)",
+      "Read(//c/projects/dotnet-squad-copilot-agent/**)",
+      "Bash(gh issue *)",
+      "Skill(write-commit)"
+    ]
+  }
+}

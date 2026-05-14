@@ -264,4 +264,151 @@ public class CollectionServiceTests
         // Assert
         userCollectionRepositoryMock.VerifyCreateAsyncCalled(Times.Never());
     }
+
+    // RemoveStickerFromCollectionAsync tests
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_ValidOwner_ReturnsSuccessAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var model = RemoveStickerFromCollectionModelMock.Valid(userId: userId);
+        var entry = UserCollectionEntityMock.WithUserId(userId);
+
+        var stickerRepository = new StickerRepositoryMock().Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock()
+            .SetupGetByIdAsync(Result<UserCollectionEntity?>.Success(entry))
+            .SetupSoftDeleteAsync(Result.Success())
+            .Build();
+
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.RemoveStickerFromCollectionAsync(model, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_EntryNotFound_ReturnsNotFoundAsync()
+    {
+        // Arrange
+        var model = RemoveStickerFromCollectionModelMock.Valid();
+
+        var stickerRepository = new StickerRepositoryMock().Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock()
+            .SetupGetByIdAsync(Result<UserCollectionEntity?>.Success(null))
+            .Build();
+
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.RemoveStickerFromCollectionAsync(model, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Code.ShouldBe(ResultCode.NotFound);
+        result.StatusCode.ShouldBe(404);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_DifferentOwner_ReturnsForbiddenAsync()
+    {
+        // Arrange
+        var requestingUserId = Guid.NewGuid();
+        var ownerUserId = Guid.NewGuid();
+        var model = RemoveStickerFromCollectionModelMock.Valid(userId: requestingUserId);
+        var entry = UserCollectionEntityMock.WithUserId(ownerUserId);
+
+        var stickerRepository = new StickerRepositoryMock().Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock()
+            .SetupGetByIdAsync(Result<UserCollectionEntity?>.Success(entry))
+            .Build();
+
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.RemoveStickerFromCollectionAsync(model, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Code.ShouldBe(ResultCode.Forbidden);
+        result.StatusCode.ShouldBe(403);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_GetByIdFails_PropagatesFailureAsync()
+    {
+        // Arrange
+        var model = RemoveStickerFromCollectionModelMock.Valid();
+
+        var stickerRepository = new StickerRepositoryMock().Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock()
+            .SetupGetByIdAsync(Result<UserCollectionEntity?>.Failure(ResultCode.InternalError, "Erro de banco.", 500))
+            .Build();
+
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.RemoveStickerFromCollectionAsync(model, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Code.ShouldBe(ResultCode.InternalError);
+        result.StatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_SoftDeleteFails_PropagatesFailureAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var model = RemoveStickerFromCollectionModelMock.Valid(userId: userId);
+        var entry = UserCollectionEntityMock.WithUserId(userId);
+
+        var stickerRepository = new StickerRepositoryMock().Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock()
+            .SetupGetByIdAsync(Result<UserCollectionEntity?>.Success(entry))
+            .SetupSoftDeleteAsync(Result.Failure(ResultCode.InternalError, "Erro ao deletar.", 500))
+            .Build();
+
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.RemoveStickerFromCollectionAsync(model, CancellationToken.None);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Code.ShouldBe(ResultCode.InternalError);
+        result.StatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task RemoveStickerFromCollectionAsync_ValidOwner_CallsSoftDeleteOnceAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var model = RemoveStickerFromCollectionModelMock.Valid(userId: userId);
+        var entry = UserCollectionEntityMock.WithUserId(userId);
+
+        var stickerRepository = new StickerRepositoryMock().Build();
+
+        var userCollectionRepositoryMock = new UserCollectionRepositoryMock()
+            .SetupGetByIdAsync(Result<UserCollectionEntity?>.Success(entry))
+            .SetupSoftDeleteAsync(Result.Success());
+
+        var service = new CollectionService(stickerRepository, userCollectionRepositoryMock.Build(), _mapper);
+
+        // Act
+        await service.RemoveStickerFromCollectionAsync(model, CancellationToken.None);
+
+        // Assert
+        userCollectionRepositoryMock.VerifySoftDeleteAsyncCalled(Times.Once());
+    }
 }
