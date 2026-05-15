@@ -7,7 +7,10 @@
       "Bash(dotnet test *)",
       "Read(//c/projects/dotnet-squad-copilot-agent/**)",
       "Bash(gh issue *)",
-      "Skill(write-commit)"
+      "Skill(write-commit)",
+      "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\" -Recurse -Depth 3 -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(Head -60)"
     ]
   }
 }

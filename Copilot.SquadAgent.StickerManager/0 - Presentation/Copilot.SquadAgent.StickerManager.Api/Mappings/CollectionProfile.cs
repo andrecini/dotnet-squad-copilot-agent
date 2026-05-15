@@ -15,5 +15,8 @@ public class CollectionProfile : Profile
 
         CreateMap<UserCollectionModel, AddToCollectionResponse>()
             .ForMember(dest => dest.CollectionId, opt => opt.MapFrom(src => src.Id));
+
+        CreateMap<UserCollectionModel, ToggleDuplicateResponse>()
+            .ForMember(dest => dest.CollectionId, opt => opt.MapFrom(src => src.Id));
     }
 }

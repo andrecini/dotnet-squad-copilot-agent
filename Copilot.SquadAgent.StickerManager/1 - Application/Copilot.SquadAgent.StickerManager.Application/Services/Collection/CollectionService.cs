@@ -1,5 +1,6 @@
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
+using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
@@ -84,5 +85,51 @@ public class CollectionService(
             return Result<UserCollectionModel>.Failure(createResult.Code, createResult.Message!, createResult.StatusCode);
 
         return Result<UserCollectionModel>.Success(mapper.Map<UserCollectionModel>(createResult.Value));
+    }
+
+    public async Task<Result<UserCollectionModel>> ToggleDuplicateAsync(ToggleDuplicateModel model, CancellationToken cancellationToken)
+    {
+        var getResult = await userCollectionRepository.GetByIdAsync(model.CollectionId, cancellationToken);
+
+        if (getResult.IsFailure)
+            return Result<UserCollectionModel>.Failure(getResult.Code, getResult.Message!, getResult.StatusCode);
+
+        var entry = getResult.Value;
+
+        if (entry is null)
+            return Result<UserCollectionModel>.Failure(ResultCode.NotFound, "Registro de coleção não encontrado.", 404);
+
+        if (entry.UserId != model.UserId)
+            return Result<UserCollectionModel>.Failure(ResultCode.Forbidden, "Você não tem permissão para alterar este registro.", 403);
+
+        if (model.Action == DuplicateAction.Mark)
+        {
+            if (entry.QuantityOwned <= 0)
+                return Result<UserCollectionModel>.Failure(
+                    ResultCode.BusinessError,
+                    "Não há figurinhas disponíveis para marcar como duplicata.",
+                    statusCode: 422);
+
+            entry.QuantityOwned--;
+            entry.QuantityDuplicate++;
+        }
+        else
+        {
+            if (entry.QuantityDuplicate <= 0)
+                return Result<UserCollectionModel>.Failure(
+                    ResultCode.BusinessError,
+                    "Não há duplicatas disponíveis para desmarcar.",
+                    statusCode: 422);
+
+            entry.QuantityDuplicate--;
+            entry.QuantityOwned++;
+        }
+
+        var updateResult = await userCollectionRepository.UpdateAsync(entry, cancellationToken);
+
+        if (updateResult.IsFailure)
+            return Result<UserCollectionModel>.Failure(updateResult.Code, updateResult.Message!, updateResult.StatusCode);
+
+        return Result<UserCollectionModel>.Success(mapper.Map<UserCollectionModel>(updateResult.Value));
     }
 }

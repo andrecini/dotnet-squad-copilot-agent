@@ -38,4 +38,22 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
 
         return TypedResults.NoContent();
     }
+
+    public async Task<IResult> ToggleDuplicateAsync(Guid userId, Guid collectionId, ToggleDuplicateRequest request, CancellationToken cancellationToken)
+    {
+        var model = new ToggleDuplicateModel
+        {
+            CollectionId = collectionId,
+            UserId = userId,
+            Action = request.Action
+        };
+
+        var result = await collectionService.ToggleDuplicateAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<ToggleDuplicateResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
 }
