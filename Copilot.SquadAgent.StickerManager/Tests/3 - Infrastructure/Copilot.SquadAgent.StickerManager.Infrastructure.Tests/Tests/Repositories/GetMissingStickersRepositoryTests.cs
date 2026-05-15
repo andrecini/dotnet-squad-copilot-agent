@@ -309,7 +309,7 @@ public class GetMissingStickersRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new StickerRepository(dbContext);
-        var filter = new MissingStickersModel { UserId = userId };
+        var filter = new MissingStickersModel { UserId = userId, Page = 1, Limit = 100 };
 
         // Act
         var result = await repository.ListMissingByUserAsync(filter, CancellationToken.None);
@@ -324,5 +324,116 @@ public class GetMissingStickersRepositoryTests
         item.TeamName.ShouldBe("Brasil");
         item.TeamCode.ShouldBe("BRA");
         item.Rarity.ShouldBe(StickerRarity.Foil);
+    }
+
+    [Fact]
+    public async Task ListMissingByUserAsync_WithPaginationLimit1_ReturnsOnlyOneItemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var team = TeamEntityMock.Valid();
+        var sticker1 = new Domain.Entities.Sticker
+        {
+            Code = "BRA001",
+            PlayerName = "Neymar Jr",
+            Rarity = StickerRarity.Base,
+            TeamId = team.Id
+        };
+        var sticker2 = new Domain.Entities.Sticker
+        {
+            Code = "BRA002",
+            PlayerName = "Vinicius Jr",
+            Rarity = StickerRarity.Foil,
+            TeamId = team.Id
+        };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddAsync(team);
+        await dbContext.Stickers.AddRangeAsync(sticker1, sticker2);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var filter = new MissingStickersModel { UserId = userId, Page = 1, Limit = 1 };
+
+        // Act
+        var result = await repository.ListMissingByUserAsync(filter, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task ListMissingByUserAsync_WithPage2Limit1_ReturnsSecondItemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var team = TeamEntityMock.Valid();
+        var stickerA = new Domain.Entities.Sticker
+        {
+            Code = "BRA001",
+            PlayerName = "Alisson",
+            Rarity = StickerRarity.Base,
+            TeamId = team.Id
+        };
+        var stickerB = new Domain.Entities.Sticker
+        {
+            Code = "BRA002",
+            PlayerName = "Casemiro",
+            Rarity = StickerRarity.Base,
+            TeamId = team.Id
+        };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddAsync(team);
+        await dbContext.Stickers.AddRangeAsync(stickerA, stickerB);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var filterPage1 = new MissingStickersModel { UserId = userId, Sort = "number", Page = 1, Limit = 1 };
+        var filterPage2 = new MissingStickersModel { UserId = userId, Sort = "number", Page = 2, Limit = 1 };
+
+        // Act
+        var resultPage1 = await repository.ListMissingByUserAsync(filterPage1, CancellationToken.None);
+        var resultPage2 = await repository.ListMissingByUserAsync(filterPage2, CancellationToken.None);
+
+        // Assert
+        resultPage1.IsSuccess.ShouldBeTrue();
+        resultPage1.Value!.Count.ShouldBe(1);
+        resultPage1.Value[0].Code.ShouldBe("BRA001");
+
+        resultPage2.IsSuccess.ShouldBeTrue();
+        resultPage2.Value!.Count.ShouldBe(1);
+        resultPage2.Value[0].Code.ShouldBe("BRA002");
+    }
+
+    [Fact]
+    public async Task ListMissingByUserAsync_PageBeyondLastPage_ReturnsEmptyListAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var team = TeamEntityMock.Valid();
+        var sticker = new Domain.Entities.Sticker
+        {
+            Code = "BRA001",
+            PlayerName = "Neymar Jr",
+            Rarity = StickerRarity.Base,
+            TeamId = team.Id
+        };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddAsync(team);
+        await dbContext.Stickers.AddAsync(sticker);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var filter = new MissingStickersModel { UserId = userId, Page = 99, Limit = 100 };
+
+        // Act
+        var result = await repository.ListMissingByUserAsync(filter, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Count.ShouldBe(0);
     }
 }

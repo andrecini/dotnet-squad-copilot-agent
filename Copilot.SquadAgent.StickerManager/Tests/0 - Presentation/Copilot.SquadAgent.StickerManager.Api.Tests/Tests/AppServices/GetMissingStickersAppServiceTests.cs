@@ -3,6 +3,7 @@ using Copilot.SquadAgent.StickerManager.Api.AppServices;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
 using Copilot.SquadAgent.StickerManager.Api.Mappings;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Models;
+using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Requests;
 using Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
@@ -31,6 +32,7 @@ public class GetMissingStickersAppServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.Valid();
         var items = MissingStickerItemModelMock.List(5);
 
         var collectionService = new CollectionServiceMock()
@@ -40,7 +42,7 @@ public class GetMissingStickersAppServiceTests
         var appService = new CollectionAppService(collectionService, _mapper);
 
         // Act
-        var result = await appService.ListMissingStickersAsync(userId, null, CancellationToken.None);
+        var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
         result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
@@ -54,6 +56,7 @@ public class GetMissingStickersAppServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.Valid();
         var items = MissingStickerItemModelMock.List(0);
 
         var collectionService = new CollectionServiceMock()
@@ -63,7 +66,7 @@ public class GetMissingStickersAppServiceTests
         var appService = new CollectionAppService(collectionService, _mapper);
 
         // Act
-        var result = await appService.ListMissingStickersAsync(userId, null, CancellationToken.None);
+        var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
         result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
@@ -76,6 +79,7 @@ public class GetMissingStickersAppServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.WithSort("team");
         var items = MissingStickerItemModelMock.List(3);
 
         var collectionService = new CollectionServiceMock()
@@ -85,7 +89,7 @@ public class GetMissingStickersAppServiceTests
         var appService = new CollectionAppService(collectionService, _mapper);
 
         // Act
-        var result = await appService.ListMissingStickersAsync(userId, "team", CancellationToken.None);
+        var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
         result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
@@ -94,10 +98,34 @@ public class GetMissingStickersAppServiceTests
     }
 
     [Fact]
+    public async Task ListMissingStickersAsync_WithPagination_ReturnsOkAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.WithPagination(page: 2, limit: 10);
+        var items = MissingStickerItemModelMock.List(10);
+
+        var collectionService = new CollectionServiceMock()
+            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
+        var ok = (Ok<IReadOnlyList<MissingStickerItemResponse>>)result;
+        ok.Value!.Count.ShouldBe(10);
+    }
+
+    [Fact]
     public async Task ListMissingStickersAsync_ServiceReturnsFailure_ReturnsProblemWith500Async()
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.Valid();
 
         var collectionService = new CollectionServiceMock()
             .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Failure(ResultCode.InternalError, "Erro interno.", 500))
@@ -106,7 +134,7 @@ public class GetMissingStickersAppServiceTests
         var appService = new CollectionAppService(collectionService, _mapper);
 
         // Act
-        var result = await appService.ListMissingStickersAsync(userId, null, CancellationToken.None);
+        var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
         result.ShouldBeOfType<ProblemHttpResult>();
@@ -119,6 +147,7 @@ public class GetMissingStickersAppServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.Valid();
         var items = new List<MissingStickerItemModel>
         {
             new()
@@ -139,7 +168,7 @@ public class GetMissingStickersAppServiceTests
         var appService = new CollectionAppService(collectionService, _mapper);
 
         // Act
-        var result = await appService.ListMissingStickersAsync(userId, null, CancellationToken.None);
+        var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
         result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
@@ -157,6 +186,7 @@ public class GetMissingStickersAppServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var query = MissingStickersQueryRequestMock.Valid();
         var items = MissingStickerItemModelMock.List(2);
 
         var collectionServiceMock = new CollectionServiceMock()
@@ -165,7 +195,7 @@ public class GetMissingStickersAppServiceTests
         var appService = new CollectionAppService(collectionServiceMock.Build(), _mapper);
 
         // Act
-        await appService.ListMissingStickersAsync(userId, null, CancellationToken.None);
+        await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
         collectionServiceMock.VerifyListMissingStickersAsyncCalled(Times.Once());

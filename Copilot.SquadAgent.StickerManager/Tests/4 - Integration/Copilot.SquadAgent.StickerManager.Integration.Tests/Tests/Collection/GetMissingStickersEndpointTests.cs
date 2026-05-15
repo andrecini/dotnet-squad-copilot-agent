@@ -67,7 +67,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -89,7 +89,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         await _client.PostAsJsonAsync("/api/v1/collection", new { sticker_id = stickerId });
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -109,7 +109,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?sort=rarity");
+        var response = await _client.GetAsync("/api/v1/collection/missing?sort=rarity&page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -128,7 +128,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?sort=team");
+        var response = await _client.GetAsync("/api/v1/collection/missing?sort=team&page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -147,12 +147,63 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?sort=number");
+        var response = await _client.GetAsync("/api/v1/collection/missing?sort=number&page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var body = await response.Content.ReadFromJsonAsync<List<MissingStickerItemResponse>>(JsonOptions);
         body.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task GetMissingStickersAsync_WithPaginationLimit1_ReturnsAtMostOneItemAsync()
+    {
+        // Arrange
+        await SeedStickerAsync("Paqueta");
+        await SeedStickerAsync("Fred");
+
+        var email = $"missing_page_limit_{Guid.NewGuid():N}@test.com";
+        var token = await AuthHelper.GetTokenAsync(_client, email);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=1");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var body = await response.Content.ReadFromJsonAsync<List<MissingStickerItemResponse>>(JsonOptions);
+        body.ShouldNotBeNull();
+        body.Count.ShouldBeLessThanOrEqualTo(1);
+    }
+
+    [Fact]
+    public async Task GetMissingStickersAsync_WithInvalidPage_ReturnsBadRequestAsync()
+    {
+        // Arrange
+        var email = $"missing_invalid_page_{Guid.NewGuid():N}@test.com";
+        var token = await AuthHelper.GetTokenAsync(_client, email);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=0&limit=100");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task GetMissingStickersAsync_WithInvalidLimit_ReturnsBadRequestAsync()
+    {
+        // Arrange
+        var email = $"missing_invalid_limit_{Guid.NewGuid():N}@test.com";
+        var token = await AuthHelper.GetTokenAsync(_client, email);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=501");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -162,7 +213,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = null;
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
@@ -179,7 +230,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

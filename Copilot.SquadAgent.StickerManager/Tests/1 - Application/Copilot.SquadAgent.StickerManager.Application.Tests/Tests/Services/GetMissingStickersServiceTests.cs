@@ -143,6 +143,30 @@ public class GetMissingStickersServiceTests
     }
 
     [Fact]
+    public async Task ListMissingStickersAsync_WithPagination_ReturnsSuccessAsync()
+    {
+        // Arrange
+        var model = MissingStickersModelMock.WithPagination(page: 2, limit: 10);
+        var items = MissingStickerItemModelMock.List(10);
+
+        var stickerRepository = new StickerRepositoryMock()
+            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock().Build();
+
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.ListMissingStickersAsync(model, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBeNull();
+        result.Value!.Count.ShouldBe(10);
+    }
+
+    [Fact]
     public async Task ListMissingStickersAsync_ValidModel_CallsRepositoryOnceAsync()
     {
         // Arrange

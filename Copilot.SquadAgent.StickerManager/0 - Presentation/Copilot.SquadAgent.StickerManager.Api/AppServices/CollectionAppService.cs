@@ -72,13 +72,10 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         return TypedResults.Ok(response);
     }
 
-    public async Task<IResult> ListMissingStickersAsync(Guid userId, string? sort, CancellationToken cancellationToken)
+    public async Task<IResult> ListMissingStickersAsync(Guid userId, MissingStickersQueryRequest query, CancellationToken cancellationToken)
     {
-        var model = new MissingStickersModel
-        {
-            UserId = userId,
-            Sort = sort
-        };
+        var model = mapper.Map<MissingStickersModel>(query);
+        model.UserId = userId;
 
         var result = await collectionService.ListMissingStickersAsync(model, cancellationToken);
 

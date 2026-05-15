@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using Copilot.SquadAgent.StickerManager.Api.Filters;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 
@@ -10,7 +12,7 @@ public static class GetMissingStickersEndpoint
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapGet("/api/v1/collection/missing", async (
-            string? sort,
+            [AsParameters] MissingStickersQueryRequest query,
             ClaimsPrincipal principal,
             ICollectionAppService appService,
             CancellationToken cancellationToken) =>
@@ -21,10 +23,11 @@ public static class GetMissingStickersEndpoint
             if (!Guid.TryParse(userIdClaim, out var userId))
                 return Results.Unauthorized();
 
-            return await appService.ListMissingStickersAsync(userId, sort, cancellationToken);
+            return await appService.ListMissingStickersAsync(userId, query, cancellationToken);
         })
+        .AddEndpointFilter<ValidationFilter<MissingStickersQueryRequest>>()
         .WithName("GetMissingStickers")
-        .WithSummary("Lista todas as figurinhas que o usuário autenticado ainda não possui")
+        .WithSummary("Lista todas as figurinhas que o usuário autenticado ainda não possui, com paginação")
         .WithTags("Collection")
         .RequireAuthorization()
         .WithOpenApi();

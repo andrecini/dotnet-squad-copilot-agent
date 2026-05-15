@@ -1,11 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
+namespace Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 
 [ExcludeFromCodeCoverage]
-public class MissingStickersModel
+public class MissingStickersQueryRequest
 {
-    public Guid UserId { get; set; }
     public string? Sort { get; set; }
     public int Page { get; set; } = 1;
     public int Limit { get; set; } = 100;
