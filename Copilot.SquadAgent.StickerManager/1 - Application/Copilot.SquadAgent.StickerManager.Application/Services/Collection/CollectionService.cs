@@ -104,13 +104,12 @@ public class CollectionService(
 
         if (model.Action == DuplicateAction.Mark)
         {
-            if (entry.QuantityOwned <= 0)
+            if (entry.QuantityDuplicate >= entry.QuantityOwned)
                 return Result<UserCollectionModel>.Failure(
                     ResultCode.BusinessError,
-                    "Não há figurinhas disponíveis para marcar como duplicata.",
+                    "Todas as figurinhas já estão marcadas como duplicata.",
                     statusCode: 422);
 
-            entry.QuantityOwned--;
             entry.QuantityDuplicate++;
         }
         else
@@ -118,11 +117,10 @@ public class CollectionService(
             if (entry.QuantityDuplicate <= 0)
                 return Result<UserCollectionModel>.Failure(
                     ResultCode.BusinessError,
-                    "Não há duplicatas disponíveis para desmarcar.",
+                    "Não há duplicatas para desmarcar.",
                     statusCode: 422);
 
             entry.QuantityDuplicate--;
-            entry.QuantityOwned++;
         }
 
         var updateResult = await userCollectionRepository.UpdateAsync(entry, cancellationToken);

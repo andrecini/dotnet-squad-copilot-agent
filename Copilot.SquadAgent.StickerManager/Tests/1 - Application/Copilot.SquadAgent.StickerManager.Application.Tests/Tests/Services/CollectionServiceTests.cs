@@ -416,7 +416,7 @@ public class CollectionServiceTests
     // ToggleDuplicateAsync tests
 
     [Fact]
-    public async Task ToggleDuplicateAsync_MarkAction_MovesOwnerToDuplicateAsync()
+    public async Task ToggleDuplicateAsync_MarkAction_IncrementsDuplicateKeepsOwnedUnchangedAsync()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -425,7 +425,7 @@ public class CollectionServiceTests
         entry.QuantityOwned = 3;
         entry.QuantityDuplicate = 1;
         var updatedEntry = UserCollectionEntityMock.WithUserId(userId);
-        updatedEntry.QuantityOwned = 2;
+        updatedEntry.QuantityOwned = 3;
         updatedEntry.QuantityDuplicate = 2;
 
         var stickerRepository = new StickerRepositoryMock().Build();
@@ -443,18 +443,18 @@ public class CollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.QuantityOwned.ShouldBe(2);
+        result.Value!.QuantityOwned.ShouldBe(3);
         result.Value.QuantityDuplicate.ShouldBe(2);
     }
 
     [Fact]
-    public async Task ToggleDuplicateAsync_UnmarkAction_MovesDuplicateToOwnerAsync()
+    public async Task ToggleDuplicateAsync_UnmarkAction_DecrementsDuplicateKeepsOwnedUnchangedAsync()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var model = ToggleDuplicateModelMock.WithUnmarkAction(userId: userId);
         var entry = UserCollectionEntityMock.WithUserId(userId);
-        entry.QuantityOwned = 2;
+        entry.QuantityOwned = 3;
         entry.QuantityDuplicate = 2;
         var updatedEntry = UserCollectionEntityMock.WithUserId(userId);
         updatedEntry.QuantityOwned = 3;
@@ -529,13 +529,13 @@ public class CollectionServiceTests
     }
 
     [Fact]
-    public async Task ToggleDuplicateAsync_MarkWithNoOwned_ReturnsBusinessErrorAsync()
+    public async Task ToggleDuplicateAsync_MarkWhenAllAlreadyDuplicated_ReturnsBusinessErrorAsync()
     {
-        // Arrange
+        // Arrange — todas as figurinhas já estão marcadas como duplicata (duplicate == owned)
         var userId = Guid.NewGuid();
         var model = ToggleDuplicateModelMock.Valid(userId: userId);
         var entry = UserCollectionEntityMock.WithUserId(userId);
-        entry.QuantityOwned = 0;
+        entry.QuantityOwned = 3;
         entry.QuantityDuplicate = 3;
 
         var stickerRepository = new StickerRepositoryMock().Build();

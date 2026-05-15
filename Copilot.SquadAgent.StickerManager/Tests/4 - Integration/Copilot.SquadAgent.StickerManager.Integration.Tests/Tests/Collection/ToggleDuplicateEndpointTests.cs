@@ -59,7 +59,7 @@ public class ToggleDuplicateEndpointTests(IntegrationTestFixture fixture) : ICla
     }
 
     [Fact]
-    public async Task ToggleDuplicateAsync_MarkAction_DecreasesOwnedAndIncreasesDuplicateAsync()
+    public async Task ToggleDuplicateAsync_MarkAction_KeepsOwnedAndIncreasesDuplicateAsync()
     {
         // Arrange
         var stickerId = await SeedStickerAsync();
@@ -77,16 +77,16 @@ public class ToggleDuplicateEndpointTests(IntegrationTestFixture fixture) : ICla
         // Act
         var response = await _client.PatchAsJsonAsync($"/api/v1/collection/{collectionId}/duplicate", request);
 
-        // Assert
+        // Assert — QuantityOwned permanece 2; QuantityDuplicate incrementa de 1 para 2
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var body = await response.Content.ReadFromJsonAsync<ToggleDuplicateResponse>();
         body.ShouldNotBeNull();
-        body!.QuantityOwned.ShouldBe(1);
+        body!.QuantityOwned.ShouldBe(2);
         body.QuantityDuplicate.ShouldBe(2);
     }
 
     [Fact]
-    public async Task ToggleDuplicateAsync_UnmarkAction_DecreasesDuplicateAndIncreasesOwnedAsync()
+    public async Task ToggleDuplicateAsync_UnmarkAction_KeepsOwnedAndDecreasesDuplicateAsync()
     {
         // Arrange
         var stickerId = await SeedStickerAsync();
@@ -99,7 +99,7 @@ public class ToggleDuplicateEndpointTests(IntegrationTestFixture fixture) : ICla
         await _client.PostAsJsonAsync("/api/v1/collection", AddToCollectionRequestMock.Valid(stickerId));
         var collectionId = await AddStickerToCollectionAsync(stickerId);
 
-        // Primeiro marca como duplicata: QuantityOwned=1, QuantityDuplicate=2
+        // Marca como duplicata: QuantityOwned=2 (inalterado), QuantityDuplicate=2
         await _client.PatchAsJsonAsync($"/api/v1/collection/{collectionId}/duplicate", ToggleDuplicateRequestMock.Mark());
 
         var request = ToggleDuplicateRequestMock.Unmark();
@@ -107,7 +107,7 @@ public class ToggleDuplicateEndpointTests(IntegrationTestFixture fixture) : ICla
         // Act
         var response = await _client.PatchAsJsonAsync($"/api/v1/collection/{collectionId}/duplicate", request);
 
-        // Assert
+        // Assert — QuantityOwned permanece 2; QuantityDuplicate decrementa de 2 para 1
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var body = await response.Content.ReadFromJsonAsync<ToggleDuplicateResponse>();
         body.ShouldNotBeNull();
