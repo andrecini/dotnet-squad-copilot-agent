@@ -7,6 +7,7 @@ using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 
 namespace Copilot.SquadAgent.StickerManager.Api.AppServices;
 
+
 public class CollectionAppService(ICollectionService collectionService, IMapper mapper) : ICollectionAppService
 {
     public async Task<IResult> AddStickerAsync(Guid userId, AddToCollectionRequest request, CancellationToken cancellationToken)
@@ -54,6 +55,20 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
             return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
 
         var response = mapper.Map<ToggleDuplicateResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
+
+    public async Task<IResult> ListCollectionAsync(Guid userId, CollectionQueryRequest query, CancellationToken cancellationToken)
+    {
+        var model = mapper.Map<ListCollectionModel>(query);
+        model.UserId = userId;
+
+        var result = await collectionService.ListCollectionAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<IReadOnlyList<CollectionItemResponse>>(result.Value);
         return TypedResults.Ok(response);
     }
 }

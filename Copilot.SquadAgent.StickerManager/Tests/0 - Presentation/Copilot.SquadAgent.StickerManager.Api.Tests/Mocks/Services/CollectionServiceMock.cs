@@ -3,6 +3,7 @@ using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
 
+
 namespace Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
 
 public class CollectionServiceMock : BaseMock<ICollectionService>
@@ -46,6 +47,20 @@ public class CollectionServiceMock : BaseMock<ICollectionService>
     public CollectionServiceMock VerifyToggleDuplicateAsyncCalled(Times times)
     {
         _mock.Verify(x => x.ToggleDuplicateAsync(It.IsAny<ToggleDuplicateModel>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public CollectionServiceMock SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>> returnValue)
+    {
+        _mock.Setup(x => x.ListCollectionAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public CollectionServiceMock VerifyListCollectionAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.ListCollectionAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
 }

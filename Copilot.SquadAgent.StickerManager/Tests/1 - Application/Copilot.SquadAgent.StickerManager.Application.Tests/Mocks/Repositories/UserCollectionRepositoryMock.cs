@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
+using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
 using UserCollectionEntity = Copilot.SquadAgent.StickerManager.Domain.Entities.UserCollection;
@@ -62,6 +63,20 @@ public class UserCollectionRepositoryMock : BaseMock<IUserCollectionRepository>
     public UserCollectionRepositoryMock VerifySoftDeleteAsyncCalled(Times times)
     {
         _mock.Verify(x => x.SoftDeleteAsync(It.IsAny<UserCollectionEntity>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public UserCollectionRepositoryMock SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>> returnValue)
+    {
+        _mock.Setup(x => x.ListByUserAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserCollectionRepositoryMock VerifyListByUserAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.ListByUserAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
 }
