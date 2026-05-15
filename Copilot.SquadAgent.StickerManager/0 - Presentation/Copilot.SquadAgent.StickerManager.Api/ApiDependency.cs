@@ -59,6 +59,7 @@ public static class ApiDependency
         RemoveStickerFromCollectionEndpoint.Map(app);
         ToggleDuplicateEndpoint.Map(app);
         ListCollectionEndpoint.Map(app);
+        GetMissingStickersEndpoint.Map(app);
 
         return app;
     }

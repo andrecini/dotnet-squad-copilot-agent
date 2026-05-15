@@ -140,4 +140,14 @@ public class CollectionService(
 
         return Result<IReadOnlyList<CollectionItemModel>>.Success(result.Value!);
     }
+
+    public async Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingStickersAsync(MissingStickersModel model, CancellationToken cancellationToken)
+    {
+        var result = await stickerRepository.ListMissingByUserAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<IReadOnlyList<MissingStickerItemModel>>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<IReadOnlyList<MissingStickerItemModel>>.Success(result.Value!);
+    }
 }
