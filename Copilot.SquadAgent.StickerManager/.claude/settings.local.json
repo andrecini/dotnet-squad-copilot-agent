@@ -10,7 +10,8 @@
       "Skill(write-commit)",
       "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\" -Recurse -Depth 3 -Directory)",
       "Bash(Select-Object FullName)",
-      "Bash(Head -60)"
+      "Bash(Head -60)",
+      "Bash(git *)"
     ]
   }
 }
