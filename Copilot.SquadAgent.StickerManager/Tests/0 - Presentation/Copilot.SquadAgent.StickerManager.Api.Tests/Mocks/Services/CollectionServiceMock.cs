@@ -77,4 +77,18 @@ public class CollectionServiceMock : BaseMock<ICollectionService>
         _mock.Verify(x => x.ListMissingStickersAsync(It.IsAny<MissingStickersModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
+
+    public CollectionServiceMock SetupGetCollectionStatsAsync(Result<CollectionStatsModel> returnValue)
+    {
+        _mock.Setup(x => x.GetCollectionStatsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public CollectionServiceMock VerifyGetCollectionStatsAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetCollectionStatsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
 }

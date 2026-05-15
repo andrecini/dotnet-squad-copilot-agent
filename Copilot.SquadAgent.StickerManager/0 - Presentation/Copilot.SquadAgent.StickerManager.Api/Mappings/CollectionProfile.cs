@@ -28,5 +28,10 @@ public class CollectionProfile : Profile
 
         CreateMap<MissingStickerItemModel, MissingStickerItemResponse>()
             .ForMember(dest => dest.Team, opt => opt.MapFrom(src => src.TeamName));
+
+        CreateMap<TeamStatsModel, TeamStatsResponse>()
+            .ForMember(dest => dest.Team, opt => opt.MapFrom(src => src.TeamName));
+
+        CreateMap<CollectionStatsModel, CollectionStatsResponse>();
     }
 }

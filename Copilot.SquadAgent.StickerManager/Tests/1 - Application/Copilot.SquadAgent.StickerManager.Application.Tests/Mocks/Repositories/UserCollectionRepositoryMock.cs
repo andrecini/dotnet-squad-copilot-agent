@@ -79,4 +79,18 @@ public class UserCollectionRepositoryMock : BaseMock<IUserCollectionRepository>
         _mock.Verify(x => x.ListByUserAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
+
+    public UserCollectionRepositoryMock SetupGetStatsAsync(Result<CollectionStatsModel> returnValue)
+    {
+        _mock.Setup(x => x.GetStatsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public UserCollectionRepositoryMock VerifyGetStatsAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetStatsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
 }

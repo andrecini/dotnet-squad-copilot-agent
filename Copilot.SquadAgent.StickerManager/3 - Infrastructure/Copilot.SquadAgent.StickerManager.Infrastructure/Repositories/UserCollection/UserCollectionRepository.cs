@@ -90,4 +90,52 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
 
         return Result<IReadOnlyList<CollectionItemModel>>.Success(items);
     }
+
+    public async Task<Result<CollectionStatsModel>> GetStatsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var totalStickers = await dbContext.Stickers
+            .AsNoTracking()
+            .CountAsync(cancellationToken);
+
+        var userCollections = await dbContext.UserCollections
+            .AsNoTracking()
+            .Where(uc => uc.UserId == userId && uc.DeletedAt == null)
+            .Include(uc => uc.Sticker)
+                .ThenInclude(s => s.Team)
+            .ToListAsync(cancellationToken);
+
+        var totalOwned = userCollections.Count;
+        var duplicates = userCollections.Sum(uc => uc.QuantityDuplicate);
+        var totalMissing = totalStickers - totalOwned;
+        var completionPercentage = totalStickers > 0
+            ? Math.Round((double)totalOwned / totalStickers * 100, 1)
+            : 0;
+
+        var byTeam = userCollections
+            .GroupBy(uc => uc.Sticker.Team)
+            .Select(g => new TeamStatsModel
+            {
+                TeamId   = g.Key.Id,
+                TeamName = g.Key.Name,
+                TeamCode = g.Key.Code,
+                Owned    = g.Count(),
+                Total    = dbContext.Stickers.Count(s => s.TeamId == g.Key.Id),
+                CompletionPercentage = dbContext.Stickers.Count(s => s.TeamId == g.Key.Id) > 0
+                    ? Math.Round((double)g.Count() / dbContext.Stickers.Count(s => s.TeamId == g.Key.Id) * 100, 1)
+                    : 0
+            })
+            .ToList();
+
+        var stats = new CollectionStatsModel
+        {
+            TotalOwned            = totalOwned,
+            TotalMissing          = totalMissing < 0 ? 0 : totalMissing,
+            TotalStickers         = totalStickers,
+            CompletionPercentage  = completionPercentage,
+            Duplicates            = duplicates,
+            ByTeam                = byTeam
+        };
+
+        return Result<CollectionStatsModel>.Success(stats);
+    }
 }

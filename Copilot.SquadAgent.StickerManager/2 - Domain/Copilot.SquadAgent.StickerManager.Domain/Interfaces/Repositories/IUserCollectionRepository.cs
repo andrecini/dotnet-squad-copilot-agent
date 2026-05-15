@@ -12,4 +12,5 @@ public interface IUserCollectionRepository
     Task<ResultNs.Result<UserCollection>> UpdateAsync(UserCollection userCollection, CancellationToken cancellationToken);
     Task<ResultNs.Result> SoftDeleteAsync(UserCollection userCollection, CancellationToken cancellationToken);
     Task<ResultNs.Result<IReadOnlyList<CollectionItemModel>>> ListByUserAsync(ListCollectionModel filter, CancellationToken cancellationToken);
+    Task<ResultNs.Result<CollectionStatsModel>> GetStatsAsync(Guid userId, CancellationToken cancellationToken);
 }

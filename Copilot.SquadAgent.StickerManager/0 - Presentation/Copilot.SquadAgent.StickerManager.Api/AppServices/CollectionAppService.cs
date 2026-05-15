@@ -85,4 +85,15 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         var response = mapper.Map<IReadOnlyList<MissingStickerItemResponse>>(result.Value);
         return TypedResults.Ok(response);
     }
+
+    public async Task<IResult> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await collectionService.GetCollectionStatsAsync(userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<CollectionStatsResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
 }

@@ -150,4 +150,14 @@ public class CollectionService(
 
         return Result<IReadOnlyList<MissingStickerItemModel>>.Success(result.Value!);
     }
+
+    public async Task<Result<CollectionStatsModel>> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await userCollectionRepository.GetStatsAsync(userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<CollectionStatsModel>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<CollectionStatsModel>.Success(result.Value!);
+    }
 }
