@@ -8,4 +8,5 @@ public interface ICollectionAppService
     Task<IResult> RemoveStickerFromCollectionAsync(Guid userId, Guid collectionId, CancellationToken cancellationToken);
     Task<IResult> ToggleDuplicateAsync(Guid userId, Guid collectionId, ToggleDuplicateRequest request, CancellationToken cancellationToken);
     Task<IResult> ListCollectionAsync(Guid userId, CollectionQueryRequest query, CancellationToken cancellationToken);
+    Task<IResult> ListMissingStickersAsync(Guid userId, string? sort, CancellationToken cancellationToken);
 }
