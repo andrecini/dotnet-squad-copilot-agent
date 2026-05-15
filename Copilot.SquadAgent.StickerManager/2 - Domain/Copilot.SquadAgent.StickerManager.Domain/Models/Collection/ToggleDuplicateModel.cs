@@ -1,4 +1,5 @@
-@using System.Diagnostics.CodeAnalysis;
+using Copilot.SquadAgent.StickerManager.Domain.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 
@@ -7,5 +8,5 @@ public class ToggleDuplicateModel
 {
     public Guid CollectionId { get; set; }
     public Guid UserId { get; set; }
-    public string Action { get; set; } = string.Empty;
+    public DuplicateAction Action { get; set; }
 }
