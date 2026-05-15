@@ -8,4 +8,5 @@ public interface ICollectionService
     Task<ResultNs.Result<UserCollectionModel>> AddStickerAsync(AddToCollectionModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result> RemoveStickerFromCollectionAsync(RemoveStickerFromCollectionModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result<UserCollectionModel>> ToggleDuplicateAsync(ToggleDuplicateModel model, CancellationToken cancellationToken);
+    Task<ResultNs.Result<IReadOnlyList<CollectionItemModel>>> ListCollectionAsync(ListCollectionModel model, CancellationToken cancellationToken);
 }

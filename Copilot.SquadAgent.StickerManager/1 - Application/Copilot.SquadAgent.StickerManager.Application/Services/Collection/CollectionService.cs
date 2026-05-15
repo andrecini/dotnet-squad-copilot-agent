@@ -130,4 +130,14 @@ public class CollectionService(
 
         return Result<UserCollectionModel>.Success(mapper.Map<UserCollectionModel>(updateResult.Value));
     }
+
+    public async Task<Result<IReadOnlyList<CollectionItemModel>>> ListCollectionAsync(ListCollectionModel model, CancellationToken cancellationToken)
+    {
+        var result = await userCollectionRepository.ListByUserAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<IReadOnlyList<CollectionItemModel>>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<IReadOnlyList<CollectionItemModel>>.Success(result.Value!);
+    }
 }
