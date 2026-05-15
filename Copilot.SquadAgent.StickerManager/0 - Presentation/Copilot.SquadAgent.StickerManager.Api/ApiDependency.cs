@@ -57,6 +57,7 @@ public static class ApiDependency
         ResetPasswordEndpoint.Map(app);
         AddToCollectionEndpoint.Map(app);
         RemoveStickerFromCollectionEndpoint.Map(app);
+        ToggleDuplicateEndpoint.Map(app);
 
         return app;
     }

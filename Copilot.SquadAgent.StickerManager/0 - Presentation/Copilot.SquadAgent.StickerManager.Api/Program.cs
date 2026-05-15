@@ -1,3 +1,4 @@
+using Copilot.SquadAgent.StickerManager.Api.Filters;
 using Copilot.SquadAgent.StickerManager.Application;
 using Copilot.SquadAgent.StickerManager.Domain;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
@@ -5,6 +6,7 @@ using Copilot.SquadAgent.StickerManager.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Copilot.SquadAgent.StickerManager.Api
 {
@@ -27,6 +29,9 @@ namespace Copilot.SquadAgent.StickerManager.Api
                     .Enrich.FromLogContext()
                     .WriteTo.Console());
 
+                builder.Services.ConfigureHttpJsonOptions(options =>
+                    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
                 builder.Services
                     .AddDomain()
                     .AddApplication()
@@ -37,6 +42,7 @@ namespace Copilot.SquadAgent.StickerManager.Api
                 builder.Services.AddSwaggerGen(options =>
                 {
                     options.SwaggerDoc("v1", new() { Title = "Sticker Manager API", Version = "v1" });
+                    options.SchemaFilter<EnumSchemaFilter>();
 
                     var securityScheme = new OpenApiSecurityScheme
                     {

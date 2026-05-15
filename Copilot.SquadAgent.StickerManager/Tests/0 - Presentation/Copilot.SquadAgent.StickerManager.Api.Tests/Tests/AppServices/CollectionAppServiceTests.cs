@@ -261,4 +261,143 @@ public class CollectionAppServiceTests
         // Assert
         collectionServiceMock.VerifyRemoveStickerFromCollectionAsyncCalled(Moq.Times.Once());
     }
+
+    // ToggleDuplicateAsync tests
+
+    [Fact]
+    public async Task ToggleDuplicateAsync_MarkAction_ReturnsOkAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+        var request = ToggleDuplicateRequestMock.Valid();
+        var userCollectionModel = UserCollectionModelMock.Valid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupToggleDuplicateAsync(Result<Domain.Models.Collection.UserCollectionModel>.Success(userCollectionModel))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ToggleDuplicateAsync(userId, collectionId, request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Microsoft.AspNetCore.Http.HttpResults.Ok<DTOs.Responses.ToggleDuplicateResponse>>();
+        var ok = (Microsoft.AspNetCore.Http.HttpResults.Ok<DTOs.Responses.ToggleDuplicateResponse>)result;
+        ok.Value.ShouldNotBeNull();
+        ok.Value!.CollectionId.ShouldBe(userCollectionModel.Id);
+    }
+
+    [Fact]
+    public async Task ToggleDuplicateAsync_UnmarkAction_ReturnsOkAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+        var request = ToggleDuplicateRequestMock.WithUnmarkAction();
+        var userCollectionModel = UserCollectionModelMock.Valid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupToggleDuplicateAsync(Result<Domain.Models.Collection.UserCollectionModel>.Success(userCollectionModel))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ToggleDuplicateAsync(userId, collectionId, request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Microsoft.AspNetCore.Http.HttpResults.Ok<DTOs.Responses.ToggleDuplicateResponse>>();
+    }
+
+    [Fact]
+    public async Task ToggleDuplicateAsync_ServiceReturnsNotFound_ReturnsProblemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+        var request = ToggleDuplicateRequestMock.Valid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupToggleDuplicateAsync(Result<Domain.Models.Collection.UserCollectionModel>.Failure(ResultCode.NotFound, "Registro de coleção não encontrado.", 404))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ToggleDuplicateAsync(userId, collectionId, request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<ProblemHttpResult>();
+        var problem = (ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(404);
+    }
+
+    [Fact]
+    public async Task ToggleDuplicateAsync_ServiceReturnsBusinessError_ReturnsProblemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+        var request = ToggleDuplicateRequestMock.Valid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupToggleDuplicateAsync(Result<Domain.Models.Collection.UserCollectionModel>.Failure(ResultCode.BusinessError, "Não há figurinhas disponíveis para marcar como duplicata.", 422))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ToggleDuplicateAsync(userId, collectionId, request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<ProblemHttpResult>();
+        var problem = (ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(422);
+    }
+
+    [Fact]
+    public async Task ToggleDuplicateAsync_ServiceReturnsFailureWithNullStatusCode_ReturnsProblemWith500Async()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+        var request = ToggleDuplicateRequestMock.Valid();
+
+        var collectionService = new CollectionServiceMock()
+            .SetupToggleDuplicateAsync(Result<Domain.Models.Collection.UserCollectionModel>.Failure(ResultCode.InternalError, "Erro interno."))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ToggleDuplicateAsync(userId, collectionId, request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<ProblemHttpResult>();
+        var problem = (ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task ToggleDuplicateAsync_ValidRequest_CallsCollectionServiceOnceAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var collectionId = Guid.NewGuid();
+        var request = ToggleDuplicateRequestMock.Valid();
+        var userCollectionModel = UserCollectionModelMock.Valid();
+
+        var collectionServiceMock = new CollectionServiceMock()
+            .SetupToggleDuplicateAsync(Result<Domain.Models.Collection.UserCollectionModel>.Success(userCollectionModel));
+
+        var appService = new CollectionAppService(collectionServiceMock.Build(), _mapper);
+
+        // Act
+        await appService.ToggleDuplicateAsync(userId, collectionId, request, CancellationToken.None);
+
+        // Assert
+        collectionServiceMock.VerifyToggleDuplicateAsyncCalled(Moq.Times.Once());
+    }
 }
