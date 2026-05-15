@@ -12,7 +12,8 @@
       "Bash(Select-Object FullName)",
       "Bash(Head -60)",
       "Bash(git *)",
-      "Bash(dir *)"
+      "Bash(dir *)",
+      "Bash(Test-Path *)"
     ]
   }
 }

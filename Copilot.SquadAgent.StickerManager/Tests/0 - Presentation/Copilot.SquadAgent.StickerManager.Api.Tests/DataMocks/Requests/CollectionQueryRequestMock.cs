@@ -31,4 +31,39 @@ public static class CollectionQueryRequestMock
         Page = 1,
         Limit = 100
     };
+
+    public static CollectionQueryRequest WithPageZero() => new()
+    {
+        Page = 0,
+        Limit = 100,
+        Sort = null
+    };
+
+    public static CollectionQueryRequest WithLimitZero() => new()
+    {
+        Page = 1,
+        Limit = 0,
+        Sort = null
+    };
+
+    public static CollectionQueryRequest WithLimitAboveMaximum() => new()
+    {
+        Page = 1,
+        Limit = 501,
+        Sort = null
+    };
+
+    public static CollectionQueryRequest WithInvalidSort() => new()
+    {
+        Page = 1,
+        Limit = 100,
+        Sort = "invalid_sort"
+    };
+
+    public static CollectionQueryRequest WithNullSort() => new()
+    {
+        Page = 1,
+        Limit = 100,
+        Sort = null
+    };
 }
