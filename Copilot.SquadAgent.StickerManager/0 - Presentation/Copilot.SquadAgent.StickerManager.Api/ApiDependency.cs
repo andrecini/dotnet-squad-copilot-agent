@@ -60,6 +60,7 @@ public static class ApiDependency
         ToggleDuplicateEndpoint.Map(app);
         ListCollectionEndpoint.Map(app);
         GetMissingStickersEndpoint.Map(app);
+        GetCollectionStatsEndpoint.Map(app);
 
         return app;
     }
