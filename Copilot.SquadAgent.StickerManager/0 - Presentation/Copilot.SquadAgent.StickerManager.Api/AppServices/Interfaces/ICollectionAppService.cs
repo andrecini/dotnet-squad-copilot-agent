@@ -10,4 +10,5 @@ public interface ICollectionAppService
     Task<IResult> ListCollectionAsync(Guid userId, CollectionQueryRequest query, CancellationToken cancellationToken);
     Task<IResult> ListMissingStickersAsync(Guid userId, MissingStickersQueryRequest query, CancellationToken cancellationToken);
     Task<IResult> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken);
+    Task<IResult> GetAlbumAsync(Guid userId, CancellationToken cancellationToken);
 }

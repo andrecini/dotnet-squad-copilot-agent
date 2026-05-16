@@ -29,4 +29,18 @@ public class StickerRepositoryMock : BaseMock<IStickerRepository>
         _mock.Verify(x => x.ListMissingByUserAsync(It.IsAny<MissingStickersModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
+
+    public StickerRepositoryMock SetupGetAlbumAsync(Result<IReadOnlyList<AlbumStickerModel>> returnValue)
+    {
+        _mock.Setup(x => x.GetAlbumAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public StickerRepositoryMock VerifyGetAlbumAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetAlbumAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
 }

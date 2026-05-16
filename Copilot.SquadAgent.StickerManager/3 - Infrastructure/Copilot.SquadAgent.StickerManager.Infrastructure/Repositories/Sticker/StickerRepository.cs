@@ -56,4 +56,34 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
 
         return Result<IReadOnlyList<MissingStickerItemModel>>.Success(items);
     }
+
+    public async Task<Result<IReadOnlyList<AlbumStickerModel>>> GetAlbumAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var items = await dbContext.Stickers
+            .AsNoTracking()
+            .Include(s => s.Team)
+            .OrderBy(s => s.Team.Name)
+            .ThenBy(s => s.Code)
+            .Select(s => new AlbumStickerModel
+            {
+                StickerId         = s.Id,
+                Code              = s.Code,
+                PlayerName        = s.PlayerName,
+                TeamName          = s.Team.Name,
+                TeamCode          = s.Team.Code,
+                Rarity            = s.Rarity,
+                Owned             = s.UserCollections.Any(uc => uc.UserId == userId && uc.DeletedAt == null),
+                QuantityOwned     = s.UserCollections
+                                      .Where(uc => uc.UserId == userId && uc.DeletedAt == null)
+                                      .Select(uc => uc.QuantityOwned)
+                                      .FirstOrDefault(),
+                QuantityDuplicate = s.UserCollections
+                                      .Where(uc => uc.UserId == userId && uc.DeletedAt == null)
+                                      .Select(uc => uc.QuantityDuplicate)
+                                      .FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken);
+
+        return Result<IReadOnlyList<AlbumStickerModel>>.Success(items);
+    }
 }

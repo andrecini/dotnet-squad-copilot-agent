@@ -160,4 +160,14 @@ public class CollectionService(
 
         return Result<CollectionStatsModel>.Success(result.Value!);
     }
+
+    public async Task<Result<IReadOnlyList<AlbumStickerModel>>> GetAlbumAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await stickerRepository.GetAlbumAsync(userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<IReadOnlyList<AlbumStickerModel>>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<IReadOnlyList<AlbumStickerModel>>.Success(result.Value!);
+    }
 }

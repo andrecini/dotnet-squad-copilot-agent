@@ -96,4 +96,15 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         var response = mapper.Map<CollectionStatsResponse>(result.Value);
         return TypedResults.Ok(response);
     }
+
+    public async Task<IResult> GetAlbumAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await collectionService.GetAlbumAsync(userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<IReadOnlyList<AlbumStickerResponse>>(result.Value);
+        return TypedResults.Ok(response);
+    }
 }

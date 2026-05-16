@@ -13,7 +13,9 @@
       "Bash(Head -60)",
       "Bash(git *)",
       "Bash(dir *)",
-      "Bash(Test-Path *)"
+      "Bash(Test-Path *)",
+      "Bash(Get-ChildItem \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\\\\0 - Presentation\\\\Copilot.SquadAgent.StickerManager.Api\" -Recurse -Name)",
+      "Bash(Sort-Object)"
     ]
   }
 }

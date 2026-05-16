@@ -8,4 +8,5 @@ public interface IStickerRepository
 {
     Task<Result<Sticker>> GetByIdAsync(Guid stickerId, CancellationToken cancellationToken);
     Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingByUserAsync(MissingStickersModel filter, CancellationToken cancellationToken);
+    Task<Result<IReadOnlyList<AlbumStickerModel>>> GetAlbumAsync(Guid userId, CancellationToken cancellationToken);
 }

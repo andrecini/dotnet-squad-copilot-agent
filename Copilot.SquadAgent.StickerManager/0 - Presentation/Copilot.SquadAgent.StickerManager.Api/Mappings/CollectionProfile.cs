@@ -33,5 +33,8 @@ public class CollectionProfile : Profile
             .ForMember(dest => dest.Team, opt => opt.MapFrom(src => src.TeamName));
 
         CreateMap<CollectionStatsModel, CollectionStatsResponse>();
+
+        CreateMap<AlbumStickerModel, AlbumStickerResponse>()
+            .ForMember(dest => dest.Team, opt => opt.MapFrom(src => src.TeamName));
     }
 }
