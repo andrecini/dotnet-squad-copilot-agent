@@ -16,7 +16,8 @@ public static class GetAlbumEndpoint
             CancellationToken cancellationToken,
             int page = 1,
             int pageSize = 20,
-            bool sortByTeam = false) =>
+            bool sortByTeam = false,
+            Guid? teamId = null) =>
         {
             var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? principal.FindFirstValue("sub");
@@ -28,13 +29,14 @@ public static class GetAlbumEndpoint
             {
                 Page       = page,
                 PageSize   = pageSize,
-                SortByTeam = sortByTeam
+                SortByTeam = sortByTeam,
+                TeamId     = teamId
             };
 
             return await appService.GetAlbumAsync(userId, query, cancellationToken);
         })
         .WithName("GetAlbum")
-        .WithSummary("Retorna todas as figurinhas do álbum com paginação e ordenação opcional por time")
+        .WithSummary("Retorna todas as figurinhas do álbum com paginação, ordenação e filtro opcional por time")
         .WithTags("Album")
         .RequireAuthorization()
         .WithOpenApi();

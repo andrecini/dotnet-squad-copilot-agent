@@ -16,12 +16,13 @@ public class GetAlbumRepositoryTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options);
 
-    private static AlbumQueryModel DefaultQuery(Guid userId, int page = 1, int pageSize = 20, bool sortByTeam = false) => new()
+    private static AlbumQueryModel DefaultQuery(Guid userId, int page = 1, int pageSize = 20, bool sortByTeam = false, Guid? teamId = null) => new()
     {
         UserId     = userId,
         Page       = page,
         PageSize   = pageSize,
-        SortByTeam = sortByTeam
+        SortByTeam = sortByTeam,
+        TeamId     = teamId
     };
 
     [Fact]
@@ -330,5 +331,187 @@ public class GetAlbumRepositoryTests
         item.TeamCode.ShouldBe("BRA");
         item.Rarity.ShouldBe(StickerRarity.Foil);
         item.Owned.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_FilterByTeamId_ReturnsOnlyStickersOfThatTeamAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamBrazil    = new Domain.Entities.Team { Name = "Brasil",    Code = "BRA", FlagUrl = "https://flags.example.com/bra.png" };
+        var teamArgentina = new Domain.Entities.Team { Name = "Argentina", Code = "ARG", FlagUrl = "https://flags.example.com/arg.png" };
+
+        var stickerBra1 = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr",  Rarity = StickerRarity.Base, TeamId = teamBrazil.Id };
+        var stickerBra2 = new Domain.Entities.Sticker { Code = "BRA002", PlayerName = "Vinicius Jr", Rarity = StickerRarity.Base, TeamId = teamBrazil.Id };
+        var stickerArg  = new Domain.Entities.Sticker { Code = "ARG001", PlayerName = "Messi",       Rarity = StickerRarity.Base, TeamId = teamArgentina.Id };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddRangeAsync(teamBrazil, teamArgentina);
+        await dbContext.Stickers.AddRangeAsync(stickerBra1, stickerBra2, stickerArg);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var query = DefaultQuery(userId, teamId: teamBrazil.Id);
+
+        // Act
+        var result = await repository.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.TotalCount.ShouldBe(2);
+        result.Value.Items.Count.ShouldBe(2);
+        result.Value.Items.ShouldAllBe(x => x.TeamName == "Brasil");
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_FilterByTeamId_ExcludesStickersOfOtherTeamsAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamBrazil    = new Domain.Entities.Team { Name = "Brasil",    Code = "BRA", FlagUrl = "https://flags.example.com/bra.png" };
+        var teamArgentina = new Domain.Entities.Team { Name = "Argentina", Code = "ARG", FlagUrl = "https://flags.example.com/arg.png" };
+
+        var stickerBra = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr", Rarity = StickerRarity.Base, TeamId = teamBrazil.Id };
+        var stickerArg = new Domain.Entities.Sticker { Code = "ARG001", PlayerName = "Messi",     Rarity = StickerRarity.Base, TeamId = teamArgentina.Id };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddRangeAsync(teamBrazil, teamArgentina);
+        await dbContext.Stickers.AddRangeAsync(stickerBra, stickerArg);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var query = DefaultQuery(userId, teamId: teamArgentina.Id);
+
+        // Act
+        var result = await repository.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.TotalCount.ShouldBe(1);
+        result.Value.Items.Count.ShouldBe(1);
+        result.Value.Items[0].Code.ShouldBe("ARG001");
+        result.Value.Items[0].TeamName.ShouldBe("Argentina");
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_FilterByTeamIdWithPagination_ReturnsCorrectPageAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamBrazil    = new Domain.Entities.Team { Name = "Brasil",    Code = "BRA", FlagUrl = "https://flags.example.com/bra.png" };
+        var teamArgentina = new Domain.Entities.Team { Name = "Argentina", Code = "ARG", FlagUrl = "https://flags.example.com/arg.png" };
+
+        var stickersBra = Enumerable.Range(1, 5).Select(i => new Domain.Entities.Sticker
+        {
+            Code       = $"BRA{i:000}",
+            PlayerName = $"Player BRA {i}",
+            Rarity     = StickerRarity.Base,
+            TeamId     = teamBrazil.Id
+        }).ToList();
+
+        var stickerArg = new Domain.Entities.Sticker { Code = "ARG001", PlayerName = "Messi", Rarity = StickerRarity.Base, TeamId = teamArgentina.Id };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddRangeAsync(teamBrazil, teamArgentina);
+        await dbContext.Stickers.AddRangeAsync(stickersBra);
+        await dbContext.Stickers.AddAsync(stickerArg);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var query = DefaultQuery(userId, page: 1, pageSize: 2, teamId: teamBrazil.Id);
+
+        // Act
+        var result = await repository.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.TotalCount.ShouldBe(5);
+        result.Value.Items.Count.ShouldBe(2);
+        result.Value.TotalPages.ShouldBe(3);
+        result.Value.Items.ShouldAllBe(x => x.TeamName == "Brasil");
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_FilterByTeamIdWithSortByTeam_ReturnsOnlyThatTeamOrderedByCodeAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamBrazil    = new Domain.Entities.Team { Name = "Brasil",    Code = "BRA", FlagUrl = "https://flags.example.com/bra.png" };
+        var teamArgentina = new Domain.Entities.Team { Name = "Argentina", Code = "ARG", FlagUrl = "https://flags.example.com/arg.png" };
+
+        var stickerBra2 = new Domain.Entities.Sticker { Code = "BRA002", PlayerName = "Vinicius Jr", Rarity = StickerRarity.Base, TeamId = teamBrazil.Id };
+        var stickerBra1 = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr",   Rarity = StickerRarity.Base, TeamId = teamBrazil.Id };
+        var stickerArg  = new Domain.Entities.Sticker { Code = "ARG001", PlayerName = "Messi",       Rarity = StickerRarity.Base, TeamId = teamArgentina.Id };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddRangeAsync(teamBrazil, teamArgentina);
+        await dbContext.Stickers.AddRangeAsync(stickerBra2, stickerBra1, stickerArg);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var query = DefaultQuery(userId, sortByTeam: true, teamId: teamBrazil.Id);
+
+        // Act
+        var result = await repository.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.TotalCount.ShouldBe(2);
+        result.Value.Items.Count.ShouldBe(2);
+        result.Value.Items[0].Code.ShouldBe("BRA001");
+        result.Value.Items[1].Code.ShouldBe("BRA002");
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithoutTeamFilter_ReturnsAllTeamsAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamBrazil    = new Domain.Entities.Team { Name = "Brasil",    Code = "BRA", FlagUrl = "https://flags.example.com/bra.png" };
+        var teamArgentina = new Domain.Entities.Team { Name = "Argentina", Code = "ARG", FlagUrl = "https://flags.example.com/arg.png" };
+
+        var stickerBra = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr", Rarity = StickerRarity.Base, TeamId = teamBrazil.Id };
+        var stickerArg = new Domain.Entities.Sticker { Code = "ARG001", PlayerName = "Messi",     Rarity = StickerRarity.Base, TeamId = teamArgentina.Id };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddRangeAsync(teamBrazil, teamArgentina);
+        await dbContext.Stickers.AddRangeAsync(stickerBra, stickerArg);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var query = DefaultQuery(userId, teamId: null);
+
+        // Act
+        var result = await repository.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.TotalCount.ShouldBe(2);
+        result.Value.Items.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_FilterByNonExistentTeamId_ReturnsEmptyAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var team    = new Domain.Entities.Team { Name = "Brasil", Code = "BRA", FlagUrl = "https://flags.example.com/bra.png" };
+        var sticker = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr", Rarity = StickerRarity.Base, TeamId = team.Id };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddAsync(team);
+        await dbContext.Stickers.AddAsync(sticker);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new StickerRepository(dbContext);
+        var query = DefaultQuery(userId, teamId: Guid.NewGuid());
+
+        // Act
+        var result = await repository.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.TotalCount.ShouldBe(0);
+        result.Value.Items.ShouldBeEmpty();
     }
 }

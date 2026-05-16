@@ -67,6 +67,9 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
             .Include(s => s.Team)
             .AsQueryable();
 
+        if (query.TeamId.HasValue)
+            baseQuery = baseQuery.Where(s => s.TeamId == query.TeamId.Value);
+
         baseQuery = query.SortByTeam
             ? baseQuery.OrderBy(s => s.Team.Name).ThenBy(s => s.Code)
             : baseQuery.OrderBy(s => s.Code);

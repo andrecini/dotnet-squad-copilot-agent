@@ -23,12 +23,13 @@ public class GetAlbumServiceTests
         }).CreateMapper();
     }
 
-    private static AlbumQueryModel DefaultQuery(int page = 1, int pageSize = 20, bool sortByTeam = false) => new()
+    private static AlbumQueryModel DefaultQuery(int page = 1, int pageSize = 20, bool sortByTeam = false, Guid? teamId = null) => new()
     {
         UserId     = Guid.NewGuid(),
         Page       = page,
         PageSize   = pageSize,
-        SortByTeam = sortByTeam
+        SortByTeam = sortByTeam,
+        TeamId     = teamId
     };
 
     [Fact]
@@ -259,5 +260,106 @@ public class GetAlbumServiceTests
         item.Owned.ShouldBeFalse();
         item.QuantityOwned.ShouldBe(0);
         item.QuantityDuplicate.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithTeamIdFilter_PassesQueryToRepositoryAsync()
+    {
+        // Arrange
+        var teamId = Guid.NewGuid();
+        var query = DefaultQuery(teamId: teamId);
+        var paged = AlbumStickerModelMock.Paged(ownedCount: 1, missingCount: 2);
+
+        var stickerRepositoryMock = new StickerRepositoryMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged));
+
+        var userCollectionRepository = new UserCollectionRepositoryMock().Build();
+        var service = new CollectionService(stickerRepositoryMock.Build(), userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Items.Count.ShouldBe(3);
+        stickerRepositoryMock.VerifyGetAlbumAsyncCalled(Times.Once());
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithTeamIdFilterAndPagination_PreservesPaginationAsync()
+    {
+        // Arrange
+        var teamId = Guid.NewGuid();
+        var query = DefaultQuery(page: 2, pageSize: 5, teamId: teamId);
+        var paged = new PagedResult<AlbumStickerModel>
+        {
+            Items      = AlbumStickerModelMock.List(ownedCount: 2, missingCount: 3),
+            TotalCount = 20,
+            Page       = 2,
+            PageSize   = 5
+        };
+
+        var stickerRepository = new StickerRepositoryMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged))
+            .Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock().Build();
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Page.ShouldBe(2);
+        result.Value.PageSize.ShouldBe(5);
+        result.Value.TotalCount.ShouldBe(20);
+        result.Value.TotalPages.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithTeamIdFilterAndSort_ReturnsSuccessAsync()
+    {
+        // Arrange
+        var teamId = Guid.NewGuid();
+        var query = DefaultQuery(sortByTeam: true, teamId: teamId);
+        var paged = AlbumStickerModelMock.Paged(ownedCount: 2, missingCount: 2);
+
+        var stickerRepositoryMock = new StickerRepositoryMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged));
+
+        var userCollectionRepository = new UserCollectionRepositoryMock().Build();
+        var service = new CollectionService(stickerRepositoryMock.Build(), userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Items.Count.ShouldBe(4);
+        stickerRepositoryMock.VerifyGetAlbumAsyncCalled(Times.Once());
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithoutTeamIdFilter_DoesNotRestrictByTeamAsync()
+    {
+        // Arrange
+        var query = DefaultQuery(teamId: null);
+        var paged = AlbumStickerModelMock.Paged(ownedCount: 3, missingCount: 7);
+
+        var stickerRepository = new StickerRepositoryMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged))
+            .Build();
+
+        var userCollectionRepository = new UserCollectionRepositoryMock().Build();
+        var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
+
+        // Act
+        var result = await service.GetAlbumAsync(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Items.Count.ShouldBe(10);
+        result.Value.TotalCount.ShouldBe(10);
     }
 }

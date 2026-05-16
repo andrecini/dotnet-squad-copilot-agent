@@ -8,4 +8,5 @@ public class AlbumQueryRequest
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 20;
     public bool SortByTeam { get; set; } = false;
+    public Guid? TeamId { get; set; } = null;
 }

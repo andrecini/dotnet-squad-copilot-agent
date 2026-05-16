@@ -24,4 +24,28 @@ public static class AlbumQueryRequestMock
         PageSize   = pageSize,
         SortByTeam = false
     };
+
+    public static AlbumQueryRequest WithTeamFilter(Guid teamId) => new()
+    {
+        Page       = 1,
+        PageSize   = 20,
+        SortByTeam = false,
+        TeamId     = teamId
+    };
+
+    public static AlbumQueryRequest WithTeamFilterAndPagination(Guid teamId, int page, int pageSize) => new()
+    {
+        Page       = page,
+        PageSize   = pageSize,
+        SortByTeam = false,
+        TeamId     = teamId
+    };
+
+    public static AlbumQueryRequest WithTeamFilterAndSort(Guid teamId) => new()
+    {
+        Page       = 1,
+        PageSize   = 20,
+        SortByTeam = true,
+        TeamId     = teamId
+    };
 }

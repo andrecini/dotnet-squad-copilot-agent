@@ -197,6 +197,134 @@ public class GetAlbumAppServiceTests
     }
 
     [Fact]
+    public async Task GetAlbumAsync_WithTeamFilter_ReturnsOkAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
+        var query = AlbumQueryRequestMock.WithTeamFilter(teamId);
+        var paged = AlbumStickerModelMock.Paged(ownedCount: 1, missingCount: 1);
+
+        var collectionService = new CollectionServiceMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.GetAlbumAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Ok<PagedAlbumResponse>>();
+        var ok = (Ok<PagedAlbumResponse>)result;
+        ok.Value.ShouldNotBeNull();
+        ok.Value!.Items.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithTeamFilterAndPagination_ReturnsCorrectPaginationMetadataAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
+        var query = AlbumQueryRequestMock.WithTeamFilterAndPagination(teamId, page: 2, pageSize: 5);
+        var paged = new PagedResult<AlbumStickerModel>
+        {
+            Items      = AlbumStickerModelMock.Paged(ownedCount: 2, missingCount: 3).Items,
+            TotalCount = 15,
+            Page       = 2,
+            PageSize   = 5
+        };
+
+        var collectionService = new CollectionServiceMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.GetAlbumAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Ok<PagedAlbumResponse>>();
+        var ok = (Ok<PagedAlbumResponse>)result;
+        ok.Value!.Page.ShouldBe(2);
+        ok.Value.PageSize.ShouldBe(5);
+        ok.Value.TotalCount.ShouldBe(15);
+        ok.Value.TotalPages.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithTeamFilterAndSort_ReturnsOkAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
+        var query = AlbumQueryRequestMock.WithTeamFilterAndSort(teamId);
+        var paged = AlbumStickerModelMock.Paged(ownedCount: 1, missingCount: 2);
+
+        var collectionService = new CollectionServiceMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.GetAlbumAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Ok<PagedAlbumResponse>>();
+        var ok = (Ok<PagedAlbumResponse>)result;
+        ok.Value.ShouldNotBeNull();
+        ok.Value!.Items.Count.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_WithoutTeamFilter_ReturnsAllItemsAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var query = AlbumQueryRequestMock.Default();
+        var paged = AlbumStickerModelMock.Paged(ownedCount: 3, missingCount: 7);
+
+        var collectionService = new CollectionServiceMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.GetAlbumAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Ok<PagedAlbumResponse>>();
+        var ok = (Ok<PagedAlbumResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(10);
+        ok.Value.TotalCount.ShouldBe(10);
+    }
+
+    [Fact]
+    public async Task GetAlbumAsync_TeamIdIsMappedToModel_CallsServiceOnceAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
+        var query = AlbumQueryRequestMock.WithTeamFilter(teamId);
+        var paged = AlbumStickerModelMock.Paged();
+
+        var collectionServiceMock = new CollectionServiceMock()
+            .SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>>.Success(paged));
+
+        var appService = new CollectionAppService(collectionServiceMock.Build(), _mapper);
+
+        // Act
+        await appService.GetAlbumAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        collectionServiceMock.VerifyGetAlbumAsyncCalled(Times.Once());
+    }
+
+    [Fact]
     public async Task GetAlbumAsync_ResponseItemsHaveCorrectTeamName_ReturnsOkAsync()
     {
         // Arrange
