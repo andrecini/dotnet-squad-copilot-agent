@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 
@@ -12,7 +13,10 @@ public static class GetAlbumEndpoint
         app.MapGet("/api/v1/album", async (
             ClaimsPrincipal principal,
             ICollectionAppService appService,
-            CancellationToken cancellationToken) =>
+            CancellationToken cancellationToken,
+            int page = 1,
+            int pageSize = 20,
+            bool sortByTeam = false) =>
         {
             var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
                 ?? principal.FindFirstValue("sub");
@@ -20,10 +24,17 @@ public static class GetAlbumEndpoint
             if (!Guid.TryParse(userIdClaim, out var userId))
                 return Results.Unauthorized();
 
-            return await appService.GetAlbumAsync(userId, cancellationToken);
+            var query = new AlbumQueryRequest
+            {
+                Page       = page,
+                PageSize   = pageSize,
+                SortByTeam = sortByTeam
+            };
+
+            return await appService.GetAlbumAsync(userId, query, cancellationToken);
         })
         .WithName("GetAlbum")
-        .WithSummary("Retorna todas as figurinhas do álbum com a flag de posse do usuário autenticado")
+        .WithSummary("Retorna todas as figurinhas do álbum com paginação e ordenação opcional por time")
         .WithTags("Album")
         .RequireAuthorization()
         .WithOpenApi();

@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
@@ -89,6 +90,20 @@ public class CollectionServiceMock : BaseMock<ICollectionService>
     public CollectionServiceMock VerifyGetCollectionStatsAsyncCalled(Times times)
     {
         _mock.Verify(x => x.GetCollectionStatsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public CollectionServiceMock SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>> returnValue)
+    {
+        _mock.Setup(x => x.GetAlbumAsync(It.IsAny<AlbumQueryModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public CollectionServiceMock VerifyGetAlbumAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetAlbumAsync(It.IsAny<AlbumQueryModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
 }

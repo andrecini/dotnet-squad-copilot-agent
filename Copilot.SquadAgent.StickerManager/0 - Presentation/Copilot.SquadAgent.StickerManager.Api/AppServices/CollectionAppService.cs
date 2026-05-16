@@ -3,6 +3,7 @@ using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 
 namespace Copilot.SquadAgent.StickerManager.Api.AppServices;
@@ -97,14 +98,17 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         return TypedResults.Ok(response);
     }
 
-    public async Task<IResult> GetAlbumAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<IResult> GetAlbumAsync(Guid userId, AlbumQueryRequest query, CancellationToken cancellationToken)
     {
-        var result = await collectionService.GetAlbumAsync(userId, cancellationToken);
+        var model = mapper.Map<AlbumQueryModel>(query);
+        model.UserId = userId;
+
+        var result = await collectionService.GetAlbumAsync(model, cancellationToken);
 
         if (result.IsFailure)
             return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
 
-        var response = mapper.Map<IReadOnlyList<AlbumStickerResponse>>(result.Value);
+        var response = mapper.Map<PagedAlbumResponse>(result.Value);
         return TypedResults.Ok(response);
     }
 }

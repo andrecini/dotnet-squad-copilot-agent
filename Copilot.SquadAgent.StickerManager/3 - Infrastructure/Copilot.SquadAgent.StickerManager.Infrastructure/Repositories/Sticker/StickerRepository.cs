@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
@@ -57,13 +58,24 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
         return Result<IReadOnlyList<MissingStickerItemModel>>.Success(items);
     }
 
-    public async Task<Result<IReadOnlyList<AlbumStickerModel>>> GetAlbumAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken)
     {
-        var items = await dbContext.Stickers
+        var userId = query.UserId;
+
+        var baseQuery = dbContext.Stickers
             .AsNoTracking()
             .Include(s => s.Team)
-            .OrderBy(s => s.Team.Name)
-            .ThenBy(s => s.Code)
+            .AsQueryable();
+
+        baseQuery = query.SortByTeam
+            ? baseQuery.OrderBy(s => s.Team.Name).ThenBy(s => s.Code)
+            : baseQuery.OrderBy(s => s.Code);
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+
+        var items = await baseQuery
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .Select(s => new AlbumStickerModel
             {
                 StickerId         = s.Id,
@@ -84,6 +96,14 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
             })
             .ToListAsync(cancellationToken);
 
-        return Result<IReadOnlyList<AlbumStickerModel>>.Success(items);
+        var paged = new PagedResult<AlbumStickerModel>
+        {
+            Items      = items,
+            TotalCount = totalCount,
+            Page       = query.Page,
+            PageSize   = query.PageSize
+        };
+
+        return Result<PagedResult<AlbumStickerModel>>.Success(paged);
     }
 }

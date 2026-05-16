@@ -2,37 +2,11 @@ using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 
-namespace Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
+namespace Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Models;
 
 public static class AlbumStickerModelMock
 {
-    public static AlbumStickerModel OwnedSticker() => new()
-    {
-        StickerId         = Guid.NewGuid(),
-        Code              = "BRA-001",
-        PlayerName        = "Neymar Jr",
-        TeamName          = "Brasil",
-        TeamCode          = "BRA",
-        Rarity            = StickerRarity.Base,
-        Owned             = true,
-        QuantityOwned     = 1,
-        QuantityDuplicate = 0
-    };
-
-    public static AlbumStickerModel MissingSticker() => new()
-    {
-        StickerId         = Guid.NewGuid(),
-        Code              = "ARG-001",
-        PlayerName        = "Lionel Messi",
-        TeamName          = "Argentina",
-        TeamCode          = "ARG",
-        Rarity            = StickerRarity.Base,
-        Owned             = false,
-        QuantityOwned     = 0,
-        QuantityDuplicate = 0
-    };
-
-    public static IReadOnlyList<AlbumStickerModel> List(int ownedCount = 2, int missingCount = 3)
+    public static PagedResult<AlbumStickerModel> Paged(int ownedCount = 2, int missingCount = 3, int page = 1, int pageSize = 20)
     {
         var owned = Enumerable.Range(1, ownedCount)
             .Select(i => new AlbumStickerModel
@@ -62,14 +36,7 @@ public static class AlbumStickerModelMock
                 QuantityDuplicate = 0
             });
 
-        return owned.Concat(missing).ToList();
-    }
-
-    public static IReadOnlyList<AlbumStickerModel> Empty() => [];
-
-    public static PagedResult<AlbumStickerModel> Paged(int ownedCount = 2, int missingCount = 3, int page = 1, int pageSize = 20)
-    {
-        var items = List(ownedCount, missingCount);
+        var items = owned.Concat(missing).ToList();
         return new PagedResult<AlbumStickerModel>
         {
             Items      = items,

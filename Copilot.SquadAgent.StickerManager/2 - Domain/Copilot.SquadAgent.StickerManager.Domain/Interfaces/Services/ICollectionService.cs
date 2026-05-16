@@ -1,3 +1,4 @@
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using ResultNs = Copilot.SquadAgent.StickerManager.Domain.Result;
 
@@ -11,5 +12,5 @@ public interface ICollectionService
     Task<ResultNs.Result<IReadOnlyList<CollectionItemModel>>> ListCollectionAsync(ListCollectionModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingStickersAsync(MissingStickersModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result<CollectionStatsModel>> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken);
-    Task<ResultNs.Result<IReadOnlyList<AlbumStickerModel>>> GetAlbumAsync(Guid userId, CancellationToken cancellationToken);
+    Task<ResultNs.Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken);
 }
