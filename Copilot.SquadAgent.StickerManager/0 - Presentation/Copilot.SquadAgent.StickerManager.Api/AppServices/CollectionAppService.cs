@@ -131,6 +131,19 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         return TypedResults.Ok(response);
     }
 
+    public Task<IResult> DownloadImportTemplateAsync(CancellationToken cancellationToken)
+    {
+        const string csvContent = "sticker_number,quantity\r\n1,2\r\n";
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes(csvContent);
+        var result = TypedResults.File(
+            bytes,
+            contentType: "text/csv",
+            fileDownloadName: "template-importacao-colecao.csv");
+
+        return Task.FromResult<IResult>(result);
+    }
+
     private static List<CsvStickerRowModel> ParseCsvRows(IFormFile file)
     {
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)

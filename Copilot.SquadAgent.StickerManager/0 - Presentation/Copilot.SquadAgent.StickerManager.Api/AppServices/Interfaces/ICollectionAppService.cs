@@ -11,4 +11,5 @@ public interface ICollectionAppService
     Task<IResult> ListMissingStickersAsync(Guid userId, MissingStickersQueryRequest query, CancellationToken cancellationToken);
     Task<IResult> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken);
     Task<IResult> ImportCollectionAsync(Guid userId, ImportCollectionRequest request, CancellationToken cancellationToken);
+    Task<IResult> DownloadImportTemplateAsync(CancellationToken cancellationToken);
 }
