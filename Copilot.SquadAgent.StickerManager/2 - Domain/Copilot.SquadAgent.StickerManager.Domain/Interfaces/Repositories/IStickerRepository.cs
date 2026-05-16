@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 
@@ -8,4 +9,5 @@ public interface IStickerRepository
 {
     Task<Result<Sticker>> GetByIdAsync(Guid stickerId, CancellationToken cancellationToken);
     Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingByUserAsync(MissingStickersModel filter, CancellationToken cancellationToken);
+    Task<Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken);
 }

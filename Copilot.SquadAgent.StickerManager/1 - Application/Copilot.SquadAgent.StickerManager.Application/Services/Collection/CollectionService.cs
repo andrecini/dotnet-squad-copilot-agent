@@ -3,6 +3,7 @@ using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 
@@ -159,5 +160,15 @@ public class CollectionService(
             return Result<CollectionStatsModel>.Failure(result.Code, result.Message!, result.StatusCode);
 
         return Result<CollectionStatsModel>.Success(result.Value!);
+    }
+
+    public async Task<Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken)
+    {
+        var result = await stickerRepository.GetAlbumAsync(query, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<PagedResult<AlbumStickerModel>>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<PagedResult<AlbumStickerModel>>.Success(result.Value!);
     }
 }

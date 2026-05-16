@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
@@ -55,5 +56,57 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
             .ToListAsync(cancellationToken);
 
         return Result<IReadOnlyList<MissingStickerItemModel>>.Success(items);
+    }
+
+    public async Task<Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken)
+    {
+        var userId = query.UserId;
+
+        var baseQuery = dbContext.Stickers
+            .AsNoTracking()
+            .Include(s => s.Team)
+            .AsQueryable();
+
+        if (query.TeamId.HasValue)
+            baseQuery = baseQuery.Where(s => s.TeamId == query.TeamId.Value);
+
+        baseQuery = query.SortByTeam
+            ? baseQuery.OrderBy(s => s.Team.Name).ThenBy(s => s.Code)
+            : baseQuery.OrderBy(s => s.Code);
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+
+        var items = await baseQuery
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .Select(s => new AlbumStickerModel
+            {
+                StickerId         = s.Id,
+                Code              = s.Code,
+                PlayerName        = s.PlayerName,
+                TeamName          = s.Team.Name,
+                TeamCode          = s.Team.Code,
+                Rarity            = s.Rarity,
+                Owned             = s.UserCollections.Any(uc => uc.UserId == userId && uc.DeletedAt == null),
+                QuantityOwned     = s.UserCollections
+                                      .Where(uc => uc.UserId == userId && uc.DeletedAt == null)
+                                      .Select(uc => uc.QuantityOwned)
+                                      .FirstOrDefault(),
+                QuantityDuplicate = s.UserCollections
+                                      .Where(uc => uc.UserId == userId && uc.DeletedAt == null)
+                                      .Select(uc => uc.QuantityDuplicate)
+                                      .FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken);
+
+        var paged = new PagedResult<AlbumStickerModel>
+        {
+            Items      = items,
+            TotalCount = totalCount,
+            Page       = query.Page,
+            PageSize   = query.PageSize
+        };
+
+        return Result<PagedResult<AlbumStickerModel>>.Success(paged);
     }
 }

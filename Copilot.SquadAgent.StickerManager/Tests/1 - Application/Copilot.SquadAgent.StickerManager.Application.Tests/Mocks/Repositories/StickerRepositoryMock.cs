@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
+using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
@@ -27,6 +28,20 @@ public class StickerRepositoryMock : BaseMock<IStickerRepository>
     public StickerRepositoryMock VerifyListMissingByUserAsyncCalled(Times times)
     {
         _mock.Verify(x => x.ListMissingByUserAsync(It.IsAny<MissingStickersModel>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public StickerRepositoryMock SetupGetAlbumAsync(Result<PagedResult<AlbumStickerModel>> returnValue)
+    {
+        _mock.Setup(x => x.GetAlbumAsync(It.IsAny<AlbumQueryModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public StickerRepositoryMock VerifyGetAlbumAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetAlbumAsync(It.IsAny<AlbumQueryModel>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
 }
