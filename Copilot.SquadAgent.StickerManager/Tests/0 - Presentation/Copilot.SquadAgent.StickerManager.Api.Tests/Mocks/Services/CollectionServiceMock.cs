@@ -91,4 +91,18 @@ public class CollectionServiceMock : BaseMock<ICollectionService>
         _mock.Verify(x => x.GetCollectionStatsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
+
+    public CollectionServiceMock SetupImportCollectionAsync(Result<ImportCollectionResultModel> returnValue)
+    {
+        _mock.Setup(x => x.ImportCollectionAsync(It.IsAny<ImportCollectionModel>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public CollectionServiceMock VerifyImportCollectionAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.ImportCollectionAsync(It.IsAny<ImportCollectionModel>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
 }

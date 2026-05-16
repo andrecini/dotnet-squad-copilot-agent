@@ -16,6 +16,20 @@ public class StickerRepositoryMock : BaseMock<IStickerRepository>
         return this;
     }
 
+    public StickerRepositoryMock SetupGetByCodeAsync(Result<StickerEntity?> returnValue)
+    {
+        _mock.Setup(x => x.GetByCodeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public StickerRepositoryMock VerifyGetByCodeAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetByCodeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
     public StickerRepositoryMock SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>> returnValue)
     {
         _mock.Setup(x => x.ListMissingByUserAsync(It.IsAny<MissingStickersModel>(), It.IsAny<CancellationToken>()))

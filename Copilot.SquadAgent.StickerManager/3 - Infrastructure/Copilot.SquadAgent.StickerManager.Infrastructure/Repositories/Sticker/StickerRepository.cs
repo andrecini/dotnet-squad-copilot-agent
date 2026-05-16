@@ -21,6 +21,15 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
         return Result<StickerEntity>.Success(sticker);
     }
 
+    public async Task<Result<StickerEntity?>> GetByCodeAsync(string code, CancellationToken cancellationToken)
+    {
+        var sticker = await dbContext.Stickers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+
+        return Result<StickerEntity?>.Success(sticker);
+    }
+
     public async Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingByUserAsync(MissingStickersModel filter, CancellationToken cancellationToken)
     {
         var ownedStickerIds = dbContext.UserCollections

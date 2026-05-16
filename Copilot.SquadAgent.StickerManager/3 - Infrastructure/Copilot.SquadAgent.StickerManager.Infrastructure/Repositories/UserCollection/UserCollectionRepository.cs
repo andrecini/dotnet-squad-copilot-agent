@@ -91,6 +91,32 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
         return Result<IReadOnlyList<CollectionItemModel>>.Success(items);
     }
 
+    public async Task<Result<int>> BulkUpsertAsync(IReadOnlyList<UserCollectionEntity> entries, CancellationToken cancellationToken)
+    {
+        foreach (var entry in entries)
+        {
+            var tracked = dbContext.ChangeTracker.Entries<UserCollectionEntity>()
+                .FirstOrDefault(e => e.Entity.Id == entry.Id);
+
+            if (tracked is not null)
+            {
+                tracked.CurrentValues.SetValues(entry);
+            }
+            else if (entry.Id == Guid.Empty || !await dbContext.UserCollections.AnyAsync(x => x.Id == entry.Id, cancellationToken))
+            {
+                await dbContext.UserCollections.AddAsync(entry, cancellationToken);
+            }
+            else
+            {
+                dbContext.UserCollections.Update(entry);
+            }
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result<int>.Success(entries.Count);
+    }
+
     public async Task<Result<CollectionStatsModel>> GetStatsAsync(Guid userId, CancellationToken cancellationToken)
     {
         var totalStickers = await dbContext.Stickers

@@ -13,4 +13,5 @@ public interface IUserCollectionRepository
     Task<ResultNs.Result> SoftDeleteAsync(UserCollection userCollection, CancellationToken cancellationToken);
     Task<ResultNs.Result<IReadOnlyList<CollectionItemModel>>> ListByUserAsync(ListCollectionModel filter, CancellationToken cancellationToken);
     Task<ResultNs.Result<CollectionStatsModel>> GetStatsAsync(Guid userId, CancellationToken cancellationToken);
+    Task<ResultNs.Result<int>> BulkUpsertAsync(IReadOnlyList<UserCollection> entries, CancellationToken cancellationToken);
 }

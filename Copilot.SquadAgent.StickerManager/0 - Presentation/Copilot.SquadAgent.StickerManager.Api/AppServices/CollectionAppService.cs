@@ -1,9 +1,13 @@
+using System.Globalization;
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
+using Copilot.SquadAgent.StickerManager.Api.Mappings;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace Copilot.SquadAgent.StickerManager.Api.AppServices;
 
@@ -95,5 +99,52 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
 
         var response = mapper.Map<CollectionStatsResponse>(result.Value);
         return TypedResults.Ok(response);
+    }
+
+    public async Task<IResult> ImportCollectionAsync(Guid userId, ImportCollectionRequest request, CancellationToken cancellationToken)
+    {
+        List<CsvStickerRowModel> rows;
+
+        try
+        {
+            rows = ParseCsvRows(request.File);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem(
+                $"Erro ao processar o arquivo CSV: {ex.Message}",
+                statusCode: 400);
+        }
+
+        var model = new ImportCollectionModel
+        {
+            UserId = userId,
+            Rows = rows
+        };
+
+        var result = await collectionService.ImportCollectionAsync(model, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<ImportCollectionResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
+
+    private static List<CsvStickerRowModel> ParseCsvRows(IFormFile file)
+    {
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+            MissingFieldFound = null,
+            HeaderValidated = null
+        };
+
+        using var reader = new StreamReader(file.OpenReadStream());
+        using var csv = new CsvReader(reader, config);
+
+        csv.Context.RegisterClassMap<CsvStickerRowMap>();
+
+        return [.. csv.GetRecords<CsvStickerRowModel>()];
     }
 }

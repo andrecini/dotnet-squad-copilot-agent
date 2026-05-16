@@ -160,4 +160,103 @@ public class CollectionService(
 
         return Result<CollectionStatsModel>.Success(result.Value!);
     }
+
+    public async Task<Result<ImportCollectionResultModel>> ImportCollectionAsync(ImportCollectionModel model, CancellationToken cancellationToken)
+    {
+        const int MaxLines = 1000;
+
+        if (model.Rows.Count > MaxLines)
+            return Result<ImportCollectionResultModel>.Failure(
+                ResultCode.BusinessError,
+                $"O arquivo CSV não pode ter mais de {MaxLines} linhas.",
+                statusCode: 422);
+
+        var errors = new List<ImportCollectionErrorModel>();
+        var entriesToUpsert = new List<UserCollection>();
+        var lineNumber = 2; // linha 1 é o cabeçalho
+
+        foreach (var row in model.Rows)
+        {
+            if (string.IsNullOrWhiteSpace(row.StickerNumber))
+            {
+                errors.Add(new ImportCollectionErrorModel { Line = lineNumber, Reason = "O campo sticker_number é obrigatório." });
+                lineNumber++;
+                continue;
+            }
+
+            if (row.Quantity <= 0)
+            {
+                errors.Add(new ImportCollectionErrorModel { Line = lineNumber, Reason = "O campo quantity deve ser maior que zero." });
+                lineNumber++;
+                continue;
+            }
+
+            var stickerResult = await stickerRepository.GetByCodeAsync(row.StickerNumber, cancellationToken);
+
+            if (stickerResult.IsFailure)
+            {
+                errors.Add(new ImportCollectionErrorModel { Line = lineNumber, Reason = $"Erro ao buscar figurinha: {stickerResult.Message}" });
+                lineNumber++;
+                continue;
+            }
+
+            if (stickerResult.Value is null)
+            {
+                errors.Add(new ImportCollectionErrorModel { Line = lineNumber, Reason = $"Figurinha com código '{row.StickerNumber}' não encontrada." });
+                lineNumber++;
+                continue;
+            }
+
+            var sticker = stickerResult.Value;
+
+            var existingResult = await userCollectionRepository.GetByUserAndStickerAsync(model.UserId, sticker.Id, cancellationToken);
+
+            if (existingResult.IsFailure)
+            {
+                errors.Add(new ImportCollectionErrorModel { Line = lineNumber, Reason = $"Erro ao verificar coleção: {existingResult.Message}" });
+                lineNumber++;
+                continue;
+            }
+
+            if (existingResult.Value is not null)
+            {
+                existingResult.Value.QuantityOwned += row.Quantity;
+                entriesToUpsert.Add(existingResult.Value);
+            }
+            else
+            {
+                entriesToUpsert.Add(new UserCollection
+                {
+                    UserId = model.UserId,
+                    StickerId = sticker.Id,
+                    QuantityOwned = row.Quantity,
+                    QuantityDuplicate = 0
+                });
+            }
+
+            lineNumber++;
+        }
+
+        if (entriesToUpsert.Count == 0)
+        {
+            return Result<ImportCollectionResultModel>.Success(new ImportCollectionResultModel
+            {
+                Imported = 0,
+                Failed = errors.Count,
+                Errors = errors
+            });
+        }
+
+        var bulkResult = await userCollectionRepository.BulkUpsertAsync(entriesToUpsert, cancellationToken);
+
+        if (bulkResult.IsFailure)
+            return Result<ImportCollectionResultModel>.Failure(bulkResult.Code, bulkResult.Message!, bulkResult.StatusCode);
+
+        return Result<ImportCollectionResultModel>.Success(new ImportCollectionResultModel
+        {
+            Imported = bulkResult.Value,
+            Failed = errors.Count,
+            Errors = errors
+        });
+    }
 }

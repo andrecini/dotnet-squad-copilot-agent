@@ -61,6 +61,7 @@ public static class ApiDependency
         ListCollectionEndpoint.Map(app);
         GetMissingStickersEndpoint.Map(app);
         GetCollectionStatsEndpoint.Map(app);
+        ImportCollectionEndpoint.Map(app);
 
         return app;
     }

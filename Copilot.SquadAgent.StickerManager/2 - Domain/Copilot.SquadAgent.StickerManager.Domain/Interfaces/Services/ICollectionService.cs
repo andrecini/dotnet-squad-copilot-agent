@@ -11,4 +11,5 @@ public interface ICollectionService
     Task<ResultNs.Result<IReadOnlyList<CollectionItemModel>>> ListCollectionAsync(ListCollectionModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingStickersAsync(MissingStickersModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result<CollectionStatsModel>> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken);
+    Task<ResultNs.Result<ImportCollectionResultModel>> ImportCollectionAsync(ImportCollectionModel model, CancellationToken cancellationToken);
 }
