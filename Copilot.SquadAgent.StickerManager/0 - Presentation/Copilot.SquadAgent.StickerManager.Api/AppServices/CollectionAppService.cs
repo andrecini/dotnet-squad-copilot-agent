@@ -1,16 +1,12 @@
-using System.Globalization;
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using Copilot.SquadAgent.StickerManager.Application.Utils;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
-using Copilot.SquadAgent.StickerManager.Api.Mappings;
-using CsvHelper;
-using CsvHelper.Configuration;
 
 namespace Copilot.SquadAgent.StickerManager.Api.AppServices;
-
 
 public class CollectionAppService(ICollectionService collectionService, IMapper mapper) : ICollectionAppService
 {
@@ -107,7 +103,8 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
 
         try
         {
-            rows = ParseCsvRows(request.File);
+            using var stream = request.File.OpenReadStream();
+            rows = CsvCollectionHelper.ParseCsvRows(stream);
         }
         catch (Exception ex)
         {
@@ -133,31 +130,12 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
 
     public Task<IResult> DownloadImportTemplateAsync(CancellationToken cancellationToken)
     {
-        const string csvContent = "sticker_number,quantity\r\n1,2\r\n";
-
-        var bytes = System.Text.Encoding.UTF8.GetBytes(csvContent);
+        var bytes = CsvCollectionHelper.GetTemplateContent();
         var result = TypedResults.File(
             bytes,
             contentType: "text/csv",
             fileDownloadName: "template-importacao-colecao.csv");
 
         return Task.FromResult<IResult>(result);
-    }
-
-    private static List<CsvStickerRowModel> ParseCsvRows(IFormFile file)
-    {
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            HasHeaderRecord = true,
-            MissingFieldFound = null,
-            HeaderValidated = null
-        };
-
-        using var reader = new StreamReader(file.OpenReadStream());
-        using var csv = new CsvReader(reader, config);
-
-        csv.Context.RegisterClassMap<CsvStickerRowMap>();
-
-        return [.. csv.GetRecords<CsvStickerRowModel>()];
     }
 }

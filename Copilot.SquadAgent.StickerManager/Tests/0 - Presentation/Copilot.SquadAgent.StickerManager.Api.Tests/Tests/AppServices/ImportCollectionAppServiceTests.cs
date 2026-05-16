@@ -6,6 +6,7 @@ using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Requests;
 using Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
 using Shouldly;
@@ -157,5 +158,32 @@ public class ImportCollectionAppServiceTests
         result.ShouldBeOfType<ProblemHttpResult>();
         var problem = (ProblemHttpResult)result;
         problem.StatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task ImportCollectionAsync_FileStreamThrowsException_ReturnsBadRequestProblemAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+
+        var formFileMock = new Mock<IFormFile>();
+        formFileMock
+            .Setup(f => f.OpenReadStream())
+            .Throws(new IOException("Erro simulado ao abrir o stream do arquivo."));
+        formFileMock.Setup(f => f.Length).Returns(100);
+        formFileMock.Setup(f => f.FileName).Returns("import.csv");
+
+        var request = new DTOs.Requests.ImportCollectionRequest { File = formFileMock.Object };
+
+        var collectionService = new CollectionServiceMock().Build();
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ImportCollectionAsync(userId, request, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<ProblemHttpResult>();
+        var problem = (ProblemHttpResult)result;
+        problem.StatusCode.ShouldBe(400);
     }
 }

@@ -14,7 +14,8 @@
       "Bash(git *)",
       "Bash(dir *)",
       "Bash(Test-Path *)",
-      "Bash(dotnet add *)"
+      "Bash(dotnet add *)",
+      "Bash(Remove-Item *)"
     ]
   }
 }
