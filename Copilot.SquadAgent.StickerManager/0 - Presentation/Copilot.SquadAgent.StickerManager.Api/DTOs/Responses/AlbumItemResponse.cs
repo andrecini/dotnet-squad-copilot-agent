@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
 
 [ExcludeFromCodeCoverage]
-public class AlbumStickerResponse
+public class AlbumItemResponse
 {
     public Guid StickerId { get; set; }
     public string Code { get; set; } = string.Empty;

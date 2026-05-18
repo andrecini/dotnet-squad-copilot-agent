@@ -3,7 +3,6 @@ using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
-using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 
@@ -132,24 +131,24 @@ public class CollectionService(
         return Result<UserCollectionModel>.Success(mapper.Map<UserCollectionModel>(updateResult.Value));
     }
 
-    public async Task<Result<IReadOnlyList<CollectionItemModel>>> ListCollectionAsync(ListCollectionModel model, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CollectionItemModel>>> ListCollectionAsync(ListCollectionModel model, CancellationToken cancellationToken)
     {
         var result = await userCollectionRepository.ListByUserAsync(model, cancellationToken);
 
         if (result.IsFailure)
-            return Result<IReadOnlyList<CollectionItemModel>>.Failure(result.Code, result.Message!, result.StatusCode);
+            return Result<PagedResult<CollectionItemModel>>.Failure(result.Code, result.Message!, result.StatusCode);
 
-        return Result<IReadOnlyList<CollectionItemModel>>.Success(result.Value!);
+        return Result<PagedResult<CollectionItemModel>>.Success(result.Value!);
     }
 
-    public async Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingStickersAsync(MissingStickersModel model, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<MissingStickerItemModel>>> ListMissingStickersAsync(MissingStickersModel model, CancellationToken cancellationToken)
     {
         var result = await stickerRepository.ListMissingByUserAsync(model, cancellationToken);
 
         if (result.IsFailure)
-            return Result<IReadOnlyList<MissingStickerItemModel>>.Failure(result.Code, result.Message!, result.StatusCode);
+            return Result<PagedResult<MissingStickerItemModel>>.Failure(result.Code, result.Message!, result.StatusCode);
 
-        return Result<IReadOnlyList<MissingStickerItemModel>>.Success(result.Value!);
+        return Result<PagedResult<MissingStickerItemModel>>.Success(result.Value!);
     }
 
     public async Task<Result<CollectionStatsModel>> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken)

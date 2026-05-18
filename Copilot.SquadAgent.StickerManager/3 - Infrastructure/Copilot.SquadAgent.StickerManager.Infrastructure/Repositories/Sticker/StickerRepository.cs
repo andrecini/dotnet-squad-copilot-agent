@@ -1,5 +1,4 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
-using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
@@ -22,7 +21,7 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
         return Result<StickerEntity>.Success(sticker);
     }
 
-    public async Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingByUserAsync(MissingStickersModel filter, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<MissingStickerItemModel>>> ListMissingByUserAsync(MissingStickersModel filter, CancellationToken cancellationToken)
     {
         var ownedStickerIds = dbContext.UserCollections
             .Where(uc => uc.UserId == filter.UserId && uc.DeletedAt == null)
@@ -41,6 +40,8 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
             _        => query.OrderByDescending(s => s.Rarity).ThenBy(s => s.Team.Name).ThenBy(s => s.Code)
         };
 
+        var totalCount = await query.CountAsync(cancellationToken);
+
         var items = await query
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
@@ -55,7 +56,15 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
             })
             .ToListAsync(cancellationToken);
 
-        return Result<IReadOnlyList<MissingStickerItemModel>>.Success(items);
+        var paged = new PagedResult<MissingStickerItemModel>
+        {
+            Items      = items,
+            TotalCount = totalCount,
+            Page       = filter.Page,
+            PageSize   = filter.PageSize
+        };
+
+        return Result<PagedResult<MissingStickerItemModel>>.Success(paged);
     }
 
     public async Task<Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken)

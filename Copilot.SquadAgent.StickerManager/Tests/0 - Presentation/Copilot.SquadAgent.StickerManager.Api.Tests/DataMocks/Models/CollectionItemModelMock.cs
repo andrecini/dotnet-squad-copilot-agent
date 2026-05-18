@@ -1,5 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
-using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
+using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;using Copilot.SquadAgent.StickerManager.Domain.Result;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Models;
 
@@ -21,4 +21,24 @@ public static class CollectionItemModelMock
             })
             .ToList();
     }
+
+    public static PagedResult<CollectionItemModel> Paged(int count = 3, int page = 1, int pageSize = 20)
+    {
+        var items = List(count);
+        return new PagedResult<CollectionItemModel>
+        {
+            Items      = items,
+            TotalCount = items.Count,
+            Page       = page,
+            PageSize   = pageSize
+        };
+    }
+
+    public static PagedResult<CollectionItemModel> PagedEmpty() => new()
+    {
+        Items      = [],
+        TotalCount = 0,
+        Page       = 1,
+        PageSize   = 20
+    };
 }

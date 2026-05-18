@@ -44,8 +44,8 @@ public class GetMissingStickersRepositoryTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(sticker.Id);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(sticker.Id);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class GetMissingStickersRepositoryTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(0);
+        result.Value!.Items.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -129,8 +129,8 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(stickerMissing.Id);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(stickerMissing.Id);
     }
 
     [Fact]
@@ -169,8 +169,8 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(sticker.Id);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(sticker.Id);
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(2);
+        result.Value!.Items.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -245,9 +245,9 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(2);
-        result.Value[0].TeamName.ShouldBe("Argentina");
-        result.Value[1].TeamName.ShouldBe("Brasil");
+        result.Value!.Items.Count.ShouldBe(2);
+        result.Value!.Items[0].TeamName.ShouldBe("Argentina");
+        result.Value!.Items[1].TeamName.ShouldBe("Brasil");
     }
 
     [Fact]
@@ -284,9 +284,9 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(2);
-        result.Value[0].Code.ShouldBe("BRA001");
-        result.Value[1].Code.ShouldBe("BRA003");
+        result.Value!.Items.Count.ShouldBe(2);
+        result.Value!.Items[0].Code.ShouldBe("BRA001");
+        result.Value!.Items[1].Code.ShouldBe("BRA003");
     }
 
     [Fact]
@@ -316,8 +316,8 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        var item = result.Value[0];
+        result.Value!.Items.Count.ShouldBe(1);
+        var item = result.Value!.Items[0];
         item.StickerId.ShouldBe(sticker.Id);
         item.Code.ShouldBe("BRA001");
         item.PlayerName.ShouldBe("Marquinhos");
@@ -360,7 +360,7 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
+        result.Value!.Items.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -399,12 +399,12 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         resultPage1.IsSuccess.ShouldBeTrue();
-        resultPage1.Value!.Count.ShouldBe(1);
-        resultPage1.Value[0].Code.ShouldBe("BRA001");
+        resultPage1.Value!.Items.Count.ShouldBe(1);
+        resultPage1.Value!.Items[0].Code.ShouldBe("BRA001");
 
         resultPage2.IsSuccess.ShouldBeTrue();
-        resultPage2.Value!.Count.ShouldBe(1);
-        resultPage2.Value[0].Code.ShouldBe("BRA002");
+        resultPage2.Value!.Items.Count.ShouldBe(1);
+        resultPage2.Value!.Items[0].Code.ShouldBe("BRA002");
     }
 
     [Fact]
@@ -434,6 +434,6 @@ public class GetMissingStickersRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(0);
+        result.Value!.Items.Count.ShouldBe(0);
     }
 }

@@ -27,10 +27,10 @@ public class GetMissingStickersServiceTests
     {
         // Arrange
         var model = MissingStickersModelMock.Valid();
-        var items = MissingStickerItemModelMock.List(5);
+        var paged = MissingStickerItemModelMock.Paged(5);
 
         var stickerRepository = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
@@ -43,7 +43,7 @@ public class GetMissingStickersServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(5);
+        result.Value!.Items.Count.ShouldBe(5);
     }
 
     [Fact]
@@ -51,10 +51,10 @@ public class GetMissingStickersServiceTests
     {
         // Arrange
         var model = MissingStickersModelMock.Valid();
-        var items = MissingStickerItemModelMock.List(0);
+        var paged = MissingStickerItemModelMock.PagedEmpty();
 
         var stickerRepository = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
@@ -67,7 +67,7 @@ public class GetMissingStickersServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(0);
+        result.Value!.Items.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -75,10 +75,10 @@ public class GetMissingStickersServiceTests
     {
         // Arrange
         var model = MissingStickersModelMock.WithTeamSort();
-        var items = MissingStickerItemModelMock.List(3);
+        var paged = MissingStickerItemModelMock.Paged(3);
 
         var stickerRepository = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
@@ -91,7 +91,7 @@ public class GetMissingStickersServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(3);
+        result.Value!.Items.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -99,10 +99,10 @@ public class GetMissingStickersServiceTests
     {
         // Arrange
         var model = MissingStickersModelMock.WithNumberSort();
-        var items = MissingStickerItemModelMock.List(4);
+        var paged = MissingStickerItemModelMock.Paged(4);
 
         var stickerRepository = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
@@ -115,7 +115,7 @@ public class GetMissingStickersServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(4);
+        result.Value!.Items.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public class GetMissingStickersServiceTests
         var model = MissingStickersModelMock.Valid();
 
         var stickerRepository = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Failure(ResultCode.InternalError, "Erro de banco.", 500))
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Failure(ResultCode.InternalError, "Erro de banco.", 500))
             .Build();
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
@@ -147,10 +147,10 @@ public class GetMissingStickersServiceTests
     {
         // Arrange
         var model = MissingStickersModelMock.WithPagination(page: 2, limit: 10);
-        var items = MissingStickerItemModelMock.List(10);
+        var paged = MissingStickerItemModelMock.Paged(10);
 
         var stickerRepository = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
@@ -163,7 +163,7 @@ public class GetMissingStickersServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(10);
+        result.Value!.Items.Count.ShouldBe(10);
     }
 
     [Fact]
@@ -171,10 +171,10 @@ public class GetMissingStickersServiceTests
     {
         // Arrange
         var model = MissingStickersModelMock.Valid();
-        var items = MissingStickerItemModelMock.List(2);
+        var paged = MissingStickerItemModelMock.Paged(2);
 
         var stickerRepositoryMock = new StickerRepositoryMock()
-            .SetupListMissingByUserAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items));
+            .SetupListMissingByUserAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged));
 
         var userCollectionRepository = new UserCollectionRepositoryMock().Build();
 

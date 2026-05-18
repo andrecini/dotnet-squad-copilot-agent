@@ -50,7 +50,7 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
         return Result.Success();
     }
 
-    public async Task<Result<IReadOnlyList<CollectionItemModel>>> ListByUserAsync(ListCollectionModel filter, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CollectionItemModel>>> ListByUserAsync(ListCollectionModel filter, CancellationToken cancellationToken)
     {
         var query = dbContext.UserCollections
             .AsNoTracking()
@@ -72,23 +72,33 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
             _              => query.OrderBy(uc => uc.Sticker.Code)
         };
 
+        var totalCount = await query.CountAsync(cancellationToken);
+
         var items = await query
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .Select(uc => new CollectionItemModel
             {
-                StickerId        = uc.StickerId,
-                PlayerName       = uc.Sticker.PlayerName,
-                TeamName         = uc.Sticker.Team.Name,
-                TeamCode         = uc.Sticker.Team.Code,
-                Rarity           = uc.Sticker.Rarity,
-                QuantityOwned    = uc.QuantityOwned,
+                StickerId         = uc.StickerId,
+                PlayerName        = uc.Sticker.PlayerName,
+                TeamName          = uc.Sticker.Team.Name,
+                TeamCode          = uc.Sticker.Team.Code,
+                Rarity            = uc.Sticker.Rarity,
+                QuantityOwned     = uc.QuantityOwned,
                 QuantityDuplicate = uc.QuantityDuplicate,
-                AcquiredAt       = uc.CreatedAt
+                AcquiredAt        = uc.CreatedAt
             })
             .ToListAsync(cancellationToken);
 
-        return Result<IReadOnlyList<CollectionItemModel>>.Success(items);
+        var paged = new PagedResult<CollectionItemModel>
+        {
+            Items      = items,
+            TotalCount = totalCount,
+            Page       = filter.Page,
+            PageSize   = filter.PageSize
+        };
+
+        return Result<PagedResult<CollectionItemModel>>.Success(paged);
     }
 
     public async Task<Result<CollectionStatsModel>> GetStatsAsync(Guid userId, CancellationToken cancellationToken)

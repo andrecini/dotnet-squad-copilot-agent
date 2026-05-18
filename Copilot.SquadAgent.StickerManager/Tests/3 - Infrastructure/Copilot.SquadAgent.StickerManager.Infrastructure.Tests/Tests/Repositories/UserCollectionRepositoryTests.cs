@@ -276,8 +276,8 @@ public class UserCollectionRepositoryTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(sticker.Id);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(sticker.Id);
     }
 
     [Fact]
@@ -306,8 +306,8 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(sticker1.Id);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(sticker1.Id);
     }
 
     [Fact]
@@ -335,8 +335,8 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].Rarity.ShouldBe(StickerRarity.Foil);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].Rarity.ShouldBe(StickerRarity.Foil);
     }
 
     [Fact]
@@ -364,9 +364,9 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(2);
-        result.Value[0].PlayerName.ShouldBe("Alisson");
-        result.Value[1].PlayerName.ShouldBe("Vinicius Jr");
+        result.Value!.Items.Count.ShouldBe(2);
+        result.Value!.Items[0].PlayerName.ShouldBe("Alisson");
+        result.Value!.Items[1].PlayerName.ShouldBe("Vinicius Jr");
     }
 
     [Fact]
@@ -394,7 +394,7 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(2);
+        result.Value!.Items.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -432,7 +432,7 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(2);
+        result.Value!.Items.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -467,8 +467,8 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(stickerActive.Id);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(stickerActive.Id);
     }
 
     [Fact]
@@ -500,9 +500,9 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(1);
-        result.Value[0].StickerId.ShouldBe(stickerBraFoil.Id);
-        result.Value[0].Rarity.ShouldBe(StickerRarity.Foil);
+        result.Value!.Items.Count.ShouldBe(1);
+        result.Value!.Items[0].StickerId.ShouldBe(stickerBraFoil.Id);
+        result.Value!.Items[0].Rarity.ShouldBe(StickerRarity.Foil);
     }
 
     [Fact]
@@ -533,9 +533,9 @@ public class UserCollectionRepositoryTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value!.Count.ShouldBe(3);
-        result.Value[0].StickerId.ShouldBe(stickerA.Id);
-        result.Value[1].StickerId.ShouldBe(stickerB.Id);
-        result.Value[2].StickerId.ShouldBe(stickerC.Id);
+        result.Value!.Items.Count.ShouldBe(3);
+        result.Value!.Items[0].StickerId.ShouldBe(stickerA.Id);
+        result.Value!.Items[1].StickerId.ShouldBe(stickerB.Id);
+        result.Value!.Items[2].StickerId.ShouldBe(stickerC.Id);
     }
 }

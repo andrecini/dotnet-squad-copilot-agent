@@ -27,11 +27,11 @@ public class ListCollectionServiceTests
     {
         // Arrange
         var model = ListCollectionModelMock.Valid();
-        var items = CollectionItemModelMock.List(3);
+        var paged = CollectionItemModelMock.Paged(3);
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -42,7 +42,7 @@ public class ListCollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(3);
+        result.Value!.Items.Count.ShouldBe(3);
     }
 
     [Fact]
@@ -51,11 +51,11 @@ public class ListCollectionServiceTests
         // Arrange
         var teamId = Guid.NewGuid();
         var model = ListCollectionModelMock.WithTeamFilter(teamId: teamId);
-        var items = CollectionItemModelMock.List(2);
+        var paged = CollectionItemModelMock.Paged(2);
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -66,7 +66,7 @@ public class ListCollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(2);
+        result.Value!.Items.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -74,11 +74,11 @@ public class ListCollectionServiceTests
     {
         // Arrange
         var model = ListCollectionModelMock.WithRarityFilter();
-        var items = CollectionItemModelMock.List(1);
+        var paged = CollectionItemModelMock.Paged(1);
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -89,7 +89,7 @@ public class ListCollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(1);
+        result.Value!.Items.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -97,11 +97,11 @@ public class ListCollectionServiceTests
     {
         // Arrange
         var model = ListCollectionModelMock.WithPagination(page: 2, limit: 10);
-        var items = CollectionItemModelMock.List(10);
+        var paged = CollectionItemModelMock.Paged(10);
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -112,7 +112,7 @@ public class ListCollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(10);
+        result.Value!.Items.Count.ShouldBe(10);
     }
 
     [Fact]
@@ -120,11 +120,11 @@ public class ListCollectionServiceTests
     {
         // Arrange
         var model = ListCollectionModelMock.WithSort(sort: "player_name");
-        var items = CollectionItemModelMock.List(5);
+        var paged = CollectionItemModelMock.Paged(5);
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -135,7 +135,7 @@ public class ListCollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(5);
+        result.Value!.Items.Count.ShouldBe(5);
     }
 
     [Fact]
@@ -143,11 +143,11 @@ public class ListCollectionServiceTests
     {
         // Arrange
         var model = ListCollectionModelMock.Valid();
-        var items = CollectionItemModelMock.List(0);
+        var paged = CollectionItemModelMock.PagedEmpty();
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -158,7 +158,7 @@ public class ListCollectionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value!.Count.ShouldBe(0);
+        result.Value!.Items.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public class ListCollectionServiceTests
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepository = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Failure(ResultCode.InternalError, "Erro de banco.", 500))
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Failure(ResultCode.InternalError, "Erro de banco.", 500))
             .Build();
 
         var service = new CollectionService(stickerRepository, userCollectionRepository, _mapper);
@@ -188,11 +188,11 @@ public class ListCollectionServiceTests
     {
         // Arrange
         var model = ListCollectionModelMock.Valid();
-        var items = CollectionItemModelMock.List(2);
+        var paged = CollectionItemModelMock.Paged(2);
 
         var stickerRepository = new StickerRepositoryMock().Build();
         var userCollectionRepositoryMock = new UserCollectionRepositoryMock()
-            .SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items));
+            .SetupListByUserAsync(Result<PagedResult<CollectionItemModel>>.Success(paged));
 
         var service = new CollectionService(stickerRepository, userCollectionRepositoryMock.Build(), _mapper);
 

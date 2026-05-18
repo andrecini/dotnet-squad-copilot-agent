@@ -1,6 +1,6 @@
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.AppServices;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses.Paged;
 using Copilot.SquadAgent.StickerManager.Api.Mappings;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Requests;
@@ -33,10 +33,10 @@ public class GetMissingStickersAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = MissingStickersQueryRequestMock.Valid();
-        var items = MissingStickerItemModelMock.List(5);
+        var paged = MissingStickerItemModelMock.Paged(5);
 
         var collectionService = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -45,10 +45,13 @@ public class GetMissingStickersAppServiceTests
         var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<MissingStickerItemResponse>>)result;
+        result.ShouldBeOfType<Ok<PagedMissingStickersResponse>>();
+        var ok = (Ok<PagedMissingStickersResponse>)result;
         ok.Value.ShouldNotBeNull();
-        ok.Value!.Count.ShouldBe(5);
+        ok.Value!.Items.Count.ShouldBe(5);
+        ok.Value.TotalCount.ShouldBe(5);
+        ok.Value.Page.ShouldBe(1);
+        ok.Value.PageSize.ShouldBe(20);
     }
 
     [Fact]
@@ -57,10 +60,10 @@ public class GetMissingStickersAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = MissingStickersQueryRequestMock.Valid();
-        var items = MissingStickerItemModelMock.List(0);
+        var paged = MissingStickerItemModelMock.PagedEmpty();
 
         var collectionService = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -69,9 +72,11 @@ public class GetMissingStickersAppServiceTests
         var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<MissingStickerItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(0);
+        result.ShouldBeOfType<Ok<PagedMissingStickersResponse>>();
+        var ok = (Ok<PagedMissingStickersResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(0);
+        ok.Value.TotalCount.ShouldBe(0);
+        ok.Value.TotalPages.ShouldBe(0);
     }
 
     [Fact]
@@ -80,10 +85,10 @@ public class GetMissingStickersAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = MissingStickersQueryRequestMock.WithSort("team");
-        var items = MissingStickerItemModelMock.List(3);
+        var paged = MissingStickerItemModelMock.Paged(3);
 
         var collectionService = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -92,21 +97,27 @@ public class GetMissingStickersAppServiceTests
         var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<MissingStickerItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(3);
+        result.ShouldBeOfType<Ok<PagedMissingStickersResponse>>();
+        var ok = (Ok<PagedMissingStickersResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(3);
     }
 
     [Fact]
-    public async Task ListMissingStickersAsync_WithPagination_ReturnsOkAsync()
+    public async Task ListMissingStickersAsync_WithPagination_ReturnsCorrectPaginationMetadataAsync()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var query = MissingStickersQueryRequestMock.WithPagination(page: 2, pageSize: 10);
-        var items = MissingStickerItemModelMock.List(10);
+        var paged = new PagedResult<MissingStickerItemModel>
+        {
+            Items      = MissingStickerItemModelMock.List(10),
+            TotalCount = 50,
+            Page       = 2,
+            PageSize   = 10
+        };
 
         var collectionService = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -115,9 +126,13 @@ public class GetMissingStickersAppServiceTests
         var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<MissingStickerItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(10);
+        result.ShouldBeOfType<Ok<PagedMissingStickersResponse>>();
+        var ok = (Ok<PagedMissingStickersResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(10);
+        ok.Value.Page.ShouldBe(2);
+        ok.Value.PageSize.ShouldBe(10);
+        ok.Value.TotalCount.ShouldBe(50);
+        ok.Value.TotalPages.ShouldBe(5);
     }
 
     [Fact]
@@ -128,7 +143,7 @@ public class GetMissingStickersAppServiceTests
         var query = MissingStickersQueryRequestMock.Valid();
 
         var collectionService = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Failure(ResultCode.InternalError, "Erro interno.", 500))
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Failure(ResultCode.InternalError, "Erro interno.", 500))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -148,21 +163,27 @@ public class GetMissingStickersAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = MissingStickersQueryRequestMock.Valid();
-        var items = new List<MissingStickerItemModel>
+        var paged = new PagedResult<MissingStickerItemModel>
         {
-            new()
+            Items = new List<MissingStickerItemModel>
             {
-                StickerId  = Guid.NewGuid(),
-                Code       = "BRA001",
-                PlayerName = "Richarlison",
-                TeamName   = "Brasil",
-                TeamCode   = "BRA",
-                Rarity     = StickerRarity.Foil
-            }
+                new()
+                {
+                    StickerId  = Guid.NewGuid(),
+                    Code       = "BRA001",
+                    PlayerName = "Richarlison",
+                    TeamName   = "Brasil",
+                    TeamCode   = "BRA",
+                    Rarity     = StickerRarity.Foil
+                }
+            },
+            TotalCount = 1,
+            Page       = 1,
+            PageSize   = 20
         };
 
         var collectionService = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items))
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -171,10 +192,10 @@ public class GetMissingStickersAppServiceTests
         var result = await appService.ListMissingStickersAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<MissingStickerItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<MissingStickerItemResponse>>)result;
+        result.ShouldBeOfType<Ok<PagedMissingStickersResponse>>();
+        var ok = (Ok<PagedMissingStickersResponse>)result;
         ok.Value.ShouldNotBeNull();
-        var first = ok.Value!.First();
+        var first = ok.Value!.Items.First();
         first.Team.ShouldBe("Brasil");
         first.PlayerName.ShouldBe("Richarlison");
         first.Code.ShouldBe("BRA001");
@@ -187,10 +208,10 @@ public class GetMissingStickersAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = MissingStickersQueryRequestMock.Valid();
-        var items = MissingStickerItemModelMock.List(2);
+        var paged = MissingStickerItemModelMock.Paged(2);
 
         var collectionServiceMock = new CollectionServiceMock()
-            .SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>>.Success(items));
+            .SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>>.Success(paged));
 
         var appService = new CollectionAppService(collectionServiceMock.Build(), _mapper);
 

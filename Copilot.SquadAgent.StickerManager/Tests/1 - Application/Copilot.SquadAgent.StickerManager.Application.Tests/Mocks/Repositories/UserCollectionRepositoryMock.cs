@@ -66,7 +66,7 @@ public class UserCollectionRepositoryMock : BaseMock<IUserCollectionRepository>
         return this;
     }
 
-    public UserCollectionRepositoryMock SetupListByUserAsync(Result<IReadOnlyList<CollectionItemModel>> returnValue)
+    public UserCollectionRepositoryMock SetupListByUserAsync(Result<PagedResult<CollectionItemModel>> returnValue)
     {
         _mock.Setup(x => x.ListByUserAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync(returnValue);

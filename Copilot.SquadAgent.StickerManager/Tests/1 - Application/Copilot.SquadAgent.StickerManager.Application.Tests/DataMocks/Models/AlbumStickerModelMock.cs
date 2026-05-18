@@ -1,6 +1,6 @@
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
-using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
+using Copilot.SquadAgent.StickerManager.Domain.Result;
 
 namespace Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
 

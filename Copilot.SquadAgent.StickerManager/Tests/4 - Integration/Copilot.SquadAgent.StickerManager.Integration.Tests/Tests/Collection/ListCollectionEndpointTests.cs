@@ -1,4 +1,4 @@
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses.Paged;
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Copilot.SquadAgent.StickerManager.Domain.Enums;
 using Copilot.SquadAgent.StickerManager.Infrastructure.Data;
@@ -78,9 +78,13 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
-        body.Count.ShouldBeGreaterThanOrEqualTo(1);
+        body.Items.ShouldNotBeNull();
+        body.Items.Count.ShouldBeGreaterThanOrEqualTo(1);
+        body.TotalCount.ShouldBeGreaterThanOrEqualTo(1);
+        body.Page.ShouldBe(1);
+        body.PageSize.ShouldBe(100);
     }
 
     [Fact]
@@ -96,9 +100,10 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
-        body.Count.ShouldBe(0);
+        body.Items.Count.ShouldBe(0);
+        body.TotalCount.ShouldBe(0);
     }
 
     [Fact]
@@ -118,9 +123,9 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
-        body.Count.ShouldBeGreaterThanOrEqualTo(1);
+        body.Items.Count.ShouldBeGreaterThanOrEqualTo(1);
     }
 
     [Fact]
@@ -140,9 +145,9 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
-        body.ShouldAllBe(item => item.Rarity == StickerRarity.Foil);
+        body.Items.ShouldAllBe(item => item.Rarity == StickerRarity.Foil);
     }
 
     [Fact]
@@ -162,8 +167,9 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
+        body.Items.ShouldNotBeNull();
     }
 
     [Fact]
@@ -183,9 +189,12 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
-        body.Count.ShouldBeLessThanOrEqualTo(1);
+        body.Items.Count.ShouldBeLessThanOrEqualTo(1);
+        body.Page.ShouldBe(1);
+        body.PageSize.ShouldBe(1);
+        body.TotalPages.ShouldBeGreaterThanOrEqualTo(0);
     }
 
     [Fact]
@@ -233,10 +242,14 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadFromJsonAsync<List<CollectionItemResponse>>(JsonOptions);
+        var body = await response.Content.ReadFromJsonAsync<PagedCollectionResponse>(JsonOptions);
         body.ShouldNotBeNull();
+        body.TotalCount.ShouldBeGreaterThanOrEqualTo(0);
+        body.Page.ShouldBe(1);
+        body.PageSize.ShouldBe(100);
+        body.TotalPages.ShouldBeGreaterThanOrEqualTo(0);
 
-        var item = body.FirstOrDefault(x => x.StickerId == stickerId);
+        var item = body.Items.FirstOrDefault(x => x.StickerId == stickerId);
         item.ShouldNotBeNull();
         item!.PlayerName.ShouldBe("Casemiro");
         item.Team.ShouldBe("Brasil");

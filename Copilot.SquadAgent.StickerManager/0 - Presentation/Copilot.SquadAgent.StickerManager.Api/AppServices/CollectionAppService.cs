@@ -3,6 +3,7 @@ using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses.Paged;
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
 using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
@@ -70,7 +71,7 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         if (result.IsFailure)
             return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
 
-        var response = mapper.Map<IReadOnlyList<CollectionItemResponse>>(result.Value);
+        var response = mapper.Map<PagedCollectionResponse>(result.Value);
         return TypedResults.Ok(response);
     }
 
@@ -84,7 +85,7 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         if (result.IsFailure)
             return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
 
-        var response = mapper.Map<IReadOnlyList<MissingStickerItemResponse>>(result.Value);
+        var response = mapper.Map<PagedMissingStickersResponse>(result.Value);
         return TypedResults.Ok(response);
     }
 

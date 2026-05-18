@@ -1,9 +1,7 @@
 using Copilot.SquadAgent.StickerManager.Domain.Interfaces.Services;
-using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
-
 
 namespace Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
 
@@ -51,7 +49,7 @@ public class CollectionServiceMock : BaseMock<ICollectionService>
         return this;
     }
 
-    public CollectionServiceMock SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>> returnValue)
+    public CollectionServiceMock SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>> returnValue)
     {
         _mock.Setup(x => x.ListCollectionAsync(It.IsAny<ListCollectionModel>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync(returnValue);
@@ -65,7 +63,7 @@ public class CollectionServiceMock : BaseMock<ICollectionService>
         return this;
     }
 
-    public CollectionServiceMock SetupListMissingStickersAsync(Result<IReadOnlyList<MissingStickerItemModel>> returnValue)
+    public CollectionServiceMock SetupListMissingStickersAsync(Result<PagedResult<MissingStickerItemModel>> returnValue)
     {
         _mock.Setup(x => x.ListMissingStickersAsync(It.IsAny<MissingStickersModel>(), It.IsAny<CancellationToken>()))
              .ReturnsAsync(returnValue);

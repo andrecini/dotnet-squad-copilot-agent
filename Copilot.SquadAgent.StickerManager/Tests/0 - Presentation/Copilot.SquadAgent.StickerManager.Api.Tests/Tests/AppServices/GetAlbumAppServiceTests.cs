@@ -1,11 +1,10 @@
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.AppServices;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses.Paged;
 using Copilot.SquadAgent.StickerManager.Api.Mappings;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Requests;
 using Copilot.SquadAgent.StickerManager.Api.Tests.Mocks.Services;
-using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Microsoft.AspNetCore.Http.HttpResults;

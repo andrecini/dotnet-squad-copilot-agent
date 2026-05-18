@@ -2,7 +2,6 @@ using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Application.Services.Collection;
 using Copilot.SquadAgent.StickerManager.Application.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Repositories;
-using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
 using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;

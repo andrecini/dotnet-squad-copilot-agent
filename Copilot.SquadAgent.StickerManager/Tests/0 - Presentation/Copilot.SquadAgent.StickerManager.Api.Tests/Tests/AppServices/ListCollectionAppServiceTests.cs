@@ -1,6 +1,6 @@
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.AppServices;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses.Paged;
 using Copilot.SquadAgent.StickerManager.Api.Mappings;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Models;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Requests;
@@ -32,10 +32,10 @@ public class ListCollectionAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.Valid();
-        var items = CollectionItemModelMock.List(3);
+        var paged = CollectionItemModelMock.Paged(3);
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -44,10 +44,13 @@ public class ListCollectionAppServiceTests
         var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<CollectionItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<CollectionItemResponse>>)result;
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
         ok.Value.ShouldNotBeNull();
-        ok.Value!.Count.ShouldBe(3);
+        ok.Value!.Items.Count.ShouldBe(3);
+        ok.Value.TotalCount.ShouldBe(3);
+        ok.Value.Page.ShouldBe(1);
+        ok.Value.PageSize.ShouldBe(20);
     }
 
     [Fact]
@@ -57,10 +60,10 @@ public class ListCollectionAppServiceTests
         var userId = Guid.NewGuid();
         var teamId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.WithTeamFilter(teamId);
-        var items = CollectionItemModelMock.List(2);
+        var paged = CollectionItemModelMock.Paged(2);
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -69,9 +72,9 @@ public class ListCollectionAppServiceTests
         var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<CollectionItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<CollectionItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(2);
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -80,10 +83,10 @@ public class ListCollectionAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.WithRarityFilter();
-        var items = CollectionItemModelMock.List(1);
+        var paged = CollectionItemModelMock.Paged(1);
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -92,9 +95,9 @@ public class ListCollectionAppServiceTests
         var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<CollectionItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<CollectionItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(1);
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -103,10 +106,10 @@ public class ListCollectionAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.WithSort("player_name");
-        var items = CollectionItemModelMock.List(4);
+        var paged = CollectionItemModelMock.Paged(4);
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -115,9 +118,9 @@ public class ListCollectionAppServiceTests
         var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<CollectionItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<CollectionItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(4);
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(4);
     }
 
     [Fact]
@@ -126,10 +129,10 @@ public class ListCollectionAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.Valid();
-        var items = CollectionItemModelMock.List(0);
+        var paged = CollectionItemModelMock.PagedEmpty();
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -138,9 +141,11 @@ public class ListCollectionAppServiceTests
         var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<CollectionItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<CollectionItemResponse>>)result;
-        ok.Value!.Count.ShouldBe(0);
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
+        ok.Value!.Items.Count.ShouldBe(0);
+        ok.Value.TotalCount.ShouldBe(0);
+        ok.Value.TotalPages.ShouldBe(0);
     }
 
     [Fact]
@@ -151,7 +156,7 @@ public class ListCollectionAppServiceTests
         var query = CollectionQueryRequestMock.Valid();
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Failure(ResultCode.InternalError, "Erro interno."))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Failure(ResultCode.InternalError, "Erro interno."))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -171,10 +176,10 @@ public class ListCollectionAppServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.Valid();
-        var items = CollectionItemModelMock.List(2);
+        var paged = CollectionItemModelMock.Paged(2);
 
         var collectionServiceMock = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items));
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged));
 
         var appService = new CollectionAppService(collectionServiceMock.Build(), _mapper);
 
@@ -186,28 +191,21 @@ public class ListCollectionAppServiceTests
     }
 
     [Fact]
-    public async Task ListCollectionAsync_ResponseContainsCorrectTeamName_ReturnsOkAsync()
+    public async Task ListCollectionAsync_WithPagination_ReturnsCorrectPaginationMetadataAsync()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var query = CollectionQueryRequestMock.Valid();
-        var items = new List<CollectionItemModel>
+        var paged = new PagedResult<CollectionItemModel>
         {
-            new()
-            {
-                StickerId         = Guid.NewGuid(),
-                PlayerName        = "Vinicius Jr",
-                TeamName          = "Brasil",
-                TeamCode          = "BRA",
-                Rarity            = Domain.Enums.StickerRarity.Base,
-                QuantityOwned     = 2,
-                QuantityDuplicate = 1,
-                AcquiredAt        = DateTime.UtcNow
-            }
+            Items      = CollectionItemModelMock.List(5),
+            TotalCount = 50,
+            Page       = 2,
+            PageSize   = 10
         };
 
         var collectionService = new CollectionServiceMock()
-            .SetupListCollectionAsync(Result<IReadOnlyList<CollectionItemModel>>.Success(items))
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
             .Build();
 
         var appService = new CollectionAppService(collectionService, _mapper);
@@ -216,10 +214,55 @@ public class ListCollectionAppServiceTests
         var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
 
         // Assert
-        result.ShouldBeOfType<Ok<IReadOnlyList<CollectionItemResponse>>>();
-        var ok = (Ok<IReadOnlyList<CollectionItemResponse>>)result;
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
+        ok.Value!.Page.ShouldBe(2);
+        ok.Value.PageSize.ShouldBe(10);
+        ok.Value.TotalCount.ShouldBe(50);
+        ok.Value.TotalPages.ShouldBe(5);
+    }
+
+    [Fact]
+    public async Task ListCollectionAsync_ResponseContainsCorrectTeamName_ReturnsOkAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var query = CollectionQueryRequestMock.Valid();
+        var paged = new PagedResult<CollectionItemModel>
+        {
+            Items = new List<CollectionItemModel>
+            {
+                new()
+                {
+                    StickerId         = Guid.NewGuid(),
+                    PlayerName        = "Vinicius Jr",
+                    TeamName          = "Brasil",
+                    TeamCode          = "BRA",
+                    Rarity            = Domain.Enums.StickerRarity.Base,
+                    QuantityOwned     = 2,
+                    QuantityDuplicate = 1,
+                    AcquiredAt        = DateTime.UtcNow
+                }
+            },
+            TotalCount = 1,
+            Page       = 1,
+            PageSize   = 20
+        };
+
+        var collectionService = new CollectionServiceMock()
+            .SetupListCollectionAsync(Result<PagedResult<CollectionItemModel>>.Success(paged))
+            .Build();
+
+        var appService = new CollectionAppService(collectionService, _mapper);
+
+        // Act
+        var result = await appService.ListCollectionAsync(userId, query, CancellationToken.None);
+
+        // Assert
+        result.ShouldBeOfType<Ok<PagedCollectionResponse>>();
+        var ok = (Ok<PagedCollectionResponse>)result;
         ok.Value.ShouldNotBeNull();
-        var first = ok.Value!.First();
+        var first = ok.Value!.Items.First();
         first.Team.ShouldBe("Brasil");
         first.PlayerName.ShouldBe("Vinicius Jr");
         first.QuantityOwned.ShouldBe(2);

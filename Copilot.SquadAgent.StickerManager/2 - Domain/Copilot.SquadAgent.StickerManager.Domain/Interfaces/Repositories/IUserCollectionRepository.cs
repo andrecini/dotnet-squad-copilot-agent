@@ -1,5 +1,6 @@
 using Copilot.SquadAgent.StickerManager.Domain.Entities;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;
+using Copilot.SquadAgent.StickerManager.Domain.Result;
 using ResultNs = Copilot.SquadAgent.StickerManager.Domain.Result;
 
 namespace Copilot.SquadAgent.StickerManager.Domain.Interfaces.Repositories;
@@ -11,6 +12,6 @@ public interface IUserCollectionRepository
     Task<ResultNs.Result<UserCollection>> CreateAsync(UserCollection userCollection, CancellationToken cancellationToken);
     Task<ResultNs.Result<UserCollection>> UpdateAsync(UserCollection userCollection, CancellationToken cancellationToken);
     Task<ResultNs.Result> SoftDeleteAsync(UserCollection userCollection, CancellationToken cancellationToken);
-    Task<ResultNs.Result<IReadOnlyList<CollectionItemModel>>> ListByUserAsync(ListCollectionModel filter, CancellationToken cancellationToken);
+    Task<ResultNs.Result<PagedResult<CollectionItemModel>>> ListByUserAsync(ListCollectionModel filter, CancellationToken cancellationToken);
     Task<ResultNs.Result<CollectionStatsModel>> GetStatsAsync(Guid userId, CancellationToken cancellationToken);
 }

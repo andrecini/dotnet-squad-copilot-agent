@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Copilot.SquadAgent.StickerManager.Domain.Models;
+namespace Copilot.SquadAgent.StickerManager.Domain.Result;
 
 [ExcludeFromCodeCoverage]
 public class PagedResult<T>
