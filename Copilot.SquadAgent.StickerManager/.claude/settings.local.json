@@ -18,7 +18,9 @@
       "Bash(Sort-Object)",
       "Bash(where gh *)",
       "Bash(Get-Command gh *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }
