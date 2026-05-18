@@ -44,5 +44,7 @@ public class CollectionProfile : Profile
         CreateMap<PagedResult<AlbumStickerModel>, PagedAlbumResponse>()
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
             .ForMember(dest => dest.TotalPages, opt => opt.MapFrom(src => src.TotalPages));
+
+        CreateMap<TeamProgressModel, TeamProgressResponse>();
     }
 }

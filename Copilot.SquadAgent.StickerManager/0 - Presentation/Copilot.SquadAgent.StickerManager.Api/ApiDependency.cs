@@ -62,6 +62,7 @@ public static class ApiDependency
         GetMissingStickersEndpoint.Map(app);
         GetCollectionStatsEndpoint.Map(app);
         GetAlbumEndpoint.Map(app);
+        GetTeamProgressEndpoint.Map(app);
 
         return app;
     }

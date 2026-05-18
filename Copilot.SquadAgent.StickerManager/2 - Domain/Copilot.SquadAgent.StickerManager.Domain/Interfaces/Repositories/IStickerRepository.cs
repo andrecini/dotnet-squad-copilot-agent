@@ -10,4 +10,5 @@ public interface IStickerRepository
     Task<Result<Sticker>> GetByIdAsync(Guid stickerId, CancellationToken cancellationToken);
     Task<Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingByUserAsync(MissingStickersModel filter, CancellationToken cancellationToken);
     Task<Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken);
+    Task<Result<TeamProgressModel>> GetTeamProgressAsync(Guid teamId, Guid userId, CancellationToken cancellationToken);
 }
