@@ -1,9 +1,9 @@
+using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.QueryRequest;
+using Copilot.SquadAgent.StickerManager.Api.Filters;
+using Copilot.SquadAgent.StickerManager.Api.Utils;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
-using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
-using Copilot.SquadAgent.StickerManager.Api.Filters;
-using Copilot.SquadAgent.StickerManager.Domain.Enums;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 
@@ -18,13 +18,11 @@ public static class ListCollectionEndpoint
             ICollectionAppService appService,
             CancellationToken cancellationToken) =>
         {
-            var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                ?? principal.FindFirstValue("sub");
+            var userIdResult = AuthorizationHelper.GetUserIdFromClaims(principal);
 
-            if (!Guid.TryParse(userIdClaim, out var userId))
-                return Results.Unauthorized();
+            if (userIdResult.IsFailure) return Results.Unauthorized();
 
-            return await appService.ListCollectionAsync(userId, query, cancellationToken);
+            return await appService.ListCollectionAsync(userIdResult.Value, query, cancellationToken);
         })
         .AddEndpointFilter<ValidationFilter<CollectionQueryRequest>>()
         .WithName("ListCollection")

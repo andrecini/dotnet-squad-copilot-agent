@@ -1,8 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
 using Copilot.SquadAgent.StickerManager.Api.Filters;
+using Copilot.SquadAgent.StickerManager.Api.Utils;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Users;
 
@@ -17,13 +18,11 @@ public static class UpdateUserProfileEndpoint
             IUserAppService appService,
             CancellationToken cancellationToken) =>
         {
-            var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                ?? principal.FindFirstValue("sub");
+            var userIdResult = AuthorizationHelper.GetUserIdFromClaims(principal);
 
-            if (!Guid.TryParse(userIdClaim, out var userId))
-                return Results.Unauthorized();
+            if (userIdResult.IsFailure) return Results.Unauthorized();
 
-            return await appService.UpdateProfileAsync(userId, request, cancellationToken);
+            return await appService.UpdateProfileAsync(userIdResult.Value, request, cancellationToken);
         })
         .AddEndpointFilter<ValidationFilter<UpdateUserProfileRequest>>()
         .WithName("UpdateUserProfile")

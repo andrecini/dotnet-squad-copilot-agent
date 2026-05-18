@@ -1,7 +1,9 @@
+using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.QueryRequest;
+using Copilot.SquadAgent.StickerManager.Api.Utils;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
-using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 
@@ -11,29 +13,16 @@ public static class GetAlbumEndpoint
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapGet("/api/v1/album", async (
+            [AsParameters] AlbumQueryRequest query,
             ClaimsPrincipal principal,
             ICollectionAppService appService,
-            CancellationToken cancellationToken,
-            int page = 1,
-            int pageSize = 20,
-            bool sortByTeam = false,
-            Guid? teamId = null) =>
+            CancellationToken cancellationToken) =>
         {
-            var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                ?? principal.FindFirstValue("sub");
+            var userIdResult = AuthorizationHelper.GetUserIdFromClaims(principal);
 
-            if (!Guid.TryParse(userIdClaim, out var userId))
-                return Results.Unauthorized();
+            if (userIdResult.IsFailure) return Results.Unauthorized();
 
-            var query = new AlbumQueryRequest
-            {
-                Page       = page,
-                PageSize   = pageSize,
-                SortByTeam = sortByTeam,
-                TeamId     = teamId
-            };
-
-            return await appService.GetAlbumAsync(userId, query, cancellationToken);
+            return await appService.GetAlbumAsync(userIdResult.Value, query, cancellationToken);
         })
         .WithName("GetAlbum")
         .WithSummary("Retorna todas as figurinhas do álbum com paginação, ordenação e filtro opcional por time")

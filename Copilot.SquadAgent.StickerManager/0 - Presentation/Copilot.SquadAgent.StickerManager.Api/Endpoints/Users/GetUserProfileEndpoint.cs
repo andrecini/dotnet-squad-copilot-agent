@@ -1,6 +1,7 @@
+using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+using Copilot.SquadAgent.StickerManager.Api.Utils;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
-using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Users;
 
@@ -14,13 +15,11 @@ public static class GetUserProfileEndpoint
             IUserAppService appService,
             CancellationToken cancellationToken) =>
         {
-            var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                ?? principal.FindFirstValue("sub");
+            var userIdResult = AuthorizationHelper.GetUserIdFromClaims(principal);
 
-            if (!Guid.TryParse(userIdClaim, out var userId))
-                return Results.Unauthorized();
+            if (userIdResult.IsFailure) return Results.Unauthorized();
 
-            return await appService.GetProfileAsync(userId, cancellationToken);
+            return await appService.GetProfileAsync(userIdResult.Value, cancellationToken);
         })
         .WithName("GetUserProfile")
         .WithSummary("Retorna o perfil do usuário autenticado")

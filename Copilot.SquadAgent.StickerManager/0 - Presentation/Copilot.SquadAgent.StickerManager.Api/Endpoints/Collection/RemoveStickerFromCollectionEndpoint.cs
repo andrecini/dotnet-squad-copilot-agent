@@ -1,6 +1,7 @@
+using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
+using Copilot.SquadAgent.StickerManager.Api.Utils;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
-using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 
@@ -15,13 +16,11 @@ public static class RemoveStickerFromCollectionEndpoint
             ICollectionAppService appService,
             CancellationToken cancellationToken) =>
         {
-            var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                ?? principal.FindFirstValue("sub");
+            var userIdResult = AuthorizationHelper.GetUserIdFromClaims(principal);
 
-            if (!Guid.TryParse(userIdClaim, out var userId))
-                return Results.Unauthorized();
+            if (userIdResult.IsFailure) return Results.Unauthorized();
 
-            return await appService.RemoveStickerFromCollectionAsync(userId, id, cancellationToken);
+            return await appService.RemoveStickerFromCollectionAsync(userIdResult.Value, id, cancellationToken);
         })
         .WithName("RemoveStickerFromCollection")
         .WithSummary("Remove uma figurinha da coleção do usuário autenticado (soft delete)")
