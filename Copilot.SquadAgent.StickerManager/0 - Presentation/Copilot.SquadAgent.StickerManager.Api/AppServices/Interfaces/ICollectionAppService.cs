@@ -11,4 +11,5 @@ public interface ICollectionAppService
     Task<IResult> ListMissingStickersAsync(Guid userId, MissingStickersQueryRequest query, CancellationToken cancellationToken);
     Task<IResult> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken);
     Task<IResult> GetAlbumAsync(Guid userId, AlbumQueryRequest query, CancellationToken cancellationToken);
+    Task<IResult> GetTeamProgressAsync(Guid userId, Guid teamId, CancellationToken cancellationToken);
 }

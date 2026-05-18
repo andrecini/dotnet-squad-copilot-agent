@@ -5,6 +5,7 @@ using Copilot.SquadAgent.StickerManager.Domain.Result;
 using Moq;
 using StickerEntity = Copilot.SquadAgent.StickerManager.Domain.Entities.Sticker;
 
+
 namespace Copilot.SquadAgent.StickerManager.Application.Tests.Mocks.Repositories;
 
 public class StickerRepositoryMock : BaseMock<IStickerRepository>
@@ -42,6 +43,20 @@ public class StickerRepositoryMock : BaseMock<IStickerRepository>
     public StickerRepositoryMock VerifyGetAlbumAsyncCalled(Times times)
     {
         _mock.Verify(x => x.GetAlbumAsync(It.IsAny<AlbumQueryModel>(), It.IsAny<CancellationToken>()), times);
+        return this;
+    }
+
+    public StickerRepositoryMock SetupGetTeamProgressAsync(Result<TeamProgressModel> returnValue)
+    {
+        _mock.Setup(x => x.GetTeamProgressAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(returnValue);
+
+        return this;
+    }
+
+    public StickerRepositoryMock VerifyGetTeamProgressAsyncCalled(Times times)
+    {
+        _mock.Verify(x => x.GetTeamProgressAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
         return this;
     }
 }

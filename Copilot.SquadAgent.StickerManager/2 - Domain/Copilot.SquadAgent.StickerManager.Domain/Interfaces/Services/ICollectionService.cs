@@ -13,4 +13,5 @@ public interface ICollectionService
     Task<ResultNs.Result<IReadOnlyList<MissingStickerItemModel>>> ListMissingStickersAsync(MissingStickersModel model, CancellationToken cancellationToken);
     Task<ResultNs.Result<CollectionStatsModel>> GetCollectionStatsAsync(Guid userId, CancellationToken cancellationToken);
     Task<ResultNs.Result<PagedResult<AlbumStickerModel>>> GetAlbumAsync(AlbumQueryModel query, CancellationToken cancellationToken);
+    Task<ResultNs.Result<TeamProgressModel>> GetTeamProgressAsync(Guid teamId, Guid userId, CancellationToken cancellationToken);
 }

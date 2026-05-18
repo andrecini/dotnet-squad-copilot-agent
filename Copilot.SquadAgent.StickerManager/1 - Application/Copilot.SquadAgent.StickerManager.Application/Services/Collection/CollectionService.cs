@@ -171,4 +171,14 @@ public class CollectionService(
 
         return Result<PagedResult<AlbumStickerModel>>.Success(result.Value!);
     }
+
+    public async Task<Result<TeamProgressModel>> GetTeamProgressAsync(Guid teamId, Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await stickerRepository.GetTeamProgressAsync(teamId, userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Result<TeamProgressModel>.Failure(result.Code, result.Message!, result.StatusCode);
+
+        return Result<TeamProgressModel>.Success(result.Value!);
+    }
 }
