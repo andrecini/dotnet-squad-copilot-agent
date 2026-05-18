@@ -109,4 +109,41 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
 
         return Result<PagedResult<AlbumStickerModel>>.Success(paged);
     }
+
+    public async Task<Result<TeamProgressModel>> GetTeamProgressAsync(Guid teamId, Guid userId, CancellationToken cancellationToken)
+    {
+        var team = await dbContext.Teams
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == teamId, cancellationToken);
+
+        if (team is null)
+            return Result<TeamProgressModel>.Failure(ResultCode.NotFound, "Time não encontrado.", statusCode: 404);
+
+        var totalStickers = await dbContext.Stickers
+            .AsNoTracking()
+            .CountAsync(s => s.TeamId == teamId, cancellationToken);
+
+        var ownedCount = await dbContext.UserCollections
+            .AsNoTracking()
+            .CountAsync(
+                uc => uc.UserId == userId
+                   && uc.DeletedAt == null
+                   && uc.Sticker.TeamId == teamId,
+                cancellationToken);
+
+        var completionPercentage = totalStickers == 0
+            ? 0.0
+            : Math.Round((double)ownedCount / totalStickers * 100, 1);
+
+        var model = new TeamProgressModel
+        {
+            TeamId               = team.Id,
+            TeamName             = team.Name,
+            TotalStickers        = totalStickers,
+            OwnedCount           = ownedCount,
+            CompletionPercentage = completionPercentage
+        };
+
+        return Result<TeamProgressModel>.Success(model);
+    }
 }

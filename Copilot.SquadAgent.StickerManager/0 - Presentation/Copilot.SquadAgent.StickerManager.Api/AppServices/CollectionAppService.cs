@@ -111,4 +111,15 @@ public class CollectionAppService(ICollectionService collectionService, IMapper 
         var response = mapper.Map<PagedAlbumResponse>(result.Value);
         return TypedResults.Ok(response);
     }
+
+    public async Task<IResult> GetTeamProgressAsync(Guid userId, Guid teamId, CancellationToken cancellationToken)
+    {
+        var result = await collectionService.GetTeamProgressAsync(teamId, userId, cancellationToken);
+
+        if (result.IsFailure)
+            return Results.Problem(result.Message, statusCode: result.StatusCode ?? 500);
+
+        var response = mapper.Map<TeamProgressResponse>(result.Value);
+        return TypedResults.Ok(response);
+    }
 }
