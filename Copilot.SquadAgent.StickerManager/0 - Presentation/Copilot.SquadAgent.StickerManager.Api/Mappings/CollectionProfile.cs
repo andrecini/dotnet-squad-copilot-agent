@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Responses;
 using Copilot.SquadAgent.StickerManager.Domain.Models;
 using Copilot.SquadAgent.StickerManager.Domain.Models.Collection;

@@ -1,5 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.QueryRequest;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 using Copilot.SquadAgent.StickerManager.Api.Filters;
 using Copilot.SquadAgent.StickerManager.Api.Utils;
 using System.Diagnostics.CodeAnalysis;

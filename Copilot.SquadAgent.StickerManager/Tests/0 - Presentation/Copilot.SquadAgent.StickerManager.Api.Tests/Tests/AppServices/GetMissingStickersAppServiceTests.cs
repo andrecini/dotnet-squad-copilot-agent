@@ -102,7 +102,7 @@ public class GetMissingStickersAppServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var query = MissingStickersQueryRequestMock.WithPagination(page: 2, limit: 10);
+        var query = MissingStickersQueryRequestMock.WithPagination(page: 2, pageSize: 10);
         var items = MissingStickerItemModelMock.List(10);
 
         var collectionService = new CollectionServiceMock()

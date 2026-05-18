@@ -268,7 +268,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, Page = 1, Limit = 100 };
+        var filter = new ListCollectionModel { UserId = userId, Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);
@@ -299,7 +299,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, TeamId = team1.Id, Page = 1, Limit = 100 };
+        var filter = new ListCollectionModel { UserId = userId, TeamId = team1.Id, Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);
@@ -328,7 +328,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, Rarity = StickerRarity.Foil, Page = 1, Limit = 100 };
+        var filter = new ListCollectionModel { UserId = userId, Rarity = StickerRarity.Foil, Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);
@@ -357,7 +357,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, Sort = "player_name", Page = 1, Limit = 100 };
+        var filter = new ListCollectionModel { UserId = userId, Sort = "player_name", Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);
@@ -387,7 +387,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, Sort = "acquired_at", Page = 1, Limit = 100 };
+        var filter = new ListCollectionModel { UserId = userId, Sort = "acquired_at", Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);
@@ -425,7 +425,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, Page = 2, Limit = 2 };
+        var filter = new ListCollectionModel { UserId = userId, Page = 2, PageSize = 2 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);
@@ -460,7 +460,7 @@ public class UserCollectionRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new UserCollectionRepository(dbContext);
-        var filter = new ListCollectionModel { UserId = userId, Page = 1, Limit = 100 };
+        var filter = new ListCollectionModel { UserId = userId, Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListByUserAsync(filter, CancellationToken.None);

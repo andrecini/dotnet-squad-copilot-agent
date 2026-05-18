@@ -42,8 +42,8 @@ public class StickerRepository(AppDbContext dbContext) : IStickerRepository
         };
 
         var items = await query
-            .Skip((filter.Page - 1) * filter.Limit)
-            .Take(filter.Limit)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
             .Select(s => new MissingStickerItemModel
             {
                 StickerId  = s.Id,

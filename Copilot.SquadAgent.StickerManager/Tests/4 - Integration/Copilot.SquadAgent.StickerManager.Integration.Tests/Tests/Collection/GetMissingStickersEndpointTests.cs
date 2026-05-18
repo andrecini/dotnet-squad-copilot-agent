@@ -67,7 +67,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -89,7 +89,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         await _client.PostAsJsonAsync("/api/v1/collection", new { sticker_id = stickerId });
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -109,7 +109,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?sort=rarity&page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?sort=rarity&page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -128,7 +128,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?sort=team&page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?sort=team&page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -147,7 +147,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?sort=number&page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?sort=number&page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -156,18 +156,18 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
     }
 
     [Fact]
-    public async Task GetMissingStickersAsync_WithPaginationLimit1_ReturnsAtMostOneItemAsync()
+    public async Task GetMissingStickersAsync_WithPageSize1_ReturnsAtMostOneItemAsync()
     {
         // Arrange
         await SeedStickerAsync("Paqueta");
         await SeedStickerAsync("Fred");
 
-        var email = $"missing_page_limit_{Guid.NewGuid():N}@test.com";
+        var email = $"missing_page_pageSize_{Guid.NewGuid():N}@test.com";
         var token = await AuthHelper.GetTokenAsync(_client, email);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=1");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&pageSize=1");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -185,7 +185,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=0&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=0&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -195,12 +195,12 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
     public async Task GetMissingStickersAsync_WithInvalidLimit_ReturnsBadRequestAsync()
     {
         // Arrange
-        var email = $"missing_invalid_limit_{Guid.NewGuid():N}@test.com";
+        var email = $"missing_invalid_pageSize_{Guid.NewGuid():N}@test.com";
         var token = await AuthHelper.GetTokenAsync(_client, email);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=501");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&pageSize=501");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -213,7 +213,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = null;
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
@@ -230,7 +230,7 @@ public class GetMissingStickersEndpointTests(IntegrationTestFixture fixture) : I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection/missing?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

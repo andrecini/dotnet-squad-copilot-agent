@@ -1,9 +1,8 @@
 using Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.QueryRequest;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 using Copilot.SquadAgent.StickerManager.Api.Utils;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Endpoints.Collection;
 

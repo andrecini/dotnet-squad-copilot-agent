@@ -73,8 +73,8 @@ public class UserCollectionRepository(AppDbContext dbContext) : IUserCollectionR
         };
 
         var items = await query
-            .Skip((filter.Page - 1) * filter.Limit)
-            .Take(filter.Limit)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
             .Select(uc => new CollectionItemModel
             {
                 StickerId        = uc.StickerId,

@@ -8,5 +8,5 @@ public class MissingStickersModel
     public Guid UserId { get; set; }
     public string? Sort { get; set; }
     public int Page { get; set; } = 1;
-    public int Limit { get; set; } = 100;
+    public int PageSize { get; set; } = 20;
 }

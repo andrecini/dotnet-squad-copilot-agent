@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 
 namespace Copilot.SquadAgent.StickerManager.Api.AppServices.Interfaces;
 

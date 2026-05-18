@@ -1,4 +1,5 @@
 using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 using Copilot.SquadAgent.StickerManager.Api.Tests.DataMocks.Requests;
 using Copilot.SquadAgent.StickerManager.Api.Validators.Collection;
 using Shouldly;
@@ -51,24 +52,24 @@ public class CollectionQueryRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_LimitZero_FailsValidation()
+    public void Validate_PageSizeZero_FailsValidation()
     {
         // Arrange
-        var request = CollectionQueryRequestMock.WithLimitZero();
+        var request = CollectionQueryRequestMock.WithPageSizeZero();
 
         // Act
         var result = _validator.Validate(request);
 
         // Assert
         result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldContain(e => e.PropertyName == nameof(CollectionQueryRequest.Limit));
+        result.Errors.ShouldContain(e => e.PropertyName == nameof(CollectionQueryRequest.PageSize));
     }
 
     [Fact]
-    public void Validate_LimitZero_ReturnsExpectedErrorMessage()
+    public void Validate_PageSizeZero_ReturnsExpectedErrorMessage()
     {
         // Arrange
-        var request = CollectionQueryRequestMock.WithLimitZero();
+        var request = CollectionQueryRequestMock.WithPageSizeZero();
 
         // Act
         var result = _validator.Validate(request);
@@ -78,24 +79,24 @@ public class CollectionQueryRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_LimitAboveMaximum_FailsValidation()
+    public void Validate_PageSizeAboveMaximum_FailsValidation()
     {
         // Arrange
-        var request = CollectionQueryRequestMock.WithLimitAboveMaximum();
+        var request = CollectionQueryRequestMock.WithPageSizeAboveMaximum();
 
         // Act
         var result = _validator.Validate(request);
 
         // Assert
         result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldContain(e => e.PropertyName == nameof(CollectionQueryRequest.Limit));
+        result.Errors.ShouldContain(e => e.PropertyName == nameof(CollectionQueryRequest.PageSize));
     }
 
     [Fact]
-    public void Validate_LimitAboveMaximum_ReturnsExpectedErrorMessage()
+    public void Validate_PageSizeAboveMaximum_ReturnsExpectedErrorMessage()
     {
         // Arrange
-        var request = CollectionQueryRequestMock.WithLimitAboveMaximum();
+        var request = CollectionQueryRequestMock.WithPageSizeAboveMaximum();
 
         // Act
         var result = _validator.Validate(request);

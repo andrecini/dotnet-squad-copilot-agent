@@ -74,7 +74,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         await AddStickerToCollectionAsync(_client, stickerId);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -92,7 +92,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -114,7 +114,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         await AddStickerToCollectionAsync(_client, stickerId);
 
         // Act
-        var response = await _client.GetAsync($"/api/v1/collection?TeamId={teamId}&page=1&limit=100");
+        var response = await _client.GetAsync($"/api/v1/collection?TeamId={teamId}&page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -136,7 +136,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         await AddStickerToCollectionAsync(_client, stickerId);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection?Rarity=Foil&page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection?Rarity=Foil&page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -158,7 +158,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         await AddStickerToCollectionAsync(_client, stickerId);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection?Sort=player_name&page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection?Sort=player_name&page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -178,8 +178,8 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
 
         await AddStickerToCollectionAsync(_client, stickerId);
 
-        // Act — página 1 com limit 1 deve retornar no máximo 1 item
-        var response = await _client.GetAsync("/api/v1/collection?page=1&limit=1");
+        // Act — página 1 com pageSize 1 deve retornar no máximo 1 item
+        var response = await _client.GetAsync("/api/v1/collection?page=1&pageSize=1");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -210,7 +210,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection?page=0&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection?page=0&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -229,7 +229,7 @@ public class ListCollectionEndpointTests(IntegrationTestFixture fixture) : IClas
         await AddStickerToCollectionAsync(_client, stickerId);
 
         // Act
-        var response = await _client.GetAsync("/api/v1/collection?page=1&limit=100");
+        var response = await _client.GetAsync("/api/v1/collection?page=1&pageSize=100");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

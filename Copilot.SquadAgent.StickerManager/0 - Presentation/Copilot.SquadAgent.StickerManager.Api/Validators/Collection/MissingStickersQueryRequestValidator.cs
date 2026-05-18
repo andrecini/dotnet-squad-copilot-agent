@@ -1,4 +1,4 @@
-using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests;
+using Copilot.SquadAgent.StickerManager.Api.DTOs.Requests.Queries;
 using FluentValidation;
 
 namespace Copilot.SquadAgent.StickerManager.Api.Validators.Collection;
@@ -13,7 +13,7 @@ public class MissingStickersQueryRequestValidator : AbstractValidator<MissingSti
             .GreaterThanOrEqualTo(1)
             .WithMessage("A página deve ser maior ou igual a 1.");
 
-        RuleFor(x => x.Limit)
+        RuleFor(x => x.PageSize)
             .InclusiveBetween(1, 500)
             .WithMessage("O limite deve estar entre 1 e 500.");
 

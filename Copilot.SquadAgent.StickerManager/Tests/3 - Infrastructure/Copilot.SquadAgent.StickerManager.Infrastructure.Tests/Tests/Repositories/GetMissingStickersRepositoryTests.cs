@@ -309,7 +309,7 @@ public class GetMissingStickersRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new StickerRepository(dbContext);
-        var filter = new MissingStickersModel { UserId = userId, Page = 1, Limit = 100 };
+        var filter = new MissingStickersModel { UserId = userId, Page = 1, PageSize = 100 };
 
         // Act
         var result = await repository.ListMissingByUserAsync(filter, CancellationToken.None);
@@ -353,7 +353,7 @@ public class GetMissingStickersRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new StickerRepository(dbContext);
-        var filter = new MissingStickersModel { UserId = userId, Page = 1, Limit = 1 };
+        var filter = new MissingStickersModel { UserId = userId, Page = 1, PageSize = 1 };
 
         // Act
         var result = await repository.ListMissingByUserAsync(filter, CancellationToken.None);
@@ -390,8 +390,8 @@ public class GetMissingStickersRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new StickerRepository(dbContext);
-        var filterPage1 = new MissingStickersModel { UserId = userId, Sort = "number", Page = 1, Limit = 1 };
-        var filterPage2 = new MissingStickersModel { UserId = userId, Sort = "number", Page = 2, Limit = 1 };
+        var filterPage1 = new MissingStickersModel { UserId = userId, Sort = "number", Page = 1, PageSize = 1 };
+        var filterPage2 = new MissingStickersModel { UserId = userId, Sort = "number", Page = 2, PageSize = 1 };
 
         // Act
         var resultPage1 = await repository.ListMissingByUserAsync(filterPage1, CancellationToken.None);
@@ -427,7 +427,7 @@ public class GetMissingStickersRepositoryTests
         await dbContext.SaveChangesAsync();
 
         var repository = new StickerRepository(dbContext);
-        var filter = new MissingStickersModel { UserId = userId, Page = 99, Limit = 100 };
+        var filter = new MissingStickersModel { UserId = userId, Page = 99, PageSize = 100 };
 
         // Act
         var result = await repository.ListMissingByUserAsync(filter, CancellationToken.None);

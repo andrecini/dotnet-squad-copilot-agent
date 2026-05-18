@@ -8,7 +8,7 @@ public static class MissingStickersModelMock
     {
         UserId = userId ?? Guid.NewGuid(),
         Page = 1,
-        Limit = 100
+        PageSize = 100
     };
 
     public static MissingStickersModel WithSort(Guid? userId = null, string sort = "rarity") => new()
@@ -16,7 +16,7 @@ public static class MissingStickersModelMock
         UserId = userId ?? Guid.NewGuid(),
         Sort = sort,
         Page = 1,
-        Limit = 100
+        PageSize = 100
     };
 
     public static MissingStickersModel WithTeamSort(Guid? userId = null) => new()
@@ -24,7 +24,7 @@ public static class MissingStickersModelMock
         UserId = userId ?? Guid.NewGuid(),
         Sort = "team",
         Page = 1,
-        Limit = 100
+        PageSize = 100
     };
 
     public static MissingStickersModel WithNumberSort(Guid? userId = null) => new()
@@ -32,13 +32,13 @@ public static class MissingStickersModelMock
         UserId = userId ?? Guid.NewGuid(),
         Sort = "number",
         Page = 1,
-        Limit = 100
+        PageSize = 100
     };
 
     public static MissingStickersModel WithPagination(int page, int limit, Guid? userId = null) => new()
     {
         UserId = userId ?? Guid.NewGuid(),
         Page = page,
-        Limit = limit
+        PageSize = limit
     };
 }
