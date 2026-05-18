@@ -20,7 +20,10 @@
       "Bash(Get-Command gh *)",
       "Bash(powershell *)",
       "Bash(Get-ChildItem -Path \"C:\\\\projects\\\\dotnet-squad-copilot-agent\\\\Copilot.SquadAgent.StickerManager\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Skill(check-coverage)",
+      "Bash(python -c ' *)",
+      "Bash(awk '{print $0}')"
     ]
   }
 }

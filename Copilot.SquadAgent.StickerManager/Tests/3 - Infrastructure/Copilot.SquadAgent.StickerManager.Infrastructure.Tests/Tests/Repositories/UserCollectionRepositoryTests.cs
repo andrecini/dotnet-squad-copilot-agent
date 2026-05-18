@@ -470,4 +470,72 @@ public class UserCollectionRepositoryTests
         result.Value!.Count.ShouldBe(1);
         result.Value[0].StickerId.ShouldBe(stickerActive.Id);
     }
+
+    [Fact]
+    public async Task ListByUserAsync_WithTeamAndRarityFilter_ReturnsOnlyMatchingItemsAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var team1 = TeamEntityMock.Valid();
+        var team2 = new Domain.Entities.Team { Name = "Argentina", Code = "ARG", FlagUrl = "https://flags.example.com/arg.png" };
+        var stickerBraBase = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr", Rarity = StickerRarity.Base, TeamId = team1.Id };
+        var stickerBraFoil = new Domain.Entities.Sticker { Code = "BRA002", PlayerName = "Vinicius Jr", Rarity = StickerRarity.Foil, TeamId = team1.Id };
+        var stickerArgBase = new Domain.Entities.Sticker { Code = "ARG001", PlayerName = "Messi", Rarity = StickerRarity.Base, TeamId = team2.Id };
+
+        var collectionBraBase = new Domain.Entities.UserCollection { UserId = userId, StickerId = stickerBraBase.Id, QuantityOwned = 1, QuantityDuplicate = 0 };
+        var collectionBraFoil = new Domain.Entities.UserCollection { UserId = userId, StickerId = stickerBraFoil.Id, QuantityOwned = 1, QuantityDuplicate = 0 };
+        var collectionArgBase = new Domain.Entities.UserCollection { UserId = userId, StickerId = stickerArgBase.Id, QuantityOwned = 1, QuantityDuplicate = 0 };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddRangeAsync(team1, team2);
+        await dbContext.Stickers.AddRangeAsync(stickerBraBase, stickerBraFoil, stickerArgBase);
+        await dbContext.UserCollections.AddRangeAsync(collectionBraBase, collectionBraFoil, collectionArgBase);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new UserCollectionRepository(dbContext);
+        var filter = new ListCollectionModel { UserId = userId, TeamId = team1.Id, Rarity = StickerRarity.Foil, Page = 1, Limit = 100 };
+
+        // Act
+        var result = await repository.ListByUserAsync(filter, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Count.ShouldBe(1);
+        result.Value[0].StickerId.ShouldBe(stickerBraFoil.Id);
+        result.Value[0].Rarity.ShouldBe(StickerRarity.Foil);
+    }
+
+    [Fact]
+    public async Task ListByUserAsync_SortByUnknownValue_OrdersByCodeAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var team = TeamEntityMock.Valid();
+        var stickerC = new Domain.Entities.Sticker { Code = "BRA003", PlayerName = "Marquinhos", Rarity = StickerRarity.Base, TeamId = team.Id };
+        var stickerA = new Domain.Entities.Sticker { Code = "BRA001", PlayerName = "Neymar Jr", Rarity = StickerRarity.Base, TeamId = team.Id };
+        var stickerB = new Domain.Entities.Sticker { Code = "BRA002", PlayerName = "Vinicius Jr", Rarity = StickerRarity.Base, TeamId = team.Id };
+
+        var collectionC = new Domain.Entities.UserCollection { UserId = userId, StickerId = stickerC.Id, QuantityOwned = 1, QuantityDuplicate = 0 };
+        var collectionA = new Domain.Entities.UserCollection { UserId = userId, StickerId = stickerA.Id, QuantityOwned = 1, QuantityDuplicate = 0 };
+        var collectionB = new Domain.Entities.UserCollection { UserId = userId, StickerId = stickerB.Id, QuantityOwned = 1, QuantityDuplicate = 0 };
+
+        await using var dbContext = CreateDbContext();
+        await dbContext.Teams.AddAsync(team);
+        await dbContext.Stickers.AddRangeAsync(stickerC, stickerA, stickerB);
+        await dbContext.UserCollections.AddRangeAsync(collectionC, collectionA, collectionB);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new UserCollectionRepository(dbContext);
+        var filter = new ListCollectionModel { UserId = userId, Sort = "invalid_sort_value", Page = 1, Limit = 100 };
+
+        // Act
+        var result = await repository.ListByUserAsync(filter, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value!.Count.ShouldBe(3);
+        result.Value[0].StickerId.ShouldBe(stickerA.Id);
+        result.Value[1].StickerId.ShouldBe(stickerB.Id);
+        result.Value[2].StickerId.ShouldBe(stickerC.Id);
+    }
 }
