@@ -39,7 +39,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Restore dependencies
-        run: dotnet restore Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+        run: dotnet restore Copilot.SquadAgent.StickerManager.slnx
 
       - name: SonarCloud Begin
         run: >
@@ -52,11 +52,11 @@ jobs:
           /d:sonar.exclusions="**/Migrations/**,**/obj/**,**/bin/**"
 
       - name: Build solution
-        run: dotnet build Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx --no-restore --configuration Release
+        run: dotnet build Copilot.SquadAgent.StickerManager.slnx --no-restore --configuration Release
 
       - name: Run tests with coverage
         run: >
-          dotnet test Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+          dotnet test Copilot.SquadAgent.StickerManager.slnx
           --no-build
           --configuration Release
           /p:CollectCoverage=true
@@ -93,7 +93,7 @@ jobs:
 
       - name: Publish application
         run: >
-          dotnet publish Copilot.SquadAgent.StickerManager/Copilot.SquadAgent.StickerManager.slnx
+          dotnet publish Copilot.SquadAgent.StickerManager.slnx
           --configuration Release
           --output ./publish
 
