@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/0 - Presentation/">
+    <Project Path="Src/0 - Presentation/Copilot.SquadAgent.StickerManager.Api/Copilot.SquadAgent.StickerManager.Api.csproj" />
+  </Folder>
+  <Folder Name="/1 - Application/">
+    <Project Path="Src/1 - Application/Copilot.SquadAgent.StickerManager.Application/Copilot.SquadAgent.StickerManager.Application.csproj" />
+  </Folder>
+  <Folder Name="/2 - Domain/">
+    <Project Path="Src/2 - Domain/Copilot.SquadAgent.StickerManager.Domain/Copilot.SquadAgent.StickerManager.Domain.csproj" />
+  </Folder>
+  <Folder Name="/3 - Infrastructure/">
+    <Project Path="Src/3 - Infrastructure/Copilot.SquadAgent.StickerManager.Infrastructure/Copilot.SquadAgent.StickerManager.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/Integration/">
+    <Project Path="Src/Tests/Integration/Copilot.SquadAgent.StickerManager.Integration.Tests/Copilot.SquadAgent.StickerManager.Integration.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Unit/" />
+  <Folder Name="/Tests/Unit/Application/">
+    <Project Path="Src/Tests/Unit/Application/Copilot.SquadAgent.StickerManager.Application.Tests/Copilot.SquadAgent.StickerManager.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Unit/Infrastructure/">
+    <Project Path="Src/Tests/Unit/Infrastructure/Copilot.SquadAgent.StickerManager.Infrastructure.Tests/Copilot.SquadAgent.StickerManager.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Unit/Presentation/">
+    <Project Path="Src/Tests/Unit/Presentation/Copilot.SquadAgent.StickerManager.Api.Tests/Copilot.SquadAgent.StickerManager.Api.Tests.csproj" />
+  </Folder>
+</Solution>
