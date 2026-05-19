@@ -1,6 +1,5 @@
 
-![Banner com ilustração de uma pessoa acenando ao lado de um laptop e anéis flutuantes, texto Ola Eu sou o Andre Cini Software Engineer .NET sobre fundo escuro](Docs\Images\README BANNER.png)
-
+![Texto Alternativo](./Docs/Images/README%20BANNER.png)
 
 # Sticker Manager — Copa 2026
 
