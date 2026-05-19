@@ -1,3 +1,7 @@
+
+![Banner com ilustração de uma pessoa acenando ao lado de um laptop e anéis flutuantes, texto Ola Eu sou o Andre Cini Software Engineer .NET sobre fundo escuro](Docs\Images\README BANNER.png)
+
+
 # Sticker Manager — Copa 2026
 
 > API para gerenciamento de álbum de figurinhas da Copa do Mundo 2026. Permite que usuários montem suas coleções, registrem figurinhas repetidas e realizem trocas entre si.
