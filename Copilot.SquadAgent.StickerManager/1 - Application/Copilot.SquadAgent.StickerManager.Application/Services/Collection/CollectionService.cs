@@ -53,23 +53,7 @@ public class CollectionService(
         var existing = existingResult.Value;
 
         if (existing is not null)
-        {
-            if (existing.QuantityDuplicate >= MaxDuplicates)
-                return Result<UserCollectionModel>.Failure(
-                    ResultCode.BusinessError,
-                    $"Limite máximo de {MaxDuplicates} duplicatas atingido para esta figurinha.",
-                    statusCode: 422);
-
-            existing.QuantityOwned++;
-            existing.QuantityDuplicate++;
-
-            var updateResult = await userCollectionRepository.UpdateAsync(existing, cancellationToken);
-
-            if (updateResult.IsFailure)
-                return Result<UserCollectionModel>.Failure(updateResult.Code, updateResult.Message!, updateResult.StatusCode);
-
-            return Result<UserCollectionModel>.Success(mapper.Map<UserCollectionModel>(updateResult.Value));
-        }
+            return await SetDuplicatedAsync(existing, cancellationToken);
 
         var newEntry = new UserCollection
         {
@@ -179,5 +163,24 @@ public class CollectionService(
             return Result<TeamProgressModel>.Failure(result.Code, result.Message!, result.StatusCode);
 
         return Result<TeamProgressModel>.Success(result.Value!);
+    }
+    
+    private async Task<Result<UserCollectionModel>> SetDuplicatedAsync(UserCollection existing, CancellationToken cancellationToken)
+    {
+        if (existing.QuantityDuplicate >= MaxDuplicates)
+            return Result<UserCollectionModel>.Failure(
+                ResultCode.BusinessError,
+                $"Limite máximo de {MaxDuplicates} duplicatas atingido para esta figurinha.",
+                statusCode: 422);
+
+        existing.QuantityOwned++;
+        existing.QuantityDuplicate++;
+
+        var updateResult = await userCollectionRepository.UpdateAsync(existing, cancellationToken);
+
+        if (updateResult.IsFailure)
+            return Result<UserCollectionModel>.Failure(updateResult.Code, updateResult.Message!, updateResult.StatusCode);
+
+        return Result<UserCollectionModel>.Success(mapper.Map<UserCollectionModel>(updateResult.Value));
     }
 }
