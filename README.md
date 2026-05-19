@@ -1,3 +1,7 @@
+
+![Banner com ilustração de uma pessoa acenando ao lado de um laptop e anéis flutuantes, texto Ola Eu sou o Andre Cini Software Engineer .NET sobre fundo escuro](Docs\Images\README BANNER.png)
+
+
 # Sticker Manager — Copa 2026
 
 > API para gerenciamento de álbum de figurinhas da Copa do Mundo 2026. Permite que usuários montem suas coleções, registrem figurinhas repetidas e realizem trocas entre si.
@@ -19,6 +23,7 @@
 - [Entidades do Dominio](#entidades-do-dominio)
 - [Decisoes Arquiteturais](#decisoes-arquiteturais)
 - [CI/CD](#cicd)
+- [Agente SQUAD — `.claude/`](#agente-squad--claude)
 - [Como Contribuir](#como-contribuir)
 - [Changelog](#changelog)
 
@@ -223,6 +228,105 @@ Executado automaticamente a cada push na branch `main`. Depende de tres jobs enc
 | `build-and-test` | Mesmo pipeline do `ci.yml` |
 | `sonarcloud` | Analise estatica de codigo via SonarCloud (requer secrets `SONAR_TOKEN` e variaveis `SONAR_ORGANIZATION`, `SONAR_PROJECT_KEY`) |
 | `deploy-staging` | Publicacao da aplicacao e deploy para o ambiente de staging (placeholder — substituir pelo mecanismo do ambiente real) |
+
+---
+
+## Agente SQUAD — `.claude/`
+
+Este repositorio inclui um **agente de desenvolvimento completo** configurado para Claude Code, localizado no diretorio `.claude/`. O objetivo e estudar e demonstrar como estruturar um copilot especializado usando skills, contextos e orchestrator agent dentro de um projeto .NET real.
+
+### Por que isso existe
+
+A pasta `.claude/` e o resultado de um estudo pratico sobre como transformar um modelo de linguagem generico em um assistente especializado com comportamento previsivel, consistente e alinhado aos padroes arquiteturais do projeto. A ideia central e que o agente conheca profundamente o codigo antes de gerar qualquer coisa — e que toda resposta siga os mesmos padroes que um desenvolvedor experiente do time seguiria.
+
+### Orchestrator Agent
+
+O agente principal esta definido em `.claude/agents/squad.md` e e configurado como um **sub-agente do Claude Code** (`/squad`). Ele combina as perspectivas de Developer, Tech Lead, Product Owner e Scrum Master em um unico ponto de entrada.
+
+**Ferramentas habilitadas:** `Read`, `Edit`, `Write`, `Glob`, `Grep`, `Bash`, `Agent`
+
+**Fluxos predefinidos:**
+
+| Gatilho | Sequencia de Skills |
+|---|---|
+| Nova feature | `create-card` → `create-feature` → `create-migration` → `create-unit-test` → `code-review` → `write-commit` |
+| Verificacao de qualidade | `check-standards` → `check-coverage` → `refactor-to-standards` |
+| Onboarding | `onboarding-checklist` |
+| Release | `write-changelog-entry` |
+
+**Servidores MCP configurados** (`.claude/mcp.json`):
+
+| Servidor | Proposito |
+|---|---|
+| `github` | Leitura e criacao de issues, PRs e releases via `@modelcontextprotocol/server-github` |
+| `filesystem` | Acesso estruturado ao codigo-fonte via `@modelcontextprotocol/server-filesystem` |
+| `git` | Inspecao de historico e estado do repositorio via `@modelcontextprotocol/server-git` |
+| `postgres` | Consulta direta ao banco para validar schema em migrations e queries |
+| `mongodb` | Consulta ao banco NoSQL para validar documentos e colecoes |
+
+### Skills (19 no total)
+
+Cada skill e um arquivo `SKILL.md` que define objetivo, contextos necessarios, perguntas obrigatorias e o algoritmo de execucao. O agente nunca executa uma skill sem ter as informacoes minimas — e nunca carrega todos os contextos de uma vez.
+
+**Criacao de Artefatos**
+
+| Skill | Descricao |
+|---|---|
+| `create-feature` | Feature completa ponta a ponta — endpoint, service, repository e testes |
+| `create-endpoint` | Endpoint isolado com Minimal API, Validator, AppService e Swagger |
+| `create-service` | Service com interface no Domain e implementacao no Application |
+| `create-repository` | Repository com decisao automatica EF Core vs Dapper |
+| `create-migration` | Migration EF Core com inspecao de schema |
+| `create-dapper-query` | Query Dapper com constante no Domain e implementacao no repositorio |
+| `create-integration` | Integracao externa — API, AWS, Kafka ou RabbitMQ |
+
+**Testes**
+
+| Skill | Descricao |
+|---|---|
+| `create-unit-test` | Conjunto completo — Data Mock, Mock Class e Teste |
+| `create-integration-test` | Testes de integracao com WebApplicationFactory e rollback |
+| `check-coverage` | Execucao de testes e analise de cobertura (meta: 85%) |
+
+**Qualidade e Padroes**
+
+| Skill | Descricao |
+|---|---|
+| `code-review` | Review estruturado com Blockers, Warnings e Suggestions |
+| `check-standards` | Diagnostico de aderencia aos padroes sem alteracoes |
+| `refactor-to-standards` | Refatoracao com opcao keep/undo por arquivo |
+
+**Documentacao e Git**
+
+| Skill | Descricao |
+|---|---|
+| `write-readme` | Geracao ou atualizacao do README.md |
+| `write-commit` | Mensagem de commit no padrao Conventional Commits |
+| `write-changelog-entry` | Entrada no CHANGELOG.md com sugestao de versao |
+
+**Agil e Processo**
+
+| Skill | Descricao |
+|---|---|
+| `create-card` | Issue no GitHub seguindo templates por tipo |
+| `daily-summary` | Issue de daily assincrona coletiva |
+| `onboarding-checklist` | Checklist de onboarding personalizado por perfil |
+
+### Contextos (46 arquivos em 9 categorias)
+
+Os contextos ensinam ao agente os padroes do projeto. Cada skill declara quais contextos precisa — o agente carrega apenas esses, nunca todos de uma vez.
+
+| Categoria | Arquivos | O que cobre |
+|---|---|---|
+| `architecture/` | 8 | Clean Architecture, estrutura da solution, responsabilidades por camada, AutoMapper |
+| `development/` | 8 | Minimal APIs, validators, DI, auth, exception handling, logging, Swagger |
+| `persistence/` | 5 | EF Core, Dapper, MongoDB, query patterns, SQL |
+| `patterns/` | 5 | Result Pattern, SOLID, Builder, Generic Repository, Unit of Work |
+| `testing/` | 5 | Arquitetura de testes, unit tests, mock classes, data mocks, integration tests |
+| `integrations/` | 5 | APIs externas, AWS, Kafka, RabbitMQ, resiliencia de mensageria |
+| `engineering-process/` | 5 | GitFlow, Conventional Commits, code review checklist, CI/CD, release process |
+| `agile/` | 2 | Cerimonias ageis assincronas, especificacao de cards |
+| `documentation/` | 3 | Templates de README, CHANGELOG e onboarding |
 
 ---
 
